@@ -2,6 +2,10 @@
 #include<Library.h>
 #include<Input.h>
 
+#include<ModelObject.h>
+
+#include<Camera.h>
+
 #include<ImguiManager.h>
 
 
@@ -56,6 +60,17 @@ void Game::Initialize()
 	//MelLib::GameObjectManager::GetInstance()->ReserveObjectArray(100);
 	//MelLib::SceneManager::GetInstance()->SetStartScene(new Play());
 
+
+	// 箱作成
+	// デフォルトだと1,1,1の白で生成される
+	// 形状たくさんあるけど今はBOXとBOARDのみ
+	// 長いから変更する可能性あり(ShapeType3Dだけで指定できるようにする予定)
+	testModel.Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
+
+	// メインカメラを取得(Get関数に何も指定しないとメインカメラを取得する)
+	// SetRotateCriteriaPositionで回転基準をセット
+	//(初期設定だとFSPカメラのため、実質カメラの座標。TPS視点の時はこれでセットした数値が注視点の座標になる)
+	MelLib::Camera::Get()->SetRotateCriteriaPosition(MelLib::Vector3(0,0,-2));
 }
 
 
@@ -67,9 +82,15 @@ void Game::Finalize()
 void Game::Update()
 {
 	//MelLib::SceneManager::GetInstance()->Update();
+
+	// 毎フレームY軸基準で3度回転
+	testModel.SetAngle(testModel.GetAngle() + MelLib::Vector3(0,3,0));
 }
 
 void Game::Draw()
 {
 	//MelLib::SceneManager::GetInstance()->Draw();
+
+	// 描画
+	testModel.Draw();
 }

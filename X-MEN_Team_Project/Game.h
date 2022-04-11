@@ -1,4 +1,7 @@
 #pragma once
+
+#include<ModelObject.h>
+
 class Game final
 {
 private:
@@ -9,6 +12,9 @@ private:
 	void Update();
 	void Draw();
 	void Finalize();
+
+	// ƒeƒXƒg
+	MelLib::ModelObject testModel;
 
 public:
 	Game(const Game& g) = delete;

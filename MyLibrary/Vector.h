@@ -2,7 +2,7 @@
 #include<DirectXMath.h>
 #include<vector>
 #include"Quaternion.h"
-#include"LibraryEnum.h";
+#include"LibraryEnum.h"
 
 namespace MelLib
 {
