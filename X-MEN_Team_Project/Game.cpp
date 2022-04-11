@@ -66,6 +66,8 @@ void Game::Finalize()
 }
 void Game::Update()
 {
+	// 2022/04/11 add gates
+
 	//MelLib::SceneManager::GetInstance()->Update();
 }
 
