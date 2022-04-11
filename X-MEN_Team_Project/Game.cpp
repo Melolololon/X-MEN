@@ -81,6 +81,10 @@ void Game::Finalize()
 }
 void Game::Update()
 {
+	// 2022/04/11 add gates
+	// 2022/04/11 add GUTTYman
+	// 2022/04/11 add ShunNedachi
+
 	//MelLib::SceneManager::GetInstance()->Update();
 
 	// –ˆƒtƒŒ[ƒ€Y²Šî€‚Å3“x‰ñ“]
