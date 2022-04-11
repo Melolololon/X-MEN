@@ -67,6 +67,7 @@ void Game::Finalize()
 void Game::Update()
 {
 	// 2022/04/11 add gates
+	// 2022/04/11 add GUTTYman
 
 	//MelLib::SceneManager::GetInstance()->Update();
 }
