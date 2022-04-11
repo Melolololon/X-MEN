@@ -199,6 +199,11 @@ namespace MelLib
 #pragma endregion
 
 #pragma region 色
+		/// <summary>
+		/// 色を加算します。
+		/// </summary>
+		/// <param name="color">色</param>
+		/// <param name="name">モデル内のオブジェクト名(指定しない場合、1番目のオブジェクトを指定)</param>
 		void SetAddColor(const Color& color, const std::string& name = "");
 		void SetSubColor(const Color& color, const std::string& name = "");
 		void SetMulColor(const Color& color, const std::string& name = "");

@@ -88,7 +88,24 @@ void Game::Update()
 	//MelLib::SceneManager::GetInstance()->Update();
 
 	// 毎フレームY軸基準で3度回転
-	testModel.SetAngle(testModel.GetAngle() + MelLib::Vector3(0,3,0));
+	testModel.SetAngle(testModel.GetAngle() + MelLib::Vector3(0, 3, 0));
+
+	// カメラの操作
+	// キーボードで入力して回転
+	if (MelLib::Input::KeyState(DIK_LEFT)) {
+		MelLib::Camera::Get()->SetAngle(MelLib::Vector3(0, MelLib::Camera::Get()->GetAngle().y - 2, 0));
+	}
+	if (MelLib::Input::KeyState(DIK_RIGHT)) {
+		MelLib::Camera::Get()->SetAngle(MelLib::Vector3(0, MelLib::Camera::Get()->GetAngle().y + 2, 0));
+	}
+
+	// 色の乗算
+	// マテリアルを生成して割り当てることもできるが、簡単な色変えならこちらでOK
+	// Color(rgb,a)
+	// 0～255で指定
+	// ParToUCharは0%～100%を0～255に変換
+	//
+	testModel.SetMulColor(MelLib::Color(255,255,255, MelLib::Color::ParToUChar(90)));
 }
 
 void Game::Draw()
