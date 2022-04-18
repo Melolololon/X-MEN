@@ -116,38 +116,48 @@ void GameObjectManager::Update()
 				&& collisionFlags[objJ].sphere)
 			{
 
-				std::vector<SphereData>sphereData1 = obj1->GetSphereData();
-				size_t sphereData1Size = sphereData1.size();
-				std::vector<SphereData>sphereData2 = obj2->GetSphereData();
-				size_t sphereData2Size = sphereData2.size();
+				std::unordered_map<std::string, std::vector<SphereData>> sphereDatas1 = obj1->GetSphereDatas();
+				std::unordered_map<std::string, std::vector<SphereData>> sphereDatas2 = obj2->GetSphereDatas();
 
-
-				for (int colI = 0; colI < sphereData1Size; colI++)
+				// 名前分ループ
+				for (const auto& shapeDatas1 : sphereDatas1)
 				{
-					for (int colJ = 0; colJ < sphereData2Size; colJ++)
+					for (const auto& shapeDatas2 : sphereDatas1)
 					{
-						if (Collision::SphereAndSphere(sphereData1[colI], sphereData2[colJ]))
-						{
-							//hitを呼び出す
-							obj1->SetHitSphereData(sphereData2[colJ]);
-							obj2->SetHitSphereData(sphereData1[colJ]);
+						std::vector<SphereData>sphereDataVec1 = sphereDatas1[shapeDatas1.first];
+						size_t sphereData1Size = sphereDataVec1.size();
+						std::vector<SphereData>sphereDataVec2 = sphereDatas2[shapeDatas1.first];
+						size_t sphereData2Size = sphereDataVec2.size();
 
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::SPHERE,
-								colI,
-								ShapeType3D::SPHERE,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::SPHERE,
-								colJ,
-								ShapeType3D::SPHERE,
-								colI
-							);
+
+						for (int colI = 0; colI < sphereData1Size; colI++)
+						{
+							for (int colJ = 0; colJ < sphereData2Size; colJ++)
+							{
+								if (Collision::SphereAndSphere(sphereDataVec1[colI], sphereDataVec2[colJ]))
+								{
+									//hitを呼び出す
+									obj1->SetHitSphereData(sphereDataVec2[colJ]);
+									obj2->SetHitSphereData(sphereDataVec1[colJ]);
+
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SPHERE,
+										shapeDatas1.first,
+										ShapeType3D::SPHERE,
+										shapeDatas2.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SPHERE,
+										shapeDatas2.first,
+										ShapeType3D::SPHERE,
+										shapeDatas1.first
+									);
+								}
+							}
 						}
 					}
 				}
@@ -160,48 +170,58 @@ void GameObjectManager::Update()
 				&& collisionFlags[objJ].box)
 			{
 
-				std::vector<BoxData>boxData1 = obj1->GetBoxData();
-				size_t boxData1Size = boxData1.size();
-				std::vector<BoxData>boxData2 = obj2->GetBoxData();
-				size_t boxData2Size = boxData2.size();
+				std::unordered_map < std::string, std::vector<BoxData>>boxDatas1 = obj1->GetBoxDatas();
 
+				std::unordered_map < std::string, std::vector<BoxData>>boxDatas2 = obj2->GetBoxDatas();
 
-				for (int colI = 0; colI < boxData1Size; colI++)
+				// 名前分ループ
+				for (const auto& boxData1 : boxDatas1)
 				{
-					for (int colJ = 0; colJ < boxData2Size; colJ++)
+					for (const auto& boxData2 : boxDatas2)
 					{
-						BoxCalcResult result1;
-						BoxCalcResult result2;
+						std::vector<BoxData>boxDataVec1 = boxData1.second;
+						std::vector<BoxData>boxDataVec2 = boxData2.second;
 
-						if (Collision::BoxAndBox(boxData1[colI], &result1, boxData2[colJ], &result2))
+						size_t boxData1Size = boxDataVec1.size();
+						size_t boxData2Size = boxDataVec2.size();
+
+						for (int colI = 0; colI < boxData1Size; colI++)
 						{
-							obj1->SetBoxCalcResult(result1, colI);
-							obj2->SetBoxCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < boxData2Size; colJ++)
+							{
+								BoxCalcResult result1;
+								BoxCalcResult result2;
 
-							obj1->SetHitBoxData(boxData2[colJ]);
-							obj2->SetHitBoxData(boxData1[colI]);
+								if (Collision::BoxAndBox(boxDataVec1[colI], &result1, boxDataVec2[colJ], &result2))
+								{
+									obj1->SetBoxCalcResult(result1, colI);
+									obj2->SetBoxCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::BOX,
-								colI,
-								ShapeType3D::BOX,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::BOX,
-								colJ,
-								ShapeType3D::BOX,
-								colI
-							);
+									obj1->SetHitBoxData(boxDataVec2[colJ]);
+									obj2->SetHitBoxData(boxDataVec1[colI]);
+
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::BOX,
+										boxData1.first,
+										ShapeType3D::BOX,
+										boxData2.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::BOX,
+										boxData2.first,
+										ShapeType3D::BOX,
+										boxData1.first
+									);
+								}
+							}
 						}
 					}
 				}
-
 
 			}
 #pragma endregion
@@ -210,54 +230,62 @@ void GameObjectManager::Update()
 			if (collisionFlags[objI].segment
 				&& collisionFlags[objJ].segment)
 			{
+				std::unordered_map < std::string, std::vector<Segment3DData>>segmentDatas1 = obj1->GetSegmentDatas();
+				std::unordered_map < std::string, std::vector<Segment3DData>>segmentDatas2 = obj2->GetSegmentDatas();
 
-				std::vector<Segment3DData>segmentData1 = obj1->GetSegmentData();
-				size_t segmentData1Size = segmentData1.size();
-				std::vector<Segment3DData>segmentData2 = obj2->GetSegmentData();
-				size_t segmentData2Size = segmentData2.size();
-
-
-
-				for (int colI = 0; colI < segmentData1Size; colI++)
+				// 名前分ループ
+				for (const auto& segmentData1 : segmentDatas1)
 				{
-					for (int colJ = 0; colJ < segmentData2Size; colJ++)
+					for (const auto& segmentData2 : segmentDatas2)
 					{
-						Segment3DCalcResult result1;
-						Segment3DCalcResult result2;
+						std::vector<Segment3DData>segmentDataVec1 = segmentData1.second;
+						size_t segmentData1Size = segmentDataVec1.size();
+						std::vector<Segment3DData>segmentDataVec2 = segmentData2.second;
+						size_t segmentData2Size = segmentDataVec2.size();
 
 
-						if (Collision::Segment3DAndSegment3D
-						(
-							segmentData1[colI],
-							&result1,
-							segmentData2[colJ],
-							&result2
-						))
+						for (int colI = 0; colI < segmentData1Size; colI++)
 						{
-							obj1->SetSegmentCalcResult(result1, colI);
-							obj2->SetSegmentCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < segmentData2Size; colJ++)
+							{
+								Segment3DCalcResult result1;
+								Segment3DCalcResult result2;
 
 
-							obj1->SetHitSegment3DData(segmentData2[colJ]);
-							obj2->SetHitSegment3DData(segmentData1[colI]);
+								if (Collision::Segment3DAndSegment3D
+								(
+									segmentDataVec1[colI],
+									&result1,
+									segmentDataVec2[colJ],
+									&result2
+								))
+								{
+									obj1->SetSegmentCalcResult(result1, colI);
+									obj2->SetSegmentCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::SEGMENT,
-								colI,
-								ShapeType3D::SEGMENT,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::SEGMENT,
-								colJ,
-								ShapeType3D::SEGMENT,
-								colI
-							);
+
+									obj1->SetHitSegment3DData(segmentDataVec2[colJ]);
+									obj2->SetHitSegment3DData(segmentDataVec1[colI]);
+
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SEGMENT,
+										segmentData1.first,
+										ShapeType3D::SEGMENT,
+										segmentData2.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SEGMENT,
+										segmentData2.first,
+										ShapeType3D::SEGMENT,
+										segmentData2.first
+									);
+								}
+							}
 						}
 					}
 				}
@@ -269,44 +297,53 @@ void GameObjectManager::Update()
 			if (collisionFlags[objI].capsule
 				&& collisionFlags[objJ].capsule)
 			{
+				std::unordered_map < std::string, std::vector<CapsuleData>>capsuleDatas1 = obj1->GetCapsuleDatas();
+				std::unordered_map < std::string, std::vector<CapsuleData>>capsuleDatas2 = obj2->GetCapsuleDatas();
 
-				std::vector<CapsuleData>capsuleData1 = obj1->GetCapsuleData();
-				size_t capsuleData1Size = capsuleData1.size();
-				std::vector<CapsuleData>capsuleData2 = obj2->GetCapsuleData();
-				size_t capsuleData2Size = capsuleData2.size();
-
-
-				for (int colI = 0; colI < capsuleData1Size; colI++)
+				// 名前分ループ
+				for (const auto& capsuleData1 : capsuleDatas1)
 				{
-					for (int colJ = 0; colJ < capsuleData2Size; colJ++)
+					for (const auto& capsuleData2 : capsuleDatas2)
 					{
-						if (Collision::CapsuleAndCapsule(capsuleData1[colI], capsuleData2[colJ]))
+
+						std::vector<CapsuleData>capsuleDataVec1 = capsuleData1.second;
+						size_t capsuleDataVec1Size = capsuleDataVec1.size();
+						std::vector<CapsuleData>capsuleDataVec2 = capsuleData2.second;
+						size_t capsuleDataVec2Size = capsuleDataVec2.size();
+
+
+						for (int colI = 0; colI < capsuleDataVec1Size; colI++)
 						{
-							obj1->SetHitCapsuleData(capsuleData2[colJ]);
-							obj2->SetHitCapsuleData(capsuleData1[colI]);
+							for (int colJ = 0; colJ < capsuleDataVec2Size; colJ++)
+							{
+								if (Collision::CapsuleAndCapsule(capsuleDataVec1[colI], capsuleDataVec2[colJ]))
+								{
+									obj1->SetHitCapsuleData(capsuleDataVec2[colJ]);
+									obj2->SetHitCapsuleData(capsuleDataVec1[colI]);
 
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::CAPSULE,
-								colI,
-								ShapeType3D::CAPSULE,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::CAPSULE,
-								colJ,
-								ShapeType3D::CAPSULE,
-								colI
-							);
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::CAPSULE,
+										capsuleData1.first,
+										ShapeType3D::CAPSULE,
+										capsuleData2.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::CAPSULE,
+										capsuleData2.first,
+										ShapeType3D::CAPSULE,
+										capsuleData1.first
+									);
+								}
+							}
 						}
 					}
 				}
-
 			}
 #pragma endregion
 
@@ -315,54 +352,63 @@ void GameObjectManager::Update()
 				&& collisionFlags[objJ].box)
 			{
 
-				std::vector<SphereData>sphereData = obj1->GetSphereData();
-				size_t sphereDataSize = sphereData.size();
-				std::vector<BoxData>boxData = obj2->GetBoxData();
-				size_t boxDataSize = boxData.size();
+				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj1->GetSphereDatas();
+				std::unordered_map < std::string, std::vector<BoxData>>boxData = obj2->GetBoxDatas();
 
-				for (int colI = 0; colI < sphereDataSize; colI++)
+				// 名前分ループ
+				for (const auto& sphereData : sphereDatas)
 				{
-					for (int colJ = 0; colJ < boxDataSize; colJ++)
+					for (const auto& boxData : boxData)
 					{
-						SphereCalcResult result1;
-						BoxCalcResult result2;
+						std::vector<SphereData>sphereDataVec = sphereData.second;
+						size_t sphereDataSize = sphereDataVec.size();
+						std::vector<BoxData>boxDataVec = boxData.second;
+						size_t boxDataSize = boxDataVec.size();
 
-						if (Collision::SphereAndBox
-						(
-							sphereData[colI],
-							&result1,
-							boxData[colJ],
-							&result2
-						))
+						for (int colI = 0; colI < sphereDataSize; colI++)
 						{
-							obj1->SetSphereCalcResult(result1, colI);
-							obj2->SetBoxCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < boxDataSize; colJ++)
+							{
+								SphereCalcResult result1;
+								BoxCalcResult result2;
 
-							obj1->SetHitBoxData(boxData[colJ]);
-							obj2->SetHitSphereData(sphereData[colI]);
+								if (Collision::SphereAndBox
+								(
+									sphereDataVec[colI],
+									&result1,
+									boxDataVec[colJ],
+									&result2
+								))
+								{
+									obj1->SetSphereCalcResult(result1, colI);
+									obj2->SetBoxCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::SPHERE,
-								colI,
-								ShapeType3D::BOX,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::BOX,
-								colJ,
-								ShapeType3D::SPHERE,
-								colI
-							);
+									obj1->SetHitBoxData(boxDataVec[colJ]);
+									obj2->SetHitSphereData(sphereDataVec[colI]);
+
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SPHERE,
+										sphereData.first,
+										ShapeType3D::BOX,
+										boxData.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::BOX,
+										boxData.first,
+										ShapeType3D::SPHERE,
+										sphereData.first
+									);
+								}
+							}
 						}
+
 					}
 				}
-
-
 
 
 			}
@@ -370,50 +416,60 @@ void GameObjectManager::Update()
 			if (collisionFlags[objJ].sphere
 				&& collisionFlags[objI].box)
 			{
+				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj2->GetSphereDatas();
+				std::unordered_map < std::string, std::vector<BoxData>>boxDatas = obj1->GetBoxDatas();
 
-				std::vector<SphereData>sphereData = obj2->GetSphereData();
-				size_t sphereDataSize = sphereData.size();
-				std::vector<BoxData>boxData = obj1->GetBoxData();
-				size_t boxDataSize = boxData.size();
-
-				for (int colI = 0; colI < sphereDataSize; colI++)
+				// 名前分ループ
+				for (const auto& sphereData : sphereDatas)
 				{
-					for (int colJ = 0; colJ < boxDataSize; colJ++)
+					for (const auto& boxData : boxDatas)
 					{
-						SphereCalcResult result1;
-						BoxCalcResult result2;
 
-						if (Collision::SphereAndBox
-						(
-							sphereData[colI],
-							&result1,
-							boxData[colJ],
-							&result2
-						))
+						std::vector<SphereData>sphereDataVec = sphereData.second;
+						size_t sphereDataSize = sphereDataVec.size();
+						std::vector<BoxData>boxDataVec = boxData.second;
+						size_t boxDataSize = boxDataVec.size();
+
+						for (int colI = 0; colI < sphereDataSize; colI++)
 						{
-							obj2->SetSphereCalcResult(result1, colI);
-							obj1->SetBoxCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < boxDataSize; colJ++)
+							{
+								SphereCalcResult result1;
+								BoxCalcResult result2;
 
-							obj1->SetHitSphereData(sphereData[colI]);
-							obj2->SetHitBoxData(boxData[colJ]);
+								if (Collision::SphereAndBox
+								(
+									sphereDataVec[colI],
+									&result1,
+									boxDataVec[colJ],
+									&result2
+								))
+								{
+									obj2->SetSphereCalcResult(result1, colI);
+									obj1->SetBoxCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::SPHERE,
-								colI,
-								ShapeType3D::BOX,
-								colJ
-							);
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::BOX,
-								colJ,
-								ShapeType3D::SPHERE,
-								colI
-							);
+									obj1->SetHitSphereData(sphereDataVec[colI]);
+									obj2->SetHitBoxData(boxDataVec[colJ]);
+
+									//hitを呼び出す
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SPHERE,
+										sphereData.first,
+										ShapeType3D::BOX,
+										boxData.first
+									);
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::BOX,
+										boxData.first,
+										ShapeType3D::SPHERE,
+										sphereData.first
+									);
+								}
+							}
 						}
 					}
 				}
@@ -426,39 +482,49 @@ void GameObjectManager::Update()
 			if (collisionFlags[objI].sphere
 				&& collisionFlags[objJ].capsule)
 			{
-				std::vector<SphereData>sphereData = obj1->GetSphereData();
-				size_t sphereDataSize = sphereData.size();
-				std::vector<CapsuleData>capsuleData = obj2->GetCapsuleData();
-				size_t capsuleDataSize = capsuleData.size();
+				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj1->GetSphereDatas();
+				std::unordered_map < std::string, std::vector<CapsuleData>>capsuleDatas = obj2->GetCapsuleDatas();
 
-				for (int colI = 0; colI < sphereDataSize; colI++)
+				// 名前分ループ
+				for (const auto& sphereData : sphereDatas)
 				{
-					for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+					for (const auto& capsuleData : capsuleDatas)
 					{
-						if (Collision::SphereAndCapsule(sphereData[colI], capsuleData[colJ]))
+						std::vector<SphereData>sphereDataVec = sphereData.second;
+						size_t sphereDataSize = sphereDataVec.size();
+						std::vector<CapsuleData>capsuleDataVec = capsuleData.second;
+						size_t capsuleDataSize = capsuleDataVec.size();
+
+						for (int colI = 0; colI < sphereDataSize; colI++)
 						{
-							obj1->SetHitCapsuleData(capsuleData[colJ]);
-							obj2->SetHitSphereData(sphereData[colI]);
+							for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+							{
+								if (Collision::SphereAndCapsule(sphereDataVec[colI], capsuleDataVec[colJ]))
+								{
+									obj1->SetHitCapsuleData(capsuleDataVec[colJ]);
+									obj2->SetHitSphereData(sphereDataVec[colI]);
 
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::SPHERE,
-								colI,
-								ShapeType3D::CAPSULE,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::CAPSULE,
-								colJ,
-								ShapeType3D::SPHERE,
-								colI
-							);
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SPHERE,
+										sphereData.first,
+										ShapeType3D::CAPSULE,
+										capsuleData.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::CAPSULE,
+										capsuleData.first,
+										ShapeType3D::SPHERE,
+										sphereData.first
+									);
 
+								}
+							}
 						}
 					}
 				}
@@ -468,39 +534,48 @@ void GameObjectManager::Update()
 			if (collisionFlags[objJ].sphere
 				&& collisionFlags[objI].capsule)
 			{
+				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj2->GetSphereDatas();
+				std::unordered_map < std::string, std::vector<CapsuleData>>capsuleDatas = obj1->GetCapsuleDatas();
 
-				std::vector<SphereData>sphereData = obj2->GetSphereData();
-				size_t sphereDataSize = sphereData.size();
-				std::vector<CapsuleData>capsuleData = obj1->GetCapsuleData();
-				size_t capsuleDataSize = capsuleData.size();
-
-				for (int colI = 0; colI < sphereDataSize; colI++)
+				// 名前分ループ
+				for (const auto& sphereData : sphereDatas)
 				{
-					for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+					for (const auto& capsuleData : capsuleDatas)
 					{
-						if (Collision::SphereAndCapsule(sphereData[colI], capsuleData[colJ]))
+						std::vector<SphereData>sphereDataVec = sphereData.second;
+						size_t sphereDataSize = sphereDataVec.size();
+						std::vector<CapsuleData>capsuleDataVec = capsuleData.second;
+						size_t capsuleDataSize = capsuleDataVec.size();
+
+						for (int colI = 0; colI < sphereDataSize; colI++)
 						{
-							obj1->SetHitSphereData(sphereData[colI]);
-							obj2->SetHitCapsuleData(capsuleData[colJ]);
+							for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+							{
+								if (Collision::SphereAndCapsule(sphereDataVec[colI], capsuleDataVec[colJ]))
+								{
+									obj1->SetHitSphereData(sphereDataVec[colI]);
+									obj2->SetHitCapsuleData(capsuleDataVec[colJ]);
 
-							//hitを呼び出す
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::SPHERE,
-								colI,
-								ShapeType3D::CAPSULE,
-								colJ
-							);
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::CAPSULE,
-								colJ,
-								ShapeType3D::SPHERE,
-								colI
-							);
+									//hitを呼び出す
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SPHERE,
+										sphereData.first,
+										ShapeType3D::CAPSULE,
+										capsuleData.first
+									);
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::CAPSULE,
+										capsuleData.first,
+										ShapeType3D::SPHERE,
+										sphereData.first
+									);
 
+								}
+							}
 						}
 					}
 				}
@@ -512,91 +587,111 @@ void GameObjectManager::Update()
 			if (collisionFlags[objI].board
 				&& collisionFlags[objJ].segment)
 			{
-				std::vector<BoardData>boardData = obj1->GetBoardData();
-				size_t boardDataSize = boardData.size();
-				std::vector<Segment3DData>segmentData = obj2->GetSegmentData();
-				size_t segmentDataSize = segmentData.size();
+				std::unordered_map < std::string, std::vector<BoardData>>boardDatas = obj1->GetBoardDatas();
+				std::unordered_map < std::string, std::vector<Segment3DData>>segmentDatas = obj2->GetSegmentDatas();
 
-				for (int colI = 0; colI < boardDataSize; colI++)
+				// 名前分ループ
+				for (const auto& boardData : boardDatas)
 				{
-					for (int colJ = 0; colJ < segmentDataSize; colJ++)
+					for (const auto& segmentData : segmentDatas)
 					{
-						BoardCalcResult result1;
-						Segment3DCalcResult result2;
+						std::vector<BoardData>boardDataVec = boardData.second;
+						size_t boardDataSize = boardDataVec.size();
+						std::vector<Segment3DData>segmentDataVec = segmentData.second;
+						size_t segmentDataSize = segmentDataVec.size();
 
-						if (Collision::BoardAndSegment3D(boardData[colI], &result1, segmentData[colJ], &result2))
+						for (int colI = 0; colI < boardDataSize; colI++)
 						{
-							obj1->SetBoardCalcResult(result1, colI);
-							obj2->SetSegmentCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < segmentDataSize; colJ++)
+							{
+								BoardCalcResult result1;
+								Segment3DCalcResult result2;
 
-							obj1->SetHitSegment3DData(segmentData[colJ]);
-							obj2->SetHitBoardData(boardData[colI]);
+								if (Collision::BoardAndSegment3D(boardDataVec[colI], &result1, segmentDataVec[colJ], &result2))
+								{
+									obj1->SetBoardCalcResult(result1, colI);
+									obj2->SetSegmentCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::BOARD,
-								colI,
-								ShapeType3D::SEGMENT,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::SEGMENT,
-								colJ,
-								ShapeType3D::BOARD,
-								colI
-							);
+									obj1->SetHitSegment3DData(segmentDataVec[colJ]);
+									obj2->SetHitBoardData(boardDataVec[colI]);
 
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::BOARD,
+										boardData.first,
+										ShapeType3D::SEGMENT,
+										segmentData.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SEGMENT,
+										segmentData.first,
+										ShapeType3D::BOARD,
+										boardData.first
+									);
+
+								}
+							}
 						}
+
 					}
 				}
-
 			}
 
-			if (collisionFlags[objJ].board
-				&& collisionFlags[objI].segment)
+			if (collisionFlags[objI].board
+				&& collisionFlags[objJ].segment)
 			{
-				std::vector<BoardData>boardData = obj2->GetBoardData();
-				size_t boardDataSize = boardData.size();
-				std::vector<Segment3DData>segmentData = obj1->GetSegmentData();
-				size_t segmentDataSize = segmentData.size();
-
-				for (int colI = 0; colI < boardDataSize; colI++)
+				std::unordered_map < std::string, std::vector<BoardData>>boardDatas = obj2->GetBoardDatas();
+				std::unordered_map < std::string, std::vector<Segment3DData>>segmentDatas = obj1->GetSegmentDatas();
+				// 名前分ループ
+				for (const auto& boardData : boardDatas)
 				{
-					for (int colJ = 0; colJ < segmentDataSize; colJ++)
+					for (const auto& segmentData : segmentDatas)
 					{
-						BoardCalcResult result1;
-						Segment3DCalcResult result2;
 
-						if (Collision::BoardAndSegment3D(boardData[colI], &result1, segmentData[colJ], &result2))
+						std::vector<BoardData>boardDataVec = boardData.second;
+						size_t boardDataSize = boardDataVec.size();
+						std::vector<Segment3DData>segmentDataVec = segmentData.second;
+						size_t segmentDataSize = segmentDataVec.size();
+
+						for (int colI = 0; colI < boardDataSize; colI++)
 						{
-							obj2->SetBoardCalcResult(result1, colI);
-							obj1->SetSegmentCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < segmentDataSize; colJ++)
+							{
+								BoardCalcResult result1;
+								Segment3DCalcResult result2;
 
-							obj1->SetHitBoardData(boardData[colI]);
-							obj2->SetHitSegment3DData(segmentData[colJ]);
+								if (Collision::BoardAndSegment3D(boardDataVec[colI], &result1, segmentDataVec[colJ], &result2))
+								{
+									obj2->SetBoardCalcResult(result1, colI);
+									obj1->SetSegmentCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::BOARD,
-								colI,
-								ShapeType3D::SEGMENT,
-								colJ
-							);
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::SEGMENT,
-								colJ,
-								ShapeType3D::BOARD,
-								colI
-							);
+									obj1->SetHitBoardData(boardDataVec[colI]);
+									obj2->SetHitSegment3DData(segmentDataVec[colJ]);
 
+									//hitを呼び出す
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::BOARD,
+										boardData.first,
+										ShapeType3D::SEGMENT,
+										segmentData.first
+									);
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SEGMENT,
+										segmentData.first,
+										ShapeType3D::BOARD,
+										boardData.first
+									);
+
+								}
+							}
 						}
 					}
 				}
@@ -609,44 +704,54 @@ void GameObjectManager::Update()
 			if (collisionFlags[objI].board
 				&& collisionFlags[objJ].capsule)
 			{
-				std::vector<BoardData>boardData = obj1->GetBoardData();
-				size_t boardDataSize = boardData.size();
-				std::vector<CapsuleData>capsuleData = obj2->GetCapsuleData();
-				size_t capsuleDataSize = capsuleData.size();
+				std::unordered_map < std::string, std::vector<BoardData>>boardDatas = obj1->GetBoardDatas();
+				std::unordered_map < std::string, std::vector<CapsuleData>>capsuleDatas = obj2->GetCapsuleDatas();
 
-				for (int colI = 0; colI < boardDataSize; colI++)
+				// 名前分ループ
+				for (const auto& boardData : boardDatas)
 				{
-					for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+					for (const auto& capsuleData : capsuleDatas)
 					{
-						BoardCalcResult result1;
-						Segment3DCalcResult result2;
+						std::vector<BoardData>boardDataVec = boardData.second;
+						size_t boardDataSize = boardDataVec.size();
+						std::vector<CapsuleData>capsuleDataVec = capsuleData.second;
+						size_t capsuleDataSize = capsuleDataVec.size();
 
-						if (Collision::BoardAndCapsule(boardData[colI], &result1, capsuleData[colJ], &result2))
+						for (int colI = 0; colI < boardDataSize; colI++)
 						{
-							obj1->SetBoardCalcResult(result1, colI);
-							obj2->SetCapsuleCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+							{
+								BoardCalcResult result1;
+								Segment3DCalcResult result2;
 
-							obj1->SetHitCapsuleData(capsuleData[colJ]);
-							obj2->SetHitBoardData(boardData[colI]);
+								if (Collision::BoardAndCapsule(boardDataVec[colI], &result1, capsuleDataVec[colJ], &result2))
+								{
+									obj1->SetBoardCalcResult(result1, colI);
+									obj2->SetCapsuleCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::BOARD,
-								colI,
-								ShapeType3D::CAPSULE,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::CAPSULE,
-								colJ,
-								ShapeType3D::BOARD,
-								colI
-							);
+									obj1->SetHitCapsuleData(capsuleDataVec[colJ]);
+									obj2->SetHitBoardData(boardDataVec[colI]);
 
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::BOARD,
+										boardData.first,
+										ShapeType3D::CAPSULE,
+										capsuleData.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::CAPSULE,
+										capsuleData.first,
+										ShapeType3D::BOARD,
+										boardData.first
+									);
+
+								}
+							}
 						}
 					}
 				}
@@ -656,48 +761,58 @@ void GameObjectManager::Update()
 			if (collisionFlags[objJ].board
 				&& collisionFlags[objI].capsule)
 			{
-				std::vector<BoardData>boardData = obj2->GetBoardData();
-				size_t boardDataSize = boardData.size();
-				std::vector<CapsuleData>capsuleData = obj1->GetCapsuleData();
-				size_t capsuleDataSize = capsuleData.size();
+				std::unordered_map < std::string, std::vector<BoardData>>boardDatas = obj2->GetBoardDatas();
+				std::unordered_map < std::string, std::vector<CapsuleData>>capsuleDatas = obj1->GetCapsuleDatas();
 
-				for (int colI = 0; colI < boardDataSize; colI++)
+				// 名前分ループ
+				for (const auto& boardData : boardDatas)
 				{
-					for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+					for (const auto& capsuleData : capsuleDatas)
 					{
-						BoardCalcResult result1;
-						Segment3DCalcResult result2;
+						std::vector<BoardData>boardDataVec = boardData.second;
+						size_t boardDataSize = boardDataVec.size();
+						std::vector<CapsuleData>capsuleDataVec = capsuleData.second;
+						size_t capsuleDataSize = capsuleDataVec.size();
 
-						if (Collision::BoardAndCapsule(boardData[colI], &result1, capsuleData[colJ], &result2))
+						for (int colI = 0; colI < boardDataSize; colI++)
 						{
-							obj2->SetBoardCalcResult(result1, colI);
-							obj1->SetCapsuleCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < capsuleDataSize; colJ++)
+							{
+								BoardCalcResult result1;
+								Segment3DCalcResult result2;
 
-							obj1->SetHitBoardData(boardData[colI]);
-							obj2->SetHitCapsuleData(capsuleData[colJ]);
+								if (Collision::BoardAndCapsule(boardDataVec[colI], &result1, capsuleDataVec[colJ], &result2))
+								{
+									obj2->SetBoardCalcResult(result1, colI);
+									obj1->SetCapsuleCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::BOARD,
-								colI,
-								ShapeType3D::CAPSULE,
-								colJ
-							);
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::CAPSULE,
-								colJ,
-								ShapeType3D::BOARD,
-								colI
-							);
+									obj1->SetHitBoardData(boardDataVec[colI]);
+									obj2->SetHitCapsuleData(capsuleDataVec[colJ]);
 
+									//hitを呼び出す
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::BOARD,
+										boardData.first,
+										ShapeType3D::CAPSULE,
+										capsuleData.first
+									);
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::CAPSULE,
+										capsuleData.first,
+										ShapeType3D::BOARD,
+										boardData.first
+									);
+
+								}
+							}
 						}
+
 					}
 				}
-
 			}
 #pragma endregion
 
@@ -705,95 +820,118 @@ void GameObjectManager::Update()
 			if (collisionFlags[objI].triangle
 				&& collisionFlags[objJ].segment)
 			{
-				std::vector<TriangleData>triangleData = obj1->GetTriangleData();
-				size_t treiangleDataSize = triangleData.size();
-				std::vector<Segment3DData>segmentData = obj2->GetSegmentData();
-				size_t segmentDataSize = segmentData.size();
 
-				for (int colI = 0; colI < treiangleDataSize; colI++)
+				std::unordered_map < std::string, std::vector<TriangleData>>triangleDatas = obj1->GetTriangleDatas();
+				std::unordered_map < std::string, std::vector<Segment3DData>>segmentDatas = obj2->GetSegmentDatas();
+
+				// 名前分ループ
+				for (const auto& triangleData : triangleDatas)
 				{
-					for (int colJ = 0; colJ < segmentDataSize; colJ++)
+					for (const auto& segmentData : segmentDatas)
 					{
-						TriangleCalcResult result1;
-						Segment3DCalcResult result2;
 
-						if (Collision::TriangleAndSegment3D(triangleData[colI], &result1, segmentData[colJ], &result2))
+						std::vector<TriangleData>triangleDataVec = triangleData.second;
+						size_t treiangleDataSize = triangleDataVec.size();
+						std::vector<Segment3DData>segmentDataVec = segmentData.second;
+						size_t segmentDataSize = segmentDataVec.size();
+
+						for (int colI = 0; colI < treiangleDataSize; colI++)
 						{
-							obj1->SetTriangleCalcResult(result1, colI);
-							obj2->SetSegmentCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < segmentDataSize; colJ++)
+							{
+								TriangleCalcResult result1;
+								Segment3DCalcResult result2;
 
-							obj1->SetHitSegment3DData(segmentData[colJ]);
-							obj2->SetHitTriangleData(triangleData[colI]);
+								if (Collision::TriangleAndSegment3D(triangleDataVec[colI], &result1, segmentDataVec[colJ], &result2))
+								{
+									obj1->SetTriangleCalcResult(result1, colI);
+									obj2->SetSegmentCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::TRIANGLE,
-								colI,
-								ShapeType3D::SEGMENT,
-								colJ
-							);
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::SEGMENT,
-								colJ,
-								ShapeType3D::TRIANGLE,
-								colI
-							);
+									obj1->SetHitSegment3DData(segmentDataVec[colJ]);
+									obj2->SetHitTriangleData(triangleDataVec[colI]);
 
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::TRIANGLE,
+										triangleData.first,
+										ShapeType3D::SEGMENT,
+										segmentData.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SEGMENT,
+										segmentData.first,
+										ShapeType3D::TRIANGLE,
+										triangleData.first
+									);
+
+								}
+							}
 						}
+
 					}
 				}
-
 			}
 
 			if (collisionFlags[objJ].triangle
 				&& collisionFlags[objI].segment)
 			{
-				std::vector<TriangleData>triangleData = obj2->GetTriangleData();
-				size_t triangleDataSize = triangleData.size();
-				std::vector<Segment3DData>segmentData = obj1->GetSegmentData();
-				size_t segmentDataSize = segmentData.size();
 
-				for (int colI = 0; colI < triangleDataSize; colI++)
+				std::unordered_map < std::string, std::vector<TriangleData>>triangleDatas = obj2->GetTriangleDatas();
+				std::unordered_map < std::string, std::vector<Segment3DData>>segmentDatas = obj1->GetSegmentDatas();
+
+				// 名前分ループ
+				for (const auto& triangleData : triangleDatas)
 				{
-					for (int colJ = 0; colJ < segmentDataSize; colJ++)
+					for (const auto& segmentData : segmentDatas)
 					{
-						TriangleCalcResult result1;
-						Segment3DCalcResult result2;
 
-						if (Collision::TriangleAndSegment3D(triangleData[colI], &result1, segmentData[colJ], &result2))
+						std::vector<TriangleData>triangleDataVec = triangleData.second;
+						size_t triangleDataSize = triangleDataVec.size();
+						std::vector<Segment3DData>segmentDataVec = segmentData.second;
+						size_t segmentDataSize = segmentDataVec.size();
+
+						for (int colI = 0; colI < triangleDataSize; colI++)
 						{
-							obj2->SetTriangleCalcResult(result1, colI);
-							obj1->SetSegmentCalcResult(result2, colJ);
+							for (int colJ = 0; colJ < segmentDataSize; colJ++)
+							{
+								TriangleCalcResult result1;
+								Segment3DCalcResult result2;
 
-							obj1->SetHitTriangleData(triangleData[colI]);
-							obj2->SetHitSegment3DData(segmentData[colJ]);
+								if (Collision::TriangleAndSegment3D(triangleDataVec[colI], &result1, segmentDataVec[colJ], &result2))
+								{
+									obj2->SetTriangleCalcResult(result1, colI);
+									obj1->SetSegmentCalcResult(result2, colJ);
 
-							//hitを呼び出す
-							obj2->Hit
-							(
-								obj1,
-								ShapeType3D::TRIANGLE,
-								colI,
-								ShapeType3D::SEGMENT,
-								colJ
-							);
-							obj1->Hit
-							(
-								obj2,
-								ShapeType3D::SEGMENT,
-								colJ,
-								ShapeType3D::TRIANGLE,
-								colI
-							);
+									obj1->SetHitTriangleData(triangleDataVec[colI]);
+									obj2->SetHitSegment3DData(segmentDataVec[colJ]);
 
+									//hitを呼び出す
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::TRIANGLE,
+										triangleData.first,
+										ShapeType3D::SEGMENT,
+										segmentData.first
+									);
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SEGMENT,
+										segmentData.first,
+										ShapeType3D::TRIANGLE,
+										triangleData.first
+									);
+
+								}
+							}
 						}
 					}
 				}
-
 			}
 
 #pragma endregion
@@ -994,7 +1132,7 @@ void GameObjectManager::AddObject(const std::shared_ptr<GameObject>& object)
 {
 	if (object)
 	{
-		object.get()->FalsEraseManager();
+		object.get()->FalseEraseManager();
 		addObjects.push_back(object);
 	}
 }
@@ -1020,15 +1158,15 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 	{
 	case OBJECT_SORT_XYZ_SUM:
 		std::sort(objects.begin(), objects.end(), [&orderType](const std::shared_ptr<GameObject>& obj1, const std::shared_ptr<GameObject>& obj2)
-		{
-			Vector3 pos1 = obj1->GetPosition();
-			Vector3 pos2 = obj2->GetPosition();
-			float posSum1 = pos1.x + pos1.y + pos1.z;
-			float posSum2 = pos2.x + pos2.y + pos2.z;
+			{
+				Vector3 pos1 = obj1->GetPosition();
+				Vector3 pos2 = obj2->GetPosition();
+				float posSum1 = pos1.x + pos1.y + pos1.z;
+				float posSum2 = pos2.x + pos2.y + pos2.z;
 
-			if (orderType)return posSum1 < posSum2;
-			return posSum1 > posSum2;
-		});
+				if (orderType)return posSum1 < posSum2;
+				return posSum1 > posSum2;
+			});
 		break;
 
 	case OBJECT_SORT_X:
@@ -1041,13 +1179,13 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-		{
-			Vector3 pos1 = obj1->GetPosition();
-			Vector3 pos2 = obj2->GetPosition();
+			{
+				Vector3 pos1 = obj1->GetPosition();
+				Vector3 pos2 = obj2->GetPosition();
 
-			if (orderType)return pos1.x < pos2.x;
-			return pos1.x > pos2.x;
-		});
+				if (orderType)return pos1.x < pos2.x;
+				return pos1.x > pos2.x;
+			});
 		break;
 
 	case OBJECT_SORT_Y:
@@ -1060,13 +1198,13 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-		{
-			Vector3 pos1 = obj1->GetPosition();
-			Vector3 pos2 = obj2->GetPosition();
+			{
+				Vector3 pos1 = obj1->GetPosition();
+				Vector3 pos2 = obj2->GetPosition();
 
-			if (orderType)return pos1.y < pos2.y;
-			return pos1.y > pos2.y;
-		});
+				if (orderType)return pos1.y < pos2.y;
+				return pos1.y > pos2.y;
+			});
 		break;
 
 	case OBJECT_SORT_Z:
@@ -1079,13 +1217,13 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-		{
-			Vector3 pos1 = obj1->GetPosition();
-			Vector3 pos2 = obj2->GetPosition();
+			{
+				Vector3 pos1 = obj1->GetPosition();
+				Vector3 pos2 = obj2->GetPosition();
 
-			if (orderType)return pos1.z < pos2.z;
-			return pos1.z > pos2.z;
-		});
+				if (orderType)return pos1.z < pos2.z;
+				return pos1.z > pos2.z;
+			});
 		break;
 
 	case OBJECT_SORT_NEAR_DISTANCE:
@@ -1099,16 +1237,16 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-		{
-			Vector3 pos1 = obj1->GetPosition();
-			Vector3 pos2 = obj2->GetPosition();
+			{
+				Vector3 pos1 = obj1->GetPosition();
+				Vector3 pos2 = obj2->GetPosition();
 
-			float dis1 = LibMath::CalcDistance3D(pos1, nearPos);
-			float dis2 = LibMath::CalcDistance3D(pos2, nearPos);
+				float dis1 = LibMath::CalcDistance3D(pos1, nearPos);
+				float dis2 = LibMath::CalcDistance3D(pos2, nearPos);
 
-			if (orderType)return dis1 < dis2;
-			return dis1 > dis2;
-		});
+				if (orderType)return dis1 < dis2;
+				return dis1 > dis2;
+			});
 		break;
 
 	case OBJECT_SORT_FAR_DISTANCE:
@@ -1122,16 +1260,16 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-		{
-			Vector3 pos1 = obj1->GetPosition();
-			Vector3 pos2 = obj2->GetPosition();
+			{
+				Vector3 pos1 = obj1->GetPosition();
+				Vector3 pos2 = obj2->GetPosition();
 
-			float dis1 = LibMath::CalcDistance3D(pos1, farPos);
-			float dis2 = LibMath::CalcDistance3D(pos2, farPos);
+				float dis1 = LibMath::CalcDistance3D(pos1, farPos);
+				float dis2 = LibMath::CalcDistance3D(pos2, farPos);
 
-			if (orderType)return dis1 < dis2;
-			return dis1 > dis2;
-		});
+				if (orderType)return dis1 < dis2;
+				return dis1 > dis2;
+			});
 		break;
 
 	case OBJECT_SORT_SORT_NUMBER:
@@ -1144,12 +1282,12 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-		{
-			short obj1Num = obj1->GetSortNumber();
-			short obj2Num = obj2->GetSortNumber();
-			if (orderType)return obj1Num < obj2Num;
-			return obj1Num > obj2Num;
-		});
+			{
+				short obj1Num = obj1->GetSortNumber();
+				short obj2Num = obj2->GetSortNumber();
+				if (orderType)return obj1Num < obj2Num;
+				return obj1Num > obj2Num;
+			});
 		break;
 	}
 }

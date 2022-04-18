@@ -19,7 +19,7 @@ ADSAMaterial GameObject::material;
 
 void MelLib::GameObject::SetModelPosition(const Vector3& vec)
 {
-	for(auto& m : modelObjects)
+	for (auto& m : modelObjects)
 	{
 		m.second.SetPosition(m.second.GetPosition() + vec);
 	}
@@ -27,11 +27,11 @@ void MelLib::GameObject::SetModelPosition(const Vector3& vec)
 
 void MelLib::GameObject::SetDataPosition(const Vector3& vec)
 {
-	for(auto& d : sphereData)
+	for (auto& d : sphereData)
 	{
 		d.SetPosition(d.GetPosition() + vec);
 	}
-	for(auto& d : boxData)
+	for (auto& d : boxData)
 	{
 		d.SetPosition(d.GetPosition() + vec);
 	}
@@ -124,25 +124,25 @@ GameObject::~GameObject()
 //{
 //}
 
-void GameObject::Update() 
+void GameObject::Update()
 {
 }
 
-void GameObject::Draw() 
+void GameObject::Draw()
 {
 
 }
 
-void GameObject::Hit
-(
-	const GameObject* const  object,
-	const ShapeType3D& collisionType,
-	const int arrayNum,
-	const ShapeType3D& hitObjColType,
-	const int hitObjArrayNum
-)
-{
-}
+//void GameObject::Hit
+//(
+//	const GameObject* const  object,
+//	const ShapeType3D& collisionType,
+//	const int arrayNum,
+//	const ShapeType3D& hitObjColType,
+//	const int hitObjArrayNum
+//)
+//{
+//}
 //
 //const void* GameObject::GetPtr() const
 //{
@@ -164,11 +164,20 @@ void GameObject::Hit
 //}
 
 
-void GameObject::FalsEraseManager() 
+void MelLib::GameObject::Hit
+(
+	const GameObject& object,
+	const ShapeType3D& shapeType,
+	const std::string& shapeName,
+	const ShapeType3D& hitObjShapeType,
+	const std::string& hitShapeName
+)
+{
+}
+
+void GameObject::FalseEraseManager()
 {
 	eraseManager = false;
-
-
 }
 
 void MelLib::GameObject::AddPosition(const Vector3& vec)
@@ -184,7 +193,7 @@ void MelLib::GameObject::SetPosition(const Vector3& pos)
 	SetDataPosition(pos - position);
 
 	position = pos;
-	
+
 }
 
 void MelLib::GameObject::SetAngle(const Vector3& angle)
@@ -209,7 +218,7 @@ void MelLib::GameObject::SetScale(const Vector3& scale)
 
 void MelLib::GameObject::SetAddColor(const Color& color)
 {
-	for(auto& object:modelObjects)
+	for (auto& object : modelObjects)
 	{
 		object.second.SetAddColor(color);
 	}
@@ -244,18 +253,18 @@ void GameObject::CalcMovePhysics()
 	);
 
 	//落下時の速度
-	if (isFall) 
+	if (isFall)
 	{
 		fallTime++;
 
-		
+
 		const float PRE_VEL_Y = currentFallVelovity;
 		currentFallVelovity = Physics::CalcFallVelocity(fallStartSpeed, gravutationalAcc, fallTime);
 		const float ADD_VEL_Y = currentFallVelovity - PRE_VEL_Y;
 
 		//Velocity取得時に反映させるためにvelocityに代入
 		//Get関数でvelocityに加算するようにする? 
-		
+
 		//計算では、今までの速度を加算した合計速度ではなく、現在の速度を求めるため、
 		//velovcity.yは0秒の時の速度 + 現在の速度になるようにしないと
 		//velocity.y + upThrowVelocity(加算すると現在の速度)と同じにならない。
@@ -263,7 +272,7 @@ void GameObject::CalcMovePhysics()
 
 		//毎フレーム速度を加算
 		position.y += currentFallVelovity;
-		
+
 	}
 
 
@@ -317,7 +326,7 @@ void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 	DrawData data = PipelineState::GetDefaultDrawData(PipelineStateType::MODEL);
 	data.cullMode = CullMode::NONE;
 	data.drawMode = DrawMode::WIREFRAME;
-	
+
 	material.Create(data);
 
 }
@@ -325,16 +334,16 @@ void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 void MelLib::GameObject::CreateCollisionCheckModel()
 {
 	//判定数に応じてモデルを生成したり削除したりします
-	auto createOrDeleteModel = [](const size_t& dataNum,std::vector<ModelObject>& modelObjcts,const ShapeType3D type)
+	auto createOrDeleteModel = [](const size_t& dataNum, std::vector<ModelObject>& modelObjcts, const ShapeType3D type)
 	{
 		size_t objNum = modelObjcts.size();
-		if(dataNum > objNum)
+		if (dataNum > objNum)
 		{
 			size_t addSize = dataNum - objNum;
 			modelObjcts.resize(dataNum);
 
 			//不足分生成
-			for(int i = objNum; i < dataNum;i++)
+			for (int i = objNum; i < dataNum; i++)
 			{
 				modelObjcts[i].Create(ModelData::Get(type), nullptr);
 
@@ -350,7 +359,7 @@ void MelLib::GameObject::CreateCollisionCheckModel()
 
 	//Box
 	createOrDeleteModel(boxData.size(), boxModelObjects, ShapeType3D::BOX);
-	
+
 	//Sphere
 	createOrDeleteModel(sphereData.size(), sphereModelObjects, ShapeType3D::BOX);
 
@@ -373,7 +382,7 @@ void MelLib::GameObject::SetCollisionCheckModelData()
 {
 	//Box
 	size_t dataNum = boxData.size();
-	for(size_t i = 0; i < dataNum;i++)
+	for (size_t i = 0; i < dataNum; i++)
 	{
 		boxModelObjects[i].SetScale(boxData[i].GetSize());
 		boxModelObjects[i].SetPosition(boxData[i].GetPosition());
@@ -389,7 +398,7 @@ void MelLib::GameObject::SetCollisionCheckModelData()
 
 	//Board
 	dataNum = boardModelObjects.size();
-	for(size_t i = 0; i < dataNum;i++)
+	for (size_t i = 0; i < dataNum; i++)
 	{
 		boardModelObjects[i].SetScale(boardData[i].GetSize().ToVector3());
 		boardModelObjects[i].SetAngle(boardData[i].GetAngle());
@@ -418,7 +427,7 @@ void MelLib::GameObject::SetCollisionCheckModelData()
 	for (size_t i = 0; i < dataNum; i++)
 	{
 		Value2<Vector3>lineSegmentPos = capsuleData[i].GetSegment3DData().GetRotatePosition();
-		
+
 		//四角形はスケール1だと1辺が1なので、半径1のときは1辺を2にしないといけないため、2倍
 		capsuleModelObjects[0][i].SetScale(capsuleData[i].GetRadius() * 2);
 		capsuleModelObjects[0][i].SetPosition(lineSegmentPos.v1);
@@ -444,7 +453,7 @@ void MelLib::GameObject::DrawCollisionCheckModel()
 {
 	if (!drawCollisionModel)return;
 
-	for(auto& box : boxModelObjects)
+	for (auto& box : boxModelObjects)
 	{
 		box.Draw();
 	}

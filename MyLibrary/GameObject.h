@@ -14,23 +14,8 @@
 #endif // _DEBUG
 
 
-//オブジェクトマネージャー追加時に判定を選ぶようにする?(判定ごとに追加関数と配列作る)
 
-//GameObjectを継承させてPhysicsObject作ると、Hit関数で重さとか受け取れなくなるからまとめた
-
-//velocityとかを勝手に書き換えられるとバグる。
-//GameObjectのpositionとかをprivateにして関数でセットするようにする?(velocityは書き換えられないようにする)
-//そうすれば、Unityみたいになる
-//positionもvelocityもセットできるようにする。(変数用意するのめんどいから)
-
-
-//アクションRPGとかで当たったアイテムに称号とかついてたり、取得できるゴールドが不特定の場合、
-//管理クラス作って、アイテム出現時にそれに追加して、
-//Hit関数のObjectとアイテムのポインタが一致してたら、アイテム出現時に追加したポインタ全部と比較して、
-//アドレスが同じポインタもらってパラメータ受け取ればいい
-//プレイヤーのポインタ渡してお金側でセットしてもいい
-
-namespace MelLib 
+namespace MelLib
 {
 	class GameObject
 	{
@@ -62,7 +47,7 @@ namespace MelLib
 		Vector3 scale = 0;
 
 #pragma region 物理関係
-		
+
 		//物体が動く力
 		Vector3 force = 0;
 		//重さ
@@ -107,24 +92,59 @@ namespace MelLib
 		std::vector<CapsuleData>capsuleData;
 		std::vector<TriangleData>triangleData;
 
+		// 判定新しいやつ
+		// std::unordered_map<判定の配列,判定名>
+		std::unordered_map<std::string, std::vector<SphereData>>sphereDatas;
+		std::unordered_map<std::string, std::vector<BoxData>>boxDatas;
+		std::unordered_map<std::string, std::vector<Segment3DData>>segment3DDatas;
+		std::unordered_map<std::string, std::vector<RayData>>layDatas;
+		std::unordered_map<std::string, std::vector<PlaneData>>planeDatas;
+		std::unordered_map<std::string, std::vector<BoardData>>boardDatas;
+		std::unordered_map<std::string, std::vector<CapsuleData>>capsuleDatas;
+		std::unordered_map<std::string, std::vector<TriangleData>>triangleDatas;
 
 #pragma endregion
-		
+
 		//継承したクラスを格納し、判定時に使う用
 		std::vector<std::string>tags;
 
 		std::unordered_map<std::string, ModelObject>modelObjects;
 
 		//ソート用数値。ソート順を自分で調整するための変数
+		// 2022/04/15 現在無効中
 		short sortNumber = 0;
 
 		//生死フラグ(これがtrueになると、オブジェクトマネージャーから除外される)
 		bool eraseManager = false;
-		
 
+		// 判定表示するかどうか
 		bool drawCollisionModel = true;
 
+
+	private:
+		/// <summary>
+		/// モデルの移動
+		/// </summary>
+		/// <param name="vec">移動量</param>
+		void SetModelPosition(const Vector3& vec);
+
+		/// <summary>
+		/// 判定の移動
+		/// </summary>
+		/// <param name="vec"></param>
+		void SetDataPosition(const Vector3& vec);
+
+		void SetModelAngle(const Vector3& angle);
+
+		void SetDataAngle(const Vector3& angle);
+
+		void SetModelScale(const Vector3& scale);
+
+		void SetDataScale(const Vector3& scale);
+
+
 	protected:
+		// 衝突した判定を取得する関数
 		SphereData GetHitSphereData() const { return hitSphereData; }
 		BoxData GetHitBoxData() const { return hitBoxData; }
 		Segment3DData GetHitSegmentData() const { return hitSegment3DData; }
@@ -183,26 +203,6 @@ namespace MelLib
 
 
 #pragma endregion
-	private:
-		/// <summary>
-		/// モデルの移動
-		/// </summary>
-		/// <param name="vec">移動量</param>
-		void SetModelPosition(const Vector3& vec);
-
-		/// <summary>
-		/// 判定の移動
-		/// </summary>
-		/// <param name="vec"></param>
-		void SetDataPosition(const Vector3& vec);
-
-		void SetModelAngle(const Vector3& angle);
-
-		void SetDataAngle(const Vector3& angle);
-
-		void SetModelScale(const Vector3& scale);
-
-		void SetDataScale(const Vector3& scale);
 
 	public:
 
@@ -216,21 +216,35 @@ namespace MelLib
 		//描画
 		virtual void Draw();
 
-		/// <summary>
+		/*/// <summary>
 		/// 当たった時の処理
 		/// </summary>
 		/// <param name="object">相手オブジェトのポインタ</param>
 		/// <param name="collisionType">自分のどの判定に当たったか</param>
 		/// <param name="arrayNum">自分の何個目の判定に当たったか</param>
 		/// <param name="hitObjColType">相手のどの判定に当たったか</param>
-		/// <param name="hitObjArrayNum">相手の何個目の判定に当たったか</param>
+		/// <param name="hitObjArrayNum">相手の何個目の判定に当たったか</param>*/
+
+		/// <summary>
+		/// 衝突した時に呼び出される判定
+		/// </summary>
+		/// <param name="object">オブジェクト</param>
+		/// <param name="shapeType">自分のどの形状の判定と当たったか</param>
+		/// <param name="shapeName">判定名</param>
+		/// <param name="hitObjShapeType">相手の形状</param>
+		/// <param name="hitShapeName">相手の判定名</param>
 		virtual void Hit
 		(
-			const GameObject* const  object,
+			/*const GameObject* const object,
 			const ShapeType3D& collisionType,
 			const int arrayNum,
 			const ShapeType3D& hitObjColType,
-			const int hitObjArrayNum
+			const int hitObjArrayNum*/
+			const GameObject& object,
+			const ShapeType3D& shapeType,
+			const std::string& shapeName,
+			const ShapeType3D& hitObjShapeType,
+			const std::string& hitShapeName
 		);
 
 
@@ -244,7 +258,7 @@ namespace MelLib
 		//確実に初期値が決まっている変数(eraseManagerなど)を初期化する変数(初期化忘れ防止用)
 		//これで初期化せずにヘッダで初期化する?
 		//再追加したときに初期化したいからこのままでいい
-		void FalsEraseManager();
+		void FalseEraseManager();
 
 
 
@@ -253,7 +267,7 @@ namespace MelLib
 		/// 座標、モデルの座標、判定の座標に引数を加算します。
 		/// </summary>
 		/// <param name="vec"></param>
-	    virtual void AddPosition(const Vector3& vec);
+		virtual void AddPosition(const Vector3& vec);
 #pragma endregion
 
 
@@ -264,7 +278,7 @@ namespace MelLib
 		/// </summary>
 		/// <param name="acc"></param>
 		static void SetGravutationalAcceleration(const float acc) { gravutationalAcc = acc; };
-			
+
 		/// <summary>
 		/// 座標をセットします。モデルと衝突確認に使うデータは、セット前の座標との差だけ移動します。
 		/// </summary>
@@ -284,7 +298,7 @@ namespace MelLib
 		/// </summary>
 		/// <param name="force"></param>
 		void SetForce(const Vector3& force) { this->force = force; }
-		
+
 		/// <summary>
 		/// 重さをセットします。
 		/// </summary>
@@ -334,13 +348,13 @@ namespace MelLib
 		/// </summary>
 		/// <returns></returns>
 		float GetMass()const { return mass; }
-		
+
 		/// <summary>
 		/// 落下中または投げ上げ中かどうかを取得します。
 		/// </summary>
 		/// <returns></returns>
 		bool GetIsFall()const { return isFall; }
-		
+
 		short GetSortNumber() const { return sortNumber; }
 
 
@@ -357,13 +371,11 @@ namespace MelLib
 #pragma endregion
 
 #pragma region 判定関係
-		
-#pragma endregion
-
 
 #pragma endregion
 
 
+#pragma endregion
 
 
 #pragma region 判定用関数
@@ -371,13 +383,23 @@ namespace MelLib
 
 		// 判定用関数
 		CollisionDetectionFlag GetCollisionFlag() const { return collisionFlag; }
-		std::vector<SphereData> GetSphereData() const { return sphereData; }
-		std::vector<BoxData> GetBoxData() const { return boxData; }
-		std::vector<Segment3DData> GetSegmentData() const { return segment3DData; }
-		std::vector<PlaneData> GetPlaneData() const { return planeData; }
-		std::vector<BoardData> GetBoardData()const { return boardData; }
-		std::vector<CapsuleData>GetCapsuleData() const { return capsuleData; }
-		std::vector<TriangleData>GetTriangleData() const { return triangleData; }
+		//std::vector<SphereData> GetSphereData() const { return sphereData; }
+		//std::vector<BoxData> GetBoxData() const { return boxData; }
+		//std::vector<Segment3DData> GetSegmentData() const { return segment3DData; }
+		//std::vector<PlaneData> GetPlaneData() const { return planeData; }
+		//std::vector<BoardData> GetBoardData()const { return boardData; }
+		//std::vector<CapsuleData>GetCapsuleData() const { return capsuleData; }
+		//std::vector<TriangleData>GetTriangleData() const { return triangleData; }
+
+		std::unordered_map<std::string, std::vector<SphereData>> GetSphereDatas() const { return sphereDatas; }
+		std::unordered_map<std::string, std::vector<BoxData>> GetBoxDatas() const { return boxDatas; }
+		std::unordered_map<std::string, std::vector<Segment3DData>> GetSegmentDatas() const { return segment3DDatas; }
+		std::unordered_map<std::string, std::vector<PlaneData>> GetPlaneDatas() const { return planeDatas; }
+		std::unordered_map<std::string, std::vector<BoardData>> GetBoardDatas()const { return boardDatas; }
+		std::unordered_map<std::string, std::vector<CapsuleData>>GetCapsuleDatas() const { return capsuleDatas; }
+		std::unordered_map<std::string, std::vector<TriangleData>>GetTriangleDatas() const { return triangleDatas; }
+
+
 
 		// ここ参照取得じゃなくてSetにする?
 		// そもそも持たせない。Hit関数で渡す
@@ -386,7 +408,9 @@ namespace MelLib
 		void SetSegmentCalcResult(const Segment3DCalcResult& result, const UINT index) { segment3DData[index].SetCalcResult(result); }
 		void SetBoardCalcResult(const BoardCalcResult& result, const UINT index) { boardData[index].SetCalcResult(result); }
 		void SetCapsuleCalcResult(const Segment3DCalcResult& result, const UINT index)
-		{ capsuleData[index].GetRefSegment3DData().SetCalcResult(result); }
+		{
+			capsuleData[index].GetRefSegment3DData().SetCalcResult(result);
+		}
 		void SetTriangleCalcResult(const TriangleCalcResult& result, const UINT index)
 		{
 			triangleData[index].SetCalcResult(result);
