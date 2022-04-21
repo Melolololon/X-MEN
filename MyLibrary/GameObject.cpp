@@ -27,25 +27,40 @@ void MelLib::GameObject::SetModelPosition(const Vector3& vec)
 
 void MelLib::GameObject::SetDataPosition(const Vector3& vec)
 {
-	for (auto& d : sphereData)
+	for (auto& d : sphereDatas)
 	{
-		d.SetPosition(d.GetPosition() + vec);
+		for (auto& d2 : d.second) 
+		{
+			d2.SetPosition(d2.GetPosition() + vec);
+		}
 	}
-	for (auto& d : boxData)
+	for (auto& d : boxDatas)
 	{
-		d.SetPosition(d.GetPosition() + vec);
+		for (auto& d2 : d.second)
+		{
+			d2.SetPosition(d2.GetPosition() + vec);
+		}
 	}
-	for (auto& d : boardData)
+	for (auto& d : boardDatas)
 	{
-		d.SetPosition(d.GetPosition() + vec);
+		for (auto& d2 : d.second)
+		{
+			d2.SetPosition(d2.GetPosition() + vec);
+		}
 	}
-	for (auto& d : segment3DData)
+	for (auto& d : segment3DDatas)
 	{
-		d.SetPosition(d.GetPosition() + vec);
+		for (auto& d2 : d.second)
+		{
+			d2.SetPosition(d2.GetPosition() + vec);
+		}
 	}
-	for (auto& d : capsuleData)
+	for (auto& d : capsuleDatas)
 	{
-		d.GetRefSegment3DData().SetPosition(d.GetSegment3DData().GetPosition() + vec);
+		for (auto& d2 : d.second)
+		{
+			d2.GetRefSegment3DData().SetPosition(d2.GetSegment3DData().GetPosition() + vec);
+		}
 	}
 }
 
@@ -61,17 +76,26 @@ void MelLib::GameObject::SetModelAngle(const Vector3& angle)
 void MelLib::GameObject::SetDataAngle(const Vector3& angle)
 {
 
-	for (auto& d : boardData)
+	for (auto& d : boardDatas)
 	{
-		d.SetAngle(angle);
+		for (auto& d2 : d.second)
+		{
+			d2.SetAngle(angle);
+		}
 	}
-	for (auto& d : segment3DData)
+	for (auto& d : segment3DDatas)
 	{
-		d.SetAngle(angle);
+		for (auto& d2 : d.second)
+		{
+			d2.SetAngle(angle);
+		}
 	}
-	for (auto& d : capsuleData)
+	for (auto& d : capsuleDatas)
 	{
-		d.GetRefSegment3DData().SetAngle(angle);
+		for (auto& d2 : d.second)
+		{
+			d2.GetRefSegment3DData().SetAngle(angle);
+		}
 	}
 }
 
@@ -85,29 +109,44 @@ void MelLib::GameObject::SetModelScale(const Vector3& scale)
 
 void MelLib::GameObject::SetDataScale(const Vector3& scale)
 {
-	for (auto& d : sphereData)
+	for (auto& d : sphereDatas)
 	{
-		float setRadius = scale.x;
-		if (setRadius < scale.y)setRadius = scale.y;
-		if (setRadius < scale.z)setRadius = scale.z;
+		for (auto& d2 : d.second)
+		{
+			float setRadius = scale.x;
+			if (setRadius < scale.y)setRadius = scale.y;
+			if (setRadius < scale.z)setRadius = scale.z;
 
-		d.SetRadius(setRadius / 2);
+			d2.SetRadius(setRadius / 2);
+		}
 	}
-	for (auto& d : boxData)
+	for (auto& d : boxDatas)
 	{
-		d.SetSize(scale);
+		for (auto& d2 : d.second)
+		{
+			d2.SetSize(scale);
+		}
 	}
-	for (auto& d : boardData)
+	for (auto& d : boardDatas)
 	{
-		d.SetSize(scale.ToVector2());
+		for (auto& d2 : d.second)
+		{
+			d2.SetSize(scale.ToVector2());
+		}
 	}
-	for (auto& d : segment3DData)
+	for (auto& d : segment3DDatas)
 	{
-		d.SetPosition(d.GetPosition() * scale);
+		for (auto& d2 : d.second)
+		{
+			d2.SetPosition(d2.GetPosition() * scale);
+		}
 	}
-	for (auto& d : capsuleData)
+	for (auto& d : capsuleDatas)
 	{
-		d.GetRefSegment3DData().SetPosition(d.GetSegment3DData().GetPosition() * scale);
+		for (auto& d2 : d.second)
+		{
+			d2.GetRefSegment3DData().SetPosition(d2.GetSegment3DData().GetPosition() * scale);
+		}
 	}
 }
 
@@ -331,121 +370,171 @@ void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 
 }
 
-void MelLib::GameObject::CreateCollisionCheckModel()
+void MelLib::GameObject::CollisionCheckModelCreateOrDelete
+(
+	const std::unordered_map<std::string,size_t>& datas, 
+	std::unordered_map<std::string, std::vector<ModelObject>>& modelObjects,
+	const ShapeType3D type
+)
 {
-	//判定数に応じてモデルを生成したり削除したりします
-	auto createOrDeleteModel = [](const size_t& dataNum, std::vector<ModelObject>& modelObjcts, const ShapeType3D type)
+	// umapの要素数(名前の数分)ループ
+	for(const auto& data: datas)
 	{
-		size_t objNum = modelObjcts.size();
+		// 現在の確認用モデル数を取得
+		size_t objNum = modelObjects.at(data.first).size();
+
+		// 現在の当たり判定数を取得
+		size_t dataNum = data.second;
+
 		if (dataNum > objNum)
 		{
-			size_t addSize = dataNum - objNum;
-			modelObjcts.resize(dataNum);
+			modelObjects[data.first].resize(dataNum);
 
 			//不足分生成
 			for (int i = objNum; i < dataNum; i++)
 			{
-				modelObjcts[i].Create(ModelData::Get(type), nullptr);
+				modelObjects[data.first][i].Create(ModelData::Get(type), nullptr);
 
-				modelObjcts[i].SetMaterial(&material);
+				modelObjects[data.first][i].SetMaterial(&material);
 			}
 		}
 		else if (dataNum < objNum)
 		{
-			modelObjcts.resize(objNum);
+			modelObjects[data.first].resize(dataNum);
 		}
+	}
 
-	};
 
-	//Box
-	createOrDeleteModel(boxData.size(), boxModelObjects, ShapeType3D::BOX);
-
-	//Sphere
-	createOrDeleteModel(sphereData.size(), sphereModelObjects, ShapeType3D::BOX);
-
-	//Board
-	createOrDeleteModel(boardModelObjects.size(), boardModelObjects, ShapeType3D::BOARD);
-
-	//Segment
-	createOrDeleteModel(segment3DData.size(), segmentModelObjects[0], ShapeType3D::BOX);
-	createOrDeleteModel(segment3DData.size(), segmentModelObjects[1], ShapeType3D::BOX);
-
-	//Capsule
-	//球を作成
-	createOrDeleteModel(capsuleData.size(), capsuleModelObjects[0], ShapeType3D::BOX);
-	createOrDeleteModel(capsuleData.size(), capsuleModelObjects[1], ShapeType3D::BOX);
-	//円注を作成
-	//createOrDeleteModel(capsuleData.size(), capsuleModelObjects[2], ShapeType3D::BOX);
 }
+
+void MelLib::GameObject::CreateCollisionCheckModel()
+{
+	////判定数に応じてモデルを生成したり削除したりします
+	//auto createOrDeleteModel = [](const size_t& dataNum, std::vector<ModelObject>& modelObjcts, const ShapeType3D type)
+	//{
+	//	size_t objNum = modelObjcts.size();
+	//	if (dataNum > objNum)
+	//	{
+	//		size_t addSize = dataNum - objNum;
+	//		modelObjcts.resize(dataNum);
+
+	//		//不足分生成
+	//		for (int i = objNum; i < dataNum; i++)
+	//		{
+	//			modelObjcts[i].Create(ModelData::Get(type), nullptr);
+
+	//			modelObjcts[i].SetMaterial(&material);
+	//		}
+	//	}
+	//	else if (dataNum < objNum)
+	//	{
+	//		modelObjcts.resize(objNum);
+	//	}
+
+	//};
+
+	////Box
+	//createOrDeleteModel(boxDatas.size(), boxModelObjects, ShapeType3D::BOX);
+
+	////Sphere
+	//createOrDeleteModel(sphereDatas.size(), sphereModelObjects, ShapeType3D::BOX);
+
+	////Board
+	//createOrDeleteModel(boardDatas.size(), boardModelObjects, ShapeType3D::BOARD);
+
+	////Segment
+	//createOrDeleteModel(segment3DDatas.size(), segmentModelObjects[0], ShapeType3D::BOX);
+	//createOrDeleteModel(segment3DDatas.size(), segmentModelObjects[1], ShapeType3D::BOX);
+
+	////Capsule
+	////球を作成
+	//createOrDeleteModel(capsuleDatas.size(), capsuleModelObjects[0], ShapeType3D::BOX);
+	//createOrDeleteModel(capsuleDatas.size(), capsuleModelObjects[1], ShapeType3D::BOX);
+	////円注を作成
+	////createOrDeleteModel(capsuleData.size(), capsuleModelObjects[2], ShapeType3D::BOX);
+
+
+	// 新しいやつ
+
+}
+
 
 void MelLib::GameObject::SetCollisionCheckModelData()
 {
 	//Box
-	size_t dataNum = boxData.size();
-	for (size_t i = 0; i < dataNum; i++)
+	for (auto& data : boxModelObjects)
 	{
-		boxModelObjects[i].SetScale(boxData[i].GetSize());
-		boxModelObjects[i].SetPosition(boxData[i].GetPosition());
+		for (size_t i = 0; i < data.second.size(); i++)
+		{
+			data.second[i].SetScale(boxDatas[data.first][i].GetSize());
+			data.second[i].SetPosition(boxDatas[data.first][i].GetPosition());
+
+
+			/*boxModelObjects[i].SetScale(boxData[i].GetSize());
+			boxModelObjects[i].SetPosition(boxData[i].GetPosition());*/
+		}
 	}
 
 	//Sphere
-	dataNum = sphereData.size();
-	for (size_t i = 0; i < dataNum; i++)
+	for (auto& data : sphereModelObjects)
 	{
-		sphereModelObjects[i].SetScale(sphereData[i].GetRadius() * 2);
-		sphereModelObjects[i].SetPosition(sphereData[i].GetPosition());
+		for (size_t i = 0; i < data.second.size(); i++)
+		{
+			data.second[i].SetScale(sphereDatas[data.first][i].GetRadius() * 2);
+			data.second[i].SetPosition(sphereDatas[data.first][i].GetPosition());
+
+		}
 	}
 
 	//Board
-	dataNum = boardModelObjects.size();
-	for (size_t i = 0; i < dataNum; i++)
+	for (auto& data : boardModelObjects)
 	{
-		boardModelObjects[i].SetScale(boardData[i].GetSize().ToVector3());
-		boardModelObjects[i].SetAngle(boardData[i].GetAngle());
-		boardModelObjects[i].SetPosition(boardData[i].GetPosition());
+		for (size_t i = 0; i < data.second.size(); i++)
+		{
+			boardModelObjects[data.first][i].SetScale(boardDatas[data.first][i].GetSize().ToVector3());
+			boardModelObjects[data.first][i].SetAngle(boardDatas[data.first][i].GetAngle());
+			boardModelObjects[data.first][i].SetPosition(boardDatas[data.first][i].GetPosition());
+		}
 	}
 
 	//Segment
-	dataNum = segment3DData.size();
-	for (size_t i = 0; i < dataNum; i++)
+	for (auto& data : segmentModelObjects)
 	{
-		Value2<Vector3>lineSegmentPos = segment3DData[i].GetRotatePosition();
+		for (size_t i = 0; i < data.second.size(); i++)
+		{
+			Value2<Vector3>lineSegmentPos = segment3DDatas[data.first][i].GetRotatePosition();
 
-		segmentModelObjects[0][i].SetScale(1);
-		segmentModelObjects[0][i].SetPosition(lineSegmentPos.v1);
-		segmentModelObjects[0][i].SetAngle(segment3DData[i].GetAngle());
 
-		segmentModelObjects[1][i].SetScale(1);
-		segmentModelObjects[1][i].SetPosition(lineSegmentPos.v2);
-		segmentModelObjects[1][i].SetAngle(segment3DData[i].GetAngle());
+			segmentModelObjects[data.first][0][i].SetScale(1);
+			segmentModelObjects[data.first][0][i].SetPosition(lineSegmentPos.v1);
+			segmentModelObjects[data.first][0][i].SetAngle(segment3DDatas[data.first][i].GetAngle());
 
+			segmentModelObjects[data.first][1][i].SetScale(1);
+			segmentModelObjects[data.first][1][i].SetPosition(lineSegmentPos.v2);
+			segmentModelObjects[data.first][1][i].SetAngle(segment3DDatas[data.first][i].GetAngle());
+		}
 	}
-
+	
+	
 
 	//Capsule
-	dataNum = capsuleData.size();
-	for (size_t i = 0; i < dataNum; i++)
+	for (auto& data : capsuleModelObjects)
 	{
-		Value2<Vector3>lineSegmentPos = capsuleData[i].GetSegment3DData().GetRotatePosition();
+		for (size_t i = 0; i < data.second.size(); i++)
+		{
+			Value2<Vector3>lineSegmentPos = capsuleDatas[data.first][i].GetSegment3DData().GetRotatePosition();
 
-		//四角形はスケール1だと1辺が1なので、半径1のときは1辺を2にしないといけないため、2倍
-		capsuleModelObjects[0][i].SetScale(capsuleData[i].GetRadius() * 2);
-		capsuleModelObjects[0][i].SetPosition(lineSegmentPos.v1);
-		capsuleModelObjects[0][i].SetAngle(capsuleData[i].GetSegment3DData().GetAngle());
 
-		capsuleModelObjects[1][i].SetScale(capsuleData[i].GetRadius() * 2);
-		capsuleModelObjects[1][i].SetPosition(lineSegmentPos.v2);
-		capsuleModelObjects[1][i].SetAngle(capsuleData[i].GetSegment3DData().GetAngle());
+			capsuleModelObjects[data.first][0][i].SetScale(1);
+			capsuleModelObjects[data.first][0][i].SetPosition(lineSegmentPos.v1);
+			capsuleModelObjects[data.first][0][i].SetAngle(segment3DDatas[data.first][i].GetAngle());
 
-		//円柱
-		/*Value2<Vector3>segmentPos = capsuleData[i].GetSegment3DData().GetRotatePosition();
-		float segmentLength = (segmentPos.v1.y - segmentPos.v2.y);
-
-		capsuleModelObjects[2][i].SetScale
-		(Vector3(capsuleData[i].GetRadius() * 2, segmentLength, capsuleData[i].GetRadius() * 2));
-		capsuleModelObjects[2][i].SetPosition(LibMath::CalcCenterPosition3D(segmentPos.v1, segmentPos.v2));
-		capsuleModelObjects[2][i].SetAngle(capsuleData[i].GetSegment3DData().GetAngle());*/
+			capsuleModelObjects[data.first][1][i].SetScale(1);
+			capsuleModelObjects[data.first][1][i].SetPosition(lineSegmentPos.v2);
+			capsuleModelObjects[data.first][1][i].SetAngle(segment3DDatas[data.first][i].GetAngle());
+		}
 	}
+
 
 }
 
@@ -453,21 +542,32 @@ void MelLib::GameObject::DrawCollisionCheckModel()
 {
 	if (!drawCollisionModel)return;
 
-	for (auto& box : boxModelObjects)
+	for (auto& objects : boxModelObjects)
 	{
-		box.Draw();
+		for (auto& obj : objects.second) 
+		{
+			obj.Draw();
+		}
 	}
 
-	for (auto& sphere : sphereModelObjects)
+	for (auto& objects : sphereModelObjects)
 	{
-		sphere.Draw();
+		for (auto& obj : objects.second)
+		{
+			obj.Draw();
+		}
 	}
+
+
 
 	for (int i = 0, size = capsuleModelObjects.size(); i < size; i++)
 	{
-		for (auto& capsule : capsuleModelObjects[i])
+		for (auto& objects : capsuleModelObjects)
 		{
-			capsule.Draw();
+			for (auto& obj : objects.second[i])
+			{
+				obj.Draw();
+			}
 		}
 	}
 }

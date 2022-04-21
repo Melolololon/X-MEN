@@ -21,6 +21,7 @@ namespace MelLib
 	{
 	private:
 
+		// 開発者用
 #ifdef _DEBUG
 		//判定確認用モデルのパイプライン
 		static PipelineState collisionCheckModelPipelineState;
@@ -28,16 +29,24 @@ namespace MelLib
 		//判定確認用モデルのマテリアル
 		static ADSAMaterial material;
 
-		//判定確認用モデル
+		////判定確認用モデル
 
-		std::vector<ModelObject>sphereModelObjects;
-		std::vector<ModelObject>boxModelObjects;
-		std::vector<ModelObject>boardModelObjects;
-		std::array<std::vector<ModelObject>, 2>segmentModelObjects;
+		//std::vector<ModelObject>sphereModelObjects;
+		//std::vector<ModelObject>boxModelObjects;
+		//std::vector<ModelObject>boardModelObjects;
+		//std::array<std::vector<ModelObject>, 2>segmentModelObjects;
 
-		//カプセル引き伸ばすと形崩れるから、球と円柱組み合わせて表示したほうがいいかも
-		//判定のデータの変数は今のまま(角度消すと円柱を組み合わせるのが大変になる)
-		std::array<std::vector<ModelObject>, 2>capsuleModelObjects;
+		////カプセル引き伸ばすと形崩れるから、球と円柱組み合わせて表示したほうがいいかも
+		////判定のデータの変数は今のまま(角度消すと円柱を組み合わせるのが大変になる)
+		//std::array<std::vector<ModelObject>, 2>capsuleModelObjects;
+
+		// 新しいやつ
+		std::unordered_map<std::string, std::vector<ModelObject>>sphereModelObjects;
+		std::unordered_map<std::string, std::vector<ModelObject>>boxModelObjects;
+		std::unordered_map<std::string, std::vector<ModelObject>>boardModelObjects;
+		std::unordered_map<std::string, std::array<std::vector<ModelObject>, 2>>segmentModelObjects;
+		std::unordered_map<std::string, std::array<std::vector<ModelObject>, 2>>capsuleModelObjects;
+
 
 
 #endif // _DEBUG
@@ -78,22 +87,33 @@ namespace MelLib
 		BoardData hitBoardData;
 		CapsuleData hitCapsuleData;
 		TriangleData hitTriangleData;
+
+		// 衝突確認時に計算された数値
+		SphereCalcResult sphereCalcResult;
+		BoxCalcResult boxCalcResult;
+		Segment3DCalcResult segmentCalcResult;
+		Segment3DCalcResult capsuleCalcResult;
+		RayCalcResult rayCalcResult;
+		BoardCalcResult boardCalcResult;
+		TriangleCalcResult triangleCalcResult;
+		
+
 	protected:
 
 #pragma region 判定データ
 		CollisionDetectionFlag collisionFlag;
 
-		std::vector<SphereData> sphereData;
+		/*std::vector<SphereData> sphereData;
 		std::vector<BoxData> boxData;
 		std::vector<Segment3DData> segment3DData;
 		std::vector<RayData> layData;
 		std::vector<PlaneData>planeData;
 		std::vector<BoardData>boardData;
 		std::vector<CapsuleData>capsuleData;
-		std::vector<TriangleData>triangleData;
+		std::vector<TriangleData>triangleData;*/
 
 		// 判定新しいやつ
-		// std::unordered_map<判定の配列,判定名>
+		// std::unordered_map<当たり判定の名前,当たり判定の配列>
 		std::unordered_map<std::string, std::vector<SphereData>>sphereDatas;
 		std::unordered_map<std::string, std::vector<BoxData>>boxDatas;
 		std::unordered_map<std::string, std::vector<Segment3DData>>segment3DDatas;
@@ -122,6 +142,18 @@ namespace MelLib
 
 
 	private:
+		/// <summary>
+		/// 当たり判定数に応じてモデルの生成、削除を行う関数
+		/// </summary>
+		void CollisionCheckModelCreateOrDelete
+		(
+			const std::unordered_map<std::string, size_t>& datas,
+			std::unordered_map<std::string, std::vector<ModelObject>>& modelObjects,
+			const ShapeType3D type
+		);
+
+
+
 		/// <summary>
 		/// モデルの移動
 		/// </summary>
@@ -391,6 +423,7 @@ namespace MelLib
 		//std::vector<CapsuleData>GetCapsuleData() const { return capsuleData; }
 		//std::vector<TriangleData>GetTriangleData() const { return triangleData; }
 
+
 		std::unordered_map<std::string, std::vector<SphereData>> GetSphereDatas() const { return sphereDatas; }
 		std::unordered_map<std::string, std::vector<BoxData>> GetBoxDatas() const { return boxDatas; }
 		std::unordered_map<std::string, std::vector<Segment3DData>> GetSegmentDatas() const { return segment3DDatas; }
@@ -402,8 +435,7 @@ namespace MelLib
 
 
 		// ここ参照取得じゃなくてSetにする?
-		// そもそも持たせない。Hit関数で渡す
-		void SetSphereCalcResult(const SphereCalcResult& result, const UINT index) { sphereData[index].SetCalcResult(result); }
+		/*void SetSphereCalcResult(const SphereCalcResult& result, const UINT index) { sphereData[index].SetCalcResult(result); }
 		void SetBoxCalcResult(const BoxCalcResult& result, const UINT index) { boxData[index].SetCalcResult(result); }
 		void SetSegmentCalcResult(const Segment3DCalcResult& result, const UINT index) { segment3DData[index].SetCalcResult(result); }
 		void SetBoardCalcResult(const BoardCalcResult& result, const UINT index) { boardData[index].SetCalcResult(result); }
@@ -414,6 +446,18 @@ namespace MelLib
 		void SetTriangleCalcResult(const TriangleCalcResult& result, const UINT index)
 		{
 			triangleData[index].SetCalcResult(result);
+		}*/
+		void SetSphereCalcResult(const SphereCalcResult& result) { sphereCalcResult = result; }
+		void SetBoxCalcResult(const BoxCalcResult& result) { boxCalcResult = result;}
+		void SetSegmentCalcResult(const Segment3DCalcResult& result) { segmentCalcResult = result;}
+		void SetBoardCalcResult(const BoardCalcResult& result) { boardCalcResult = result;}
+		void SetCapsuleCalcResult(const Segment3DCalcResult& result)
+		{
+			capsuleCalcResult = result;
+		}
+		void SetTriangleCalcResult(const TriangleCalcResult& result)
+		{
+			triangleCalcResult = result;
 		}
 
 		//Vector3& GetLineSegmentHitPosition(const int num);
@@ -421,7 +465,10 @@ namespace MelLib
 		//BoxHitDirection& GetSphereBoxHitDistance(const int num) { return sphereData[num].boxHitDistance; }
 		//BoxHitDirection& GetBoxBoxHitDistance(const int num) { return boxData[num].boxHitDistance; }
 
+
+		// 開発者用
 		// ヒットした相手の当たり判定の情報を渡す関数。
+
 		void SetHitSphereData(const SphereData& sphere) { hitSphereData = sphere; }
 		void SetHitBoxData(const BoxData& box) { hitBoxData = box; }
 		void SetHitBoardData(const BoardData& board) { hitBoardData = board; }
@@ -430,6 +477,7 @@ namespace MelLib
 		void SetHitCapsuleData(const CapsuleData& capsule) { hitCapsuleData = capsule; }
 		void SetHitTriangleData(const TriangleData& tri) { hitTriangleData = tri; }
 
+		// 開発者用
 #ifdef _DEBUG
 		static void CreateCollisionCheckModelPipelineState();
 

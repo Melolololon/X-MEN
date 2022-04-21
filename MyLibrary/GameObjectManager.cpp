@@ -194,8 +194,8 @@ void GameObjectManager::Update()
 
 								if (Collision::BoxAndBox(boxDataVec1[colI], &result1, boxDataVec2[colJ], &result2))
 								{
-									obj1->SetBoxCalcResult(result1, colI);
-									obj2->SetBoxCalcResult(result2, colJ);
+									obj1->SetBoxCalcResult(result1);
+									obj2->SetBoxCalcResult(result2);
 
 									obj1->SetHitBoxData(boxDataVec2[colJ]);
 									obj2->SetHitBoxData(boxDataVec1[colI]);
@@ -260,8 +260,8 @@ void GameObjectManager::Update()
 									&result2
 								))
 								{
-									obj1->SetSegmentCalcResult(result1, colI);
-									obj2->SetSegmentCalcResult(result2, colJ);
+									obj1->SetSegmentCalcResult(result1);
+									obj2->SetSegmentCalcResult(result2);
 
 
 									obj1->SetHitSegment3DData(segmentDataVec2[colJ]);
@@ -380,8 +380,8 @@ void GameObjectManager::Update()
 									&result2
 								))
 								{
-									obj1->SetSphereCalcResult(result1, colI);
-									obj2->SetBoxCalcResult(result2, colJ);
+									obj1->SetSphereCalcResult(result1);
+									obj2->SetBoxCalcResult(result2);
 
 									obj1->SetHitBoxData(boxDataVec[colJ]);
 									obj2->SetHitSphereData(sphereDataVec[colI]);
@@ -445,8 +445,8 @@ void GameObjectManager::Update()
 									&result2
 								))
 								{
-									obj2->SetSphereCalcResult(result1, colI);
-									obj1->SetBoxCalcResult(result2, colJ);
+									obj2->SetSphereCalcResult(result1);
+									obj1->SetBoxCalcResult(result2);
 
 									obj1->SetHitSphereData(sphereDataVec[colI]);
 									obj2->SetHitBoxData(boxDataVec[colJ]);
@@ -609,8 +609,8 @@ void GameObjectManager::Update()
 
 								if (Collision::BoardAndSegment3D(boardDataVec[colI], &result1, segmentDataVec[colJ], &result2))
 								{
-									obj1->SetBoardCalcResult(result1, colI);
-									obj2->SetSegmentCalcResult(result2, colJ);
+									obj1->SetBoardCalcResult(result1);
+									obj2->SetSegmentCalcResult(result2);
 
 									obj1->SetHitSegment3DData(segmentDataVec[colJ]);
 									obj2->SetHitBoardData(boardDataVec[colI]);
@@ -666,8 +666,8 @@ void GameObjectManager::Update()
 
 								if (Collision::BoardAndSegment3D(boardDataVec[colI], &result1, segmentDataVec[colJ], &result2))
 								{
-									obj2->SetBoardCalcResult(result1, colI);
-									obj1->SetSegmentCalcResult(result2, colJ);
+									obj2->SetBoardCalcResult(result1);
+									obj1->SetSegmentCalcResult(result2);
 
 									obj1->SetHitBoardData(boardDataVec[colI]);
 									obj2->SetHitSegment3DData(segmentDataVec[colJ]);
@@ -726,8 +726,8 @@ void GameObjectManager::Update()
 
 								if (Collision::BoardAndCapsule(boardDataVec[colI], &result1, capsuleDataVec[colJ], &result2))
 								{
-									obj1->SetBoardCalcResult(result1, colI);
-									obj2->SetCapsuleCalcResult(result2, colJ);
+									obj1->SetBoardCalcResult(result1);
+									obj2->SetCapsuleCalcResult(result2);
 
 									obj1->SetHitCapsuleData(capsuleDataVec[colJ]);
 									obj2->SetHitBoardData(boardDataVec[colI]);
@@ -783,8 +783,8 @@ void GameObjectManager::Update()
 
 								if (Collision::BoardAndCapsule(boardDataVec[colI], &result1, capsuleDataVec[colJ], &result2))
 								{
-									obj2->SetBoardCalcResult(result1, colI);
-									obj1->SetCapsuleCalcResult(result2, colJ);
+									obj2->SetBoardCalcResult(result1);
+									obj1->SetCapsuleCalcResult(result2);
 
 									obj1->SetHitBoardData(boardDataVec[colI]);
 									obj2->SetHitCapsuleData(capsuleDataVec[colJ]);
@@ -844,8 +844,8 @@ void GameObjectManager::Update()
 
 								if (Collision::TriangleAndSegment3D(triangleDataVec[colI], &result1, segmentDataVec[colJ], &result2))
 								{
-									obj1->SetTriangleCalcResult(result1, colI);
-									obj2->SetSegmentCalcResult(result2, colJ);
+									obj1->SetTriangleCalcResult(result1);
+									obj2->SetSegmentCalcResult(result2);
 
 									obj1->SetHitSegment3DData(segmentDataVec[colJ]);
 									obj2->SetHitTriangleData(triangleDataVec[colI]);
@@ -903,8 +903,8 @@ void GameObjectManager::Update()
 
 								if (Collision::TriangleAndSegment3D(triangleDataVec[colI], &result1, segmentDataVec[colJ], &result2))
 								{
-									obj2->SetTriangleCalcResult(result1, colI);
-									obj1->SetSegmentCalcResult(result2, colJ);
+									obj2->SetTriangleCalcResult(result1);
+									obj1->SetSegmentCalcResult(result2);
 
 									obj1->SetHitTriangleData(triangleDataVec[colI]);
 									obj2->SetHitSegment3DData(segmentDataVec[colJ]);
