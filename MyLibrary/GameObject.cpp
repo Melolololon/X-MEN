@@ -206,9 +206,9 @@ void GameObject::Draw()
 void MelLib::GameObject::Hit
 (
 	const GameObject& object,
-	const ShapeType3D& shapeType,
+	const ShapeType3D shapeType,
 	const std::string& shapeName,
-	const ShapeType3D& hitObjShapeType,
+	const ShapeType3D hitObjShapeType,
 	const std::string& hitShapeName
 )
 {

@@ -276,9 +276,9 @@ namespace MelLib
 			const ShapeType3D& hitObjColType,
 			const int hitObjArrayNum*/
 			const GameObject& object,
-			const ShapeType3D& shapeType,
+			const ShapeType3D shapeType,
 			const std::string& shapeName,
-			const ShapeType3D& hitObjShapeType,
+			const ShapeType3D hitObjShapeType,
 			const std::string& hitShapeName
 		);
 

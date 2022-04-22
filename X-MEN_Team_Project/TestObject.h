@@ -1,22 +1,19 @@
 #pragma once
 #include<GameObject.h>
 
-class Player :
-    public MelLib::GameObject
+class TestObject :public MelLib::GameObject
 {
 private:
 
-	void Move();
-
 public:
-	Player();
-	
+	TestObject(const MelLib::Vector3& pos);
+
 	// XV
-    void Update()override;
-    
+	void Update()override;
+
 	//•`‰æ
 	void Draw()override;
-    
+
 	/// <summary>
 	/// “–‚½‚Á‚½‚ÉŒÄ‚Î‚ê‚éŠÖ”
 	/// </summary>
@@ -35,4 +32,3 @@ public:
 	)override;
 
 };
-

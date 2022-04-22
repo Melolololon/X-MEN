@@ -27,6 +27,7 @@ void Player::Move()
 	}
 
 	// 加算
+	// AddPosition、SetPositionは当たり判定も一緒に動く
 	AddPosition(moveVector);
 }
 
@@ -36,7 +37,14 @@ Player::Player()
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
+	// 初期位置を0,5,0に
 	SetPosition(MelLib::Vector3(0, 5, 0));
+
+	// 当たり判定の作成(球)
+	// Playerの座標を取得し、それをセット
+	sphereDatas["main"].resize(1);
+	sphereDatas["main"][0].SetPosition(GetPosition());
+	sphereDatas["main"][0].SetRadius(2.0f);
 }
 
 void Player::Update()
@@ -59,9 +67,9 @@ void Player::Draw()
 void Player::Hit
 (
 	const GameObject& object, 
-	const MelLib::ShapeType3D& shapeType, 
+	const MelLib::ShapeType3D shapeType, 
 	const std::string& shapeName, 
-	const MelLib::ShapeType3D& hitObjShapeType, 
+	const MelLib::ShapeType3D hitObjShapeType, 
 	const std::string& hitShapeName
 )
 {
