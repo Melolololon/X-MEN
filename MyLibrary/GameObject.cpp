@@ -330,7 +330,13 @@ void GameObject::CalcMovePhysics()
 }
 
 
-
+void GameObject::AllDraw() 
+{
+	for(auto& object:modelObjects)
+	{
+		object.second.Draw();
+	}
+}
 
 
 

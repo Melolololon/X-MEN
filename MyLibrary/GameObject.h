@@ -176,6 +176,11 @@ namespace MelLib
 
 
 	protected:
+		/// <summary>
+		/// ‘S‚Ä‚ÌModelObject‚ğ•`‰æ‚µ‚Ü‚·B
+		/// </summary>
+		void AllDraw();
+		
 		// Õ“Ë‚µ‚½”»’è‚ğæ“¾‚·‚éŠÖ”
 		SphereData GetHitSphereData() const { return hitSphereData; }
 		BoxData GetHitBoxData() const { return hitBoxData; }
@@ -184,8 +189,6 @@ namespace MelLib
 		BoardData GetHitBoardData()const { return hitBoardData; }
 		CapsuleData GetHitCapsuleData() const { return hitCapsuleData; }
 		TriangleData GetHitTriangleData() const { return hitTriangleData; }
-
-
 
 #pragma region •¨—‰‰Z
 		//”½”­‚Æ‚©‚àHitŠÖ”‚Å©•ª‚ÅŒÄ‚Ô‚æ‚¤‚É‚·‚é?
