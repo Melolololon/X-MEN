@@ -73,14 +73,14 @@ void Player::Hit
 	const GameObject& object, 
 	const MelLib::ShapeType3D shapeType, 
 	const std::string& shapeName, 
-	const MelLib::ShapeType3D hitObjShapeType, 
+	const MelLib::ShapeType3D hitObjShapeType,
 	const std::string& hitShapeName
 )
 {
 	// ここに当たった時の処理を記述
 	// typeidなどで処理を分けたりする
 
-	// テストオブジェクトと衝突したら
+	// テストオブジェクトと衝突したら色変更
 	if(typeid(object) == typeid(TestObject))
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
