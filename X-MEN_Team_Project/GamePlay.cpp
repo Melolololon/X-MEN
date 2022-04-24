@@ -1,6 +1,7 @@
 #include "GamePlay.h"
 
 #include<GameObjectManager.h>
+#include<Input.h>
 
 #include"TestObject.h"
 
@@ -25,6 +26,10 @@ void GamePlay::Update()
 	// マネージャーの更新
 	// オブジェクトの更新処理、判定処理、削除処理が行われる
 	MelLib::GameObjectManager::GetInstance()->Update();
+
+	// Aキーで現在のシーンを終了して次のシーンへ
+	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
+	if (MelLib::Input::KeyTrigger(DIK_A))isEnd = true;
 }
 
 void GamePlay::Draw()
@@ -45,5 +50,5 @@ MelLib::Scene* GamePlay::GetNextScene()
 {
 	// 次のシーンのポインタを返す
 	// 例 return new Title();
-	return nullptr;
+	return new GamePlay();
 }
