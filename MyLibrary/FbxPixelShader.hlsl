@@ -45,11 +45,17 @@ float4 main(GSOutput input) : SV_TARGET
 	//べた塗テクスチャ使ってないけど、1オーバーするし、saturateより処理速い可能性あるから、/2
 	// この処理忘れちゃったから要確認(2022/4/11)
 	float alphaSum = (shaderColor.a + texColor.a) / 2;
+
+	float4 changeColor = texColor;
+	changeColor += addColor - subColor;
+	changeColor *= mulColor;
+
+	float4 sumColor = float4(shaderColor.rgb * changeColor.rgb, alphaSum);
 	
 
-	float4 sumColor = float4(shaderColor.rgb * texColor.rgb, alphaSum);
+	/*float4 sumColor = float4(shaderColor.rgb * texColor.rgb, alphaSum);
 	sumColor += addColor - subColor;
-	sumColor *= mulColor;
+	sumColor *= mulColor;*/
 
 	return sumColor;
 }
