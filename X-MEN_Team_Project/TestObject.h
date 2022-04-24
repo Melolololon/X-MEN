@@ -4,7 +4,6 @@
 class TestObject :public MelLib::GameObject
 {
 private:
-
 public:
 	TestObject(const MelLib::Vector3& pos);
 

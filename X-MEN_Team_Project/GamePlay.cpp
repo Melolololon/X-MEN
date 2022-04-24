@@ -2,10 +2,12 @@
 
 #include<GameObjectManager.h>
 
+#include"TestObject.h"
+
 void GamePlay::Initialize()
 {
 	// 初期化処理
-	// 必ずコンストラクタではなくここに初期化処理を書く
+	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
 
 	// プレイヤーのメモリ確保
 	pPlayer = std::make_shared<Player>();
@@ -13,6 +15,9 @@ void GamePlay::Initialize()
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
+
+	// テストオブジェクト追加
+	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
 }
 
 void GamePlay::Update()

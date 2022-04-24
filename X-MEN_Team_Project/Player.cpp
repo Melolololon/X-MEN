@@ -2,12 +2,14 @@
 
 #include<Input.h>
 
+#include"TestObject.h"
+
 void Player::Move()
 {
 	// 移動ベクトル
 	MelLib::Vector3 moveVector;
 	// 移動速度
-	static const float MOVE_SPEED = 1.0f;
+	static const float MOVE_SPEED = 0.3f;
 	
 	if (MelLib::Input::KeyState(DIK_LEFT))
 	{
@@ -37,14 +39,14 @@ Player::Player()
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
-	// 初期位置を0,5,0に
-	SetPosition(MelLib::Vector3(0, 5, 0));
+	// 初期位置を0,0,5に
+	SetPosition(MelLib::Vector3(0, 0, 5));
 
 	// 当たり判定の作成(球)
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(2.0f);
+	sphereDatas["main"][0].SetRadius(0.5f);
 }
 
 void Player::Update()
@@ -56,6 +58,8 @@ void Player::Update()
 	{
 		eraseManager = true;
 	}
+
+	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 255, 255));
 }
 
 void Player::Draw()
@@ -75,4 +79,10 @@ void Player::Hit
 {
 	// ここに当たった時の処理を記述
 	// typeidなどで処理を分けたりする
+
+	// テストオブジェクトと衝突したら
+	if(typeid(object) == typeid(TestObject))
+	{
+		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
+	}
 }
