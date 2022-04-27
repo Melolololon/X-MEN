@@ -29,6 +29,8 @@ namespace MelLib
 		std::vector< DirectX::ScratchImage> scratchImage;
 
 
+		//空いたヒープを使用するために使用
+		static std::vector<UINT>eraseTextureNumber;
 	private:
 
 		bool LoadSpriteTexture(const std::string& texturePath);
@@ -56,8 +58,6 @@ namespace MelLib
 		~Texture() {}
 
 
-		//空いたヒープを使用するために使用
-		static std::vector<UINT>eraseTextureNumber;
 
 		static bool Load(const std::string& path, const std::string& name);
 		static void Delete(const std::string& name);
