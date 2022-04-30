@@ -29,7 +29,7 @@ void GamePlay::Update()
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
-	if (MelLib::Input::KeyTrigger(DIK_A))isEnd = true;
+	if (MelLib::Input::KeyTrigger(DIK_I))isEnd = true;
 }
 
 void GamePlay::Draw()

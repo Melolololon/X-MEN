@@ -6,10 +6,19 @@ class Player :
 {
 private:
 
-	void Move();
+	//void Move();
+
+	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
+	// 正規化状態
+	MelLib::Vector3 GetInputVector();
+
+	// 引数のベクトル方向に移動
+	void Move(const MelLib::Vector3& vec);
 
 public:
 	Player();
+
+	~Player();
 	
 	// 更新
     void Update()override;

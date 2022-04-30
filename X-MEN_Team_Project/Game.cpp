@@ -11,6 +11,7 @@
 #include<GameObjectManager.h>
 
 #include"GamePlay.h"
+#include "InputDeviceManager.h"
 
 Game::Game() {}
 
@@ -78,6 +79,9 @@ void Game::Initialize()
 	MelLib::Camera::Get()->SetRotateCriteriaPosition(MelLib::Vector3(0,10,-10));
 
 	MelLib::Camera::Get()->SetAngle(MelLib::Vector3(45, 0, 0));
+
+	// 2022/05/01 スズキ追加
+	InputDeviceManager::GetInstance()->Initialize();
 }
 
 
@@ -91,6 +95,9 @@ void Game::Update()
 	// 2022/04/11 add gates
 	// 2022/04/11 add GUTTYman
 	// 2022/04/11 add ShunNedachi
+
+	// 2022/05/01 スズキ追加
+	InputDeviceManager::GetInstance()->Update();
 
 	MelLib::SceneManager::GetInstance()->Update();
 	

@@ -1,36 +1,83 @@
 #include "Player.h"
 
 #include<Input.h>
+#include "InputDeviceManager.h"
 
 #include"TestObject.h"
 
-void Player::Move()
+//void Player::Move()
+//{
+//	// 移動ベクトル
+//	MelLib::Vector3 moveVector;
+//	// 移動速度
+//	static const float MOVE_SPEED = 0.3f;
+//	
+//	if (MelLib::Input::KeyState(DIK_LEFT))
+//	{
+//		moveVector.x -= MOVE_SPEED;
+//	}
+//	if (MelLib::Input::KeyState(DIK_RIGHT))
+//	{
+//		moveVector.x += MOVE_SPEED;
+//	}
+//	if (MelLib::Input::KeyState(DIK_UP))
+//	{
+//		moveVector.z += MOVE_SPEED;
+//	}
+//	if (MelLib::Input::KeyState(DIK_DOWN))
+//	{
+//		moveVector.z -= MOVE_SPEED;
+//	}
+//
+//	// 斜め移動もちゃんとさせるため
+//	moveVector = moveVector.Normalize() * MOVE_SPEED;
+//
+//	// 加算
+//	// AddPosition、SetPositionは当たり判定も一緒に動く
+//	AddPosition(moveVector);
+//}
+
+MelLib::Vector3 Player::GetInputVector()
 {
-	// 移動ベクトル
+	auto inputDeviceManager = InputDeviceManager::GetInstance();
+	auto currentInputDevice = inputDeviceManager->GetCurrentInputDevice();
 	MelLib::Vector3 moveVector;
-	// 移動速度
-	static const float MOVE_SPEED = 0.3f;
-	
-	if (MelLib::Input::KeyState(DIK_LEFT))
+
+	if (currentInputDevice == InputDeviceType::CONTROLLER)
 	{
-		moveVector.x -= MOVE_SPEED;
-	}
-	else if (MelLib::Input::KeyState(DIK_RIGHT))
-	{
-		moveVector.x += MOVE_SPEED;
-	}
-	else if (MelLib::Input::KeyState(DIK_UP))
-	{
-		moveVector.z += MOVE_SPEED;
-	}
-	else if (MelLib::Input::KeyState(DIK_DOWN))
-	{
-		moveVector.z -= MOVE_SPEED;
+		moveVector = MelLib::Input::LeftStickVector3().Normalize();
+		return moveVector;
 	}
 
-	// 加算
-	// AddPosition、SetPositionは当たり判定も一緒に動く
-	AddPosition(moveVector);
+	if (currentInputDevice == InputDeviceType::KEYBOARD)
+	{
+		if (MelLib::Input::KeyState(DIK_A))
+		{
+			moveVector.x--;
+		}
+		if (MelLib::Input::KeyState(DIK_D))
+		{
+			moveVector.x++;
+		}
+		if (MelLib::Input::KeyState(DIK_W))
+		{
+			moveVector.z++;
+		}
+		if (MelLib::Input::KeyState(DIK_S))
+		{
+			moveVector.z--;
+		}
+	 
+	 return moveVector.Normalize();
+	}
+	return MelLib::Vector3();
+}
+
+void Player::Move(const MelLib::Vector3& vec)
+{
+	static const float MOVE_SPEED = 0.7f;
+	MelLib::Vector3 addVector = vec * MOVE_SPEED;
+	AddPosition(addVector);
 }
 
 Player::Player()
@@ -49,15 +96,15 @@ Player::Player()
 	sphereDatas["main"][0].SetRadius(0.5f);
 }
 
+Player::~Player()
+{
+	// 管理クラスから削除
+	eraseManager = true;
+}
+
 void Player::Update()
 {
-	Move();
-
-	// SPACE押したらモデル管理クラスから削除(メモリ解放)
-	if(MelLib::Input::KeyTrigger(DIK_SPACE))
-	{
-		eraseManager = true;
-	}
+	Move(GetInputVector());
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 255, 255));
 }
@@ -70,9 +117,9 @@ void Player::Draw()
 
 void Player::Hit
 (
-	const GameObject& object, 
-	const MelLib::ShapeType3D shapeType, 
-	const std::string& shapeName, 
+	const GameObject& object,
+	const MelLib::ShapeType3D shapeType,
+	const std::string& shapeName,
 	const MelLib::ShapeType3D hitObjShapeType,
 	const std::string& hitShapeName
 )
@@ -81,7 +128,7 @@ void Player::Hit
 	// typeidなどで処理を分けたりする
 
 	// テストオブジェクトと衝突したら色変更
-	if(typeid(object) == typeid(TestObject))
+	if (typeid(object) == typeid(TestObject))
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}
