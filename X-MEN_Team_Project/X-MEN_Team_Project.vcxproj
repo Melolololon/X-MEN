@@ -161,12 +161,14 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NormalBarrier.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TestObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="GamePlay.h" />
+    <ClInclude Include="NormalBarrier.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TestObject.h" />
   </ItemGroup>

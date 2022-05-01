@@ -2,12 +2,14 @@
 #include<Scene.h>
 
 #include"Player.h"
+#include"NormalBarrier.h"
 
 class GamePlay : public MelLib::Scene
 {
 private:
 	
 	std::shared_ptr<Player>pPlayer;
+	std::shared_ptr<NormalBarrier>barrier;
 
 public:
 	GamePlay(){}
