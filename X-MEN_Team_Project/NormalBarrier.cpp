@@ -10,20 +10,33 @@ NormalBarrier::NormalBarrier()
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-
-	// 初期位置を0,0,5に
+	//初期値
 	SetPosition(MelLib::Vector3(0, 0, 5));
 	SetScale(MelLib::Vector3(5, 5, 5));
+	time = 0;
+	isOpen = false;
+
 	// 当たり判定の作成(球)
 	// NormalBarrierの座標を取得し、それをセット
-	sphereDatas["main"].resize(1);
-	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(0.5f);
+	//sphereDatas["main"].resize(1);
+	//sphereDatas["main"][0].SetPosition(GetPosition());
+	//sphereDatas["main"][0].SetRadius(0.5f);
 }
 
 void NormalBarrier::Update()
 {
-
+	//展開中なら
+	if (isOpen)
+	{
+		//展開時間カウント
+		time++;
+		//指定した展開の時間経過したら
+		if (time > openTime)
+		{
+			isOpen = false;
+			time = 0;
+		}
+	}
 	modelObjects["main"].SetMulColor(MelLib::Color(150, 150, 255, 255));
 }
 
@@ -44,10 +57,9 @@ void NormalBarrier::Hit
 {
 	// ここに当たった時の処理を記述
 	// typeidなどで処理を分けたりする
+}
 
-	// テストオブジェクトと衝突したら色変更
-	if (typeid(object) == typeid(TestObject))
-	{
-		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
-	}
+void NormalBarrier::SetIsOpen(bool flag)
+{
+	isOpen = flag;
 }

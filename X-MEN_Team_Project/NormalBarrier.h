@@ -1,6 +1,10 @@
 #pragma once
 #include<GameObject.h>
-
+namespace
+{
+	//“WŠJ‚Å‚«‚éŽžŠÔ
+	int openTime = 60;
+}
 class NormalBarrier :
 	public MelLib::GameObject
 {
@@ -30,10 +34,10 @@ public:
 		const std::string& hitShapeName
 	)override;
 
-	void Set1Open
+	void SetIsOpen(bool flag);
 private:
 	//“WŠJ‚³‚ê‚Ä‚¢‚é‚©
-	bool open;
+	bool isOpen;
 	//Žõ–½
 	int time;
 	//ƒoƒŠƒA‚Ì”¼Œa
