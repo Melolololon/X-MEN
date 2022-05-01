@@ -1,19 +1,43 @@
 #pragma once
 #include<GameObject.h>
 
+namespace PlayerInitializeInfo
+{
+	const int HP = 100;
+}
+
 class Player :
     public MelLib::GameObject
 {
 private:
+	int hp;
+	bool isBarrier;
+	bool isThrowingBall;
+	bool isUltimateSkill;
 
-	//void Move();
+	MelLib::Vector3 dirVector;
+	// Barrier* barrier;
+	// Ball* ball;
 
+private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
 	// 正規化状態
 	MelLib::Vector3 GetInputVector();
 
 	// 引数のベクトル方向に移動
 	void Move(const MelLib::Vector3& vec);
+
+	// プレイヤーが向く方向を計算
+	void CalclateDirection();
+
+	// バリアフラグをオンにする
+	void UseBarrier(bool key);
+
+	// 投げるフラグをオンにする
+	void ThrowingBall(bool key);
+
+	// 必殺技フラグをオンにする
+	void UseUltimateSkill(bool key);
 
 public:
 	Player();
@@ -43,5 +67,24 @@ public:
 		const std::string& hitShapeName
 	)override;
 
+#pragma region Getter
+	// バリアフラグを取得
+	bool GetIsBarrier() const;
+	// ボールを投げるフラグを取得
+	bool GetIsThrowingBall() const;
+	// 必殺技フラグを取得
+	bool GetIsUltimateSkill() const;
+	// プレイヤーが向いている方向のベクトルを取得
+	MelLib::Vector3 GetDirection() const;
+#pragma endregion
+
+#pragma region Setter
+	// バリアフラグを書き換える
+	void SetIsBarrier(bool flag);
+	// ボールを投げるフラグを書き換える
+	void SetIsThrowingBall(bool flag);
+	// 必殺技フラグを書き換える
+	void SetIsUltimateSkill(bool flag);
+#pragma endregion
 };
 

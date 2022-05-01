@@ -2,51 +2,20 @@
 
 #include<Input.h>
 #include "InputDeviceManager.h"
-
 #include"TestObject.h"
-
-//void Player::Move()
-//{
-//	// 移動ベクトル
-//	MelLib::Vector3 moveVector;
-//	// 移動速度
-//	static const float MOVE_SPEED = 0.3f;
-//	
-//	if (MelLib::Input::KeyState(DIK_LEFT))
-//	{
-//		moveVector.x -= MOVE_SPEED;
-//	}
-//	if (MelLib::Input::KeyState(DIK_RIGHT))
-//	{
-//		moveVector.x += MOVE_SPEED;
-//	}
-//	if (MelLib::Input::KeyState(DIK_UP))
-//	{
-//		moveVector.z += MOVE_SPEED;
-//	}
-//	if (MelLib::Input::KeyState(DIK_DOWN))
-//	{
-//		moveVector.z -= MOVE_SPEED;
-//	}
-//
-//	// 斜め移動もちゃんとさせるため
-//	moveVector = moveVector.Normalize() * MOVE_SPEED;
-//
-//	// 加算
-//	// AddPosition、SetPositionは当たり判定も一緒に動く
-//	AddPosition(moveVector);
-//}
 
 MelLib::Vector3 Player::GetInputVector()
 {
 	auto inputDeviceManager = InputDeviceManager::GetInstance();
 	auto currentInputDevice = inputDeviceManager->GetCurrentInputDevice();
 	MelLib::Vector3 moveVector;
+	bool isInput = false;
 
+	// 現在の入力デバイスをもとに移動ベクトルを計算
 	if (currentInputDevice == InputDeviceType::CONTROLLER)
 	{
-		moveVector = MelLib::Input::LeftStickVector3().Normalize();
-		return moveVector;
+		moveVector = MelLib::Input::LeftStickVector3();
+		isInput = MelLib::Input::LeftStickAngle() > 0 ? true : false;
 	}
 
 	if (currentInputDevice == InputDeviceType::KEYBOARD)
@@ -54,33 +23,89 @@ MelLib::Vector3 Player::GetInputVector()
 		if (MelLib::Input::KeyState(DIK_A))
 		{
 			moveVector.x--;
+			isInput = true;
 		}
 		if (MelLib::Input::KeyState(DIK_D))
 		{
 			moveVector.x++;
+			isInput = true;
 		}
 		if (MelLib::Input::KeyState(DIK_W))
 		{
 			moveVector.z++;
+			isInput = true;
 		}
 		if (MelLib::Input::KeyState(DIK_S))
 		{
 			moveVector.z--;
+			isInput = true;
 		}
-	 
-	 return moveVector.Normalize();
 	}
-	return MelLib::Vector3();
+	
+	// 移動キーを入力しているなら方向ベクトルを更新
+	if (isInput)dirVector = moveVector.Normalize();
+
+	return moveVector.Normalize();
 }
 
 void Player::Move(const MelLib::Vector3& vec)
 {
 	static const float MOVE_SPEED = 0.7f;
 	MelLib::Vector3 addVector = vec * MOVE_SPEED;
-	AddPosition(addVector);
+
+	GameObject::AddPosition(addVector);
+	CalclateDirection();
+}
+
+void Player::CalclateDirection()
+{
+	const float PI = 3.141592f;
+	const float MAX_ANGLE = 180.0f;
+
+	// 方向ベクトルをもとに回転値を計算
+	float angleY = MAX_ANGLE / PI * std::atan2f(-dirVector.z, dirVector.x);
+	GameObject::SetAngle(MelLib::Vector3(0, angleY, 0));
+}
+
+void Player::UseBarrier(bool key)
+{
+	if (!key)return;
+
+	// バリアを使用中なら即終了
+	if (isBarrier)return;
+	//// ボールを保持しているならバリアは展開できない
+	//if(ball)return;
+
+	isBarrier = true;
+}
+
+void Player::ThrowingBall(bool key)
+{
+	if (!key)return;
+
+	//// ボールを保持していないなら終了
+	//if(!ball)return;
+
+	isThrowingBall = true;
+}
+
+void Player::UseUltimateSkill(bool key)
+{
+	if (!key)return;
+
+	// スキル使用中なら即終了
+	if (isUltimateSkill)return;
+
+
+	isUltimateSkill = true;
 }
 
 Player::Player()
+	: hp(PlayerInitializeInfo::HP)
+	, isBarrier(false)
+	, isThrowingBall(false)
+	, isUltimateSkill(false)
+	, dirVector(MelLib::Vector3())
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
@@ -105,6 +130,11 @@ Player::~Player()
 void Player::Update()
 {
 	Move(GetInputVector());
+
+	// 各技処理を行う関数に対応したキーのトリガーを送って関数内で実行するか判断させる
+	UseBarrier(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
+	ThrowingBall(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
+	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 255, 255));
 }
@@ -132,4 +162,39 @@ void Player::Hit
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}
+}
+
+bool Player::GetIsBarrier() const
+{
+	return isBarrier;
+}
+
+bool Player::GetIsThrowingBall() const
+{
+	return isThrowingBall;
+}
+
+bool Player::GetIsUltimateSkill() const
+{
+	return isUltimateSkill;
+}
+
+MelLib::Vector3 Player::GetDirection() const
+{
+	return dirVector;
+}
+
+void Player::SetIsBarrier(bool flag)
+{
+	isBarrier = flag;
+}
+
+void Player::SetIsThrowingBall(bool flag)
+{
+	isThrowingBall = flag;
+}
+
+void Player::SetIsUltimateSkill(bool flag)
+{
+	isUltimateSkill = flag;
 }
