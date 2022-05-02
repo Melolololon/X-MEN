@@ -1,9 +1,10 @@
 #pragma once
+#include "UltimateSkill.h"
 #include<GameObject.h>
 
 namespace PlayerInitializeInfo
 {
-	const int HP = 100;
+	const int MAX_HP = 100;
 }
 
 class Player :
@@ -17,7 +18,9 @@ private:
 
 	bool isBarrier;
 	bool isThrowingBall;
-	bool isUltimateSkill;
+
+	UltimateSkill ultimateSkill;
+	//bool isUltimateSkill;
 
 	MelLib::Vector3 dirVector;
 	// Barrier* barrier;
@@ -93,8 +96,6 @@ public:
 	void SetIsBarrier(bool flag);
 	// ボールを投げるフラグを書き換える
 	void SetIsThrowingBall(bool flag);
-	// 必殺技フラグを書き換える
-	void SetIsUltimateSkill(bool flag);
 #pragma endregion
 };
 

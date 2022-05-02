@@ -94,18 +94,18 @@ void Player::UseUltimateSkill(bool key)
 	if (!key)return;
 
 	// スキル使用中なら即終了
-	if (isUltimateSkill)return;
+	if (ultimateSkill.GetIsUsingSkill())return;
 
-
-	isUltimateSkill = true;
+	// スキル使用
+	ultimateSkill.Use();
 }
 
 Player::Player()
-	: hp(PlayerInitializeInfo::HP)
+	: hp(PlayerInitializeInfo::MAX_HP)
 	, ultimateSkillValue(0)
 	, isBarrier(false)
 	, isThrowingBall(false)
-	, isUltimateSkill(false)
+	, ultimateSkill(UltimateSkill())
 	, dirVector(MelLib::Vector3())
 {
 	// MelLib;;ModelObjectの配列
@@ -187,7 +187,7 @@ bool Player::GetIsThrowingBall() const
 
 bool Player::GetIsUltimateSkill() const
 {
-	return isUltimateSkill;
+	return ultimateSkill.GetIsUsingSkill();
 }
 
 MelLib::Vector3 Player::GetDirection() const
@@ -203,9 +203,4 @@ void Player::SetIsBarrier(bool flag)
 void Player::SetIsThrowingBall(bool flag)
 {
 	isThrowingBall = flag;
-}
-
-void Player::SetIsUltimateSkill(bool flag)
-{
-	isUltimateSkill = flag;
 }
