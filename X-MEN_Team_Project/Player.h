@@ -11,6 +11,10 @@ class Player :
 {
 private:
 	int hp;
+
+	// 必殺技ゲージ
+	int ultimateSkillValue;
+
 	bool isBarrier;
 	bool isThrowingBall;
 	bool isUltimateSkill;
@@ -66,6 +70,12 @@ public:
 		const MelLib::ShapeType3D hitObjShapeType,
 		const std::string& hitShapeName
 	)override;
+
+	// 必殺技ゲージ用の値にを引数のvalueを加算
+	void AddUltimatekillValue(int value);
+
+	// 引数の値を使ってHPを減らす
+	void Damage(int value);
 
 #pragma region Getter
 	// バリアフラグを取得

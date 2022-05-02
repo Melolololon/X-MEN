@@ -102,6 +102,7 @@ void Player::UseUltimateSkill(bool key)
 
 Player::Player()
 	: hp(PlayerInitializeInfo::HP)
+	, ultimateSkillValue(0)
 	, isBarrier(false)
 	, isThrowingBall(false)
 	, isUltimateSkill(false)
@@ -162,6 +163,16 @@ void Player::Hit
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}
+}
+
+void Player::AddUltimatekillValue(int value)
+{
+	ultimateSkillValue += value;
+}
+
+void Player::Damage(int value)
+{
+	hp -= value;
 }
 
 bool Player::GetIsBarrier() const
