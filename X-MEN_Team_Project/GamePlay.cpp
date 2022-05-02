@@ -10,12 +10,16 @@ void GamePlay::Initialize()
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
 
-	// プレイヤーのメモリ確保
+	// オブジェクトのメモリ確保
 	pPlayer = std::make_shared<Player>();
+	pBall = std::make_shared<Ball>();
+	pWall = std::make_shared<Wall>();
 
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
+	MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
+	MelLib::GameObjectManager::GetInstance()->AddObject(pWall);
 
 	// テストオブジェクト追加
 	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
