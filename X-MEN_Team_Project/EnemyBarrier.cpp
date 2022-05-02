@@ -1,46 +1,43 @@
-#include "NormalBarrier.h"
+#include "EnemyBarrier.h"
 
 #include<Input.h>
 
 #include"TestObject.h"
 
-
-NormalBarrier::NormalBarrier()
+EnemyBarrier::EnemyBarrier()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 	//初期値
 	SetPosition(MelLib::Vector3(0, 0, 5));
-	SetScale(MelLib::Vector3(5, 5, 5));
-	time = 0;
+	SetScale(MelLib::Vector3(5, 5, 1));
+	nowHp = hp;
 	isOpen = false;
-	//sphereDatas["main"][0].SetRadius(0.5f);
 
 	// 当たり判定の作成(球)
-	// NormalBarrierの座標を取得し、それをセット
+	// EnemyBarrierの座標を取得し、それをセット
 	//sphereDatas["main"].resize(1);
 	//sphereDatas["main"][0].SetPosition(GetPosition());
-};
+	//sphereDatas["main"][0].SetRadius(0.5f);
+}
 
-void NormalBarrier::Update()
+void EnemyBarrier::Update()
 {
 	//展開中なら
 	if (isOpen)
 	{
-		//展開時間カウント
-		time++;
-		//指定した展開の時間経過したら
-		if (time > openTime)
+		//耐久値が0になったら
+		if (hp < 0)
 		{
 			isOpen = false;
-			time = 0;
+			nowHp = hp;
 		}
 	}
-	modelObjects["main"].SetMulColor(MelLib::Color(150, 150, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(255, 150, 150, 255));
 }
 
-void NormalBarrier::Draw()
+void EnemyBarrier::Draw()
 {
 	if (isOpen)
 	{
@@ -49,7 +46,7 @@ void NormalBarrier::Draw()
 	}
 }
 
-void NormalBarrier::Hit
+void EnemyBarrier::Hit
 (
 	const GameObject& object,
 	const MelLib::ShapeType3D shapeType,
@@ -61,3 +58,4 @@ void NormalBarrier::Hit
 	// ここに当たった時の処理を記述
 	// typeidなどで処理を分けたりする
 }
+

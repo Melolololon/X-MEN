@@ -2,14 +2,14 @@
 #include<GameObject.h>
 namespace
 {
-	//展開できる時間
-	int openTime = 60;
+	//耐久値の初期値
+	int hp = 150;
 }
-class NormalBarrier :
+class EnemyBarrier :
 	public MelLib::GameObject
 {
 public:
-	NormalBarrier();
+	EnemyBarrier();
 
 	// 更新
 	void Update()override;
@@ -33,15 +33,18 @@ public:
 		const MelLib::ShapeType3D hitObjShapeType,
 		const std::string& hitShapeName
 	)override;
+
 	//Setter
 	void SetIsOpen(bool flag) { isOpen = flag; }
+	void SetHp(int hp) { nowHp = hp; }
 	//Getter
 	bool GetIsOpen() { return isOpen; }
-
+	int GetHp() { return nowHp; }
 private:
 	//展開されているか
 	bool isOpen;
-	//寿命
-	int time;
+	//現在の耐久値
+	int nowHp;
+
 };
 
