@@ -20,7 +20,6 @@ private:
 	bool isThrowingBall;
 
 	UltimateSkill ultimateSkill;
-	//bool isUltimateSkill;
 
 	MelLib::Vector3 dirVector;
 	// Barrier* barrier;
