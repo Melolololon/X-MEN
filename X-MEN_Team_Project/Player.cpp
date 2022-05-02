@@ -132,6 +132,10 @@ void Player::Update()
 {
 	Move(GetInputVector());
 
+	ultimateSkill.Update();
+
+	if (MelLib::Input::KeyTrigger(DIK_SPACE))ultimateSkill.AddValue(10);
+
 	// 各技処理を行う関数に対応したキーのトリガーを送って関数内で実行するか判断させる
 	UseBarrier(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
 	ThrowingBall(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
@@ -144,6 +148,8 @@ void Player::Draw()
 {
 	// ModelObjectsに追加されているModelObjectをすべて描画
 	AllDraw();
+	// 必殺技ゲージの描画
+	ultimateSkill.Draw();
 }
 
 void Player::Hit

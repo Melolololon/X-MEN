@@ -1,21 +1,32 @@
 #pragma once
+#include <Sprite2D.h>
 
 namespace UltimateSkillInfo
 {
 	// ゲージ初期値
-	const int INITIALIZE_VALUE = 0;
+	const float INITIALIZE_VALUE = 0;
 
 	// ゲージの最大値
-	const int MAX_VALUE = 100;
+	const float MAX_VALUE = 100;
 
 	// レベルが上がるために必要な量
-	const int LEVEL_UP_VALUE = 25;
+	const float LEVEL_UP_VALUE = 25;
 
 	// 初期レベル
-	const int INITIALIZE_LEVEL = 1;
+	const float INITIALIZE_LEVEL = 1;
 
 	// 最大レベル
-	const int MAX_LEVEL = 4;
+	const float MAX_LEVEL = 4;
+}
+
+namespace UltimateSkillGaugeDrawInfo
+{
+	// windowのサイズに対する比率 0 ~ 100
+	const MelLib::Vector2 SIZE_PERCENT = MelLib::Vector2(95, 2);
+
+	// 描画色
+	const MelLib::Color FRONT_COLOR = MelLib::Color(255, 0, 0, 255);
+	const MelLib::Color BACK_COLOR = MelLib::Color(64, 64, 64, 255);
 }
 
 class UltimateSkill
@@ -24,12 +35,35 @@ private:
 	int value;
 	int level;
 	bool isUsingSkill;
+
+	// ゲージの量を描画をする用
+	MelLib::Sprite2D frontGauge;
+
+	// ゲージの最大値を描画する用
+	MelLib::Sprite2D backGauge;
+
+	MelLib::Vector2 frontDrawSize;
+	MelLib::Vector2 backDrawSize;
+
+	MelLib::Vector2 drawPosition;
+	MelLib::Color drawColor;
 private:
 	// 現ゲージ量からレベルを計算
 	void CalcLevel();
+
+	// windowのサイズから描画するサイズを計算する
+	void CalcSize(const MelLib::Vector2& windowSize);
+
+	// windowのサイズから描画する位置を計算する
+	void CalcPosition(const MelLib::Vector2& windowSize);
+
+	void CalcColor();
 public:
 	UltimateSkill();
 	~UltimateSkill();
+
+	void Update();
+	void Draw();
 
 	// 今のところ値を使用したあとにレベルを再計算
 	void Use();

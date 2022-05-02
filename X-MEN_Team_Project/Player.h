@@ -4,17 +4,17 @@
 
 namespace PlayerInitializeInfo
 {
-	const int MAX_HP = 100;
+	const float MAX_HP = 100;
 }
 
 class Player :
     public MelLib::GameObject
 {
 private:
-	int hp;
+	float hp;
 
 	// ïKéEãZÉQÅ[ÉW
-	int ultimateSkillValue;
+	float ultimateSkillValue;
 
 	bool isBarrier;
 	bool isThrowingBall;
