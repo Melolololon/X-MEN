@@ -4,6 +4,8 @@ namespace
 {
 	//耐久値の初期値
 	int hp = 150;
+	//Playerとバリアの間の間隔
+	float radius = 3.0f;
 }
 class EnemyBarrier :
 	public MelLib::GameObject
@@ -33,7 +35,15 @@ public:
 		const MelLib::ShapeType3D hitObjShapeType,
 		const std::string& hitShapeName
 	)override;
-
+	/// <summary>
+	/// 指定した座標を中心にバリアを展開
+	/// 移動量で角度計算
+	/// </summary>
+	/// <param name="positon">バリアを持たせたいキャラクターの座標</param>
+	/// <param name="move">バリアを持たせたいキャラクターの移動値(velocity等)</param>
+	void SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move);
+	//バリア展開
+	void IsOpen();
 	//Setter
 	void SetIsOpen(bool flag) { isOpen = flag; }
 	void SetHp(int hp) { nowHp = hp; }

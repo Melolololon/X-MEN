@@ -10,7 +10,7 @@ void Player::Move()
 	MelLib::Vector3 moveVector;
 	// 移動速度
 	static const float MOVE_SPEED = 0.3f;
-	
+
 	if (MelLib::Input::KeyState(DIK_LEFT))
 	{
 		moveVector.x -= MOVE_SPEED;
@@ -35,6 +35,7 @@ void Player::Move()
 
 Player::Player()
 {
+
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
@@ -53,11 +54,11 @@ void Player::Update()
 {
 	Move();
 
-	// SPACE押したらモデル管理クラスから削除(メモリ解放)
-	if(MelLib::Input::KeyTrigger(DIK_SPACE))
-	{
-		eraseManager = true;
-	}
+	//// SPACE押したらモデル管理クラスから削除(メモリ解放)
+	//if (MelLib::Input::KeyTrigger(DIK_SPACE))
+	//{
+	//	eraseManager = true;
+	//}
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 255, 255));
 }
@@ -70,9 +71,9 @@ void Player::Draw()
 
 void Player::Hit
 (
-	const GameObject& object, 
-	const MelLib::ShapeType3D shapeType, 
-	const std::string& shapeName, 
+	const GameObject& object,
+	const MelLib::ShapeType3D shapeType,
+	const std::string& shapeName,
 	const MelLib::ShapeType3D hitObjShapeType,
 	const std::string& hitShapeName
 )
@@ -81,7 +82,7 @@ void Player::Hit
 	// typeidなどで処理を分けたりする
 
 	// テストオブジェクトと衝突したら色変更
-	if(typeid(object) == typeid(TestObject))
+	if (typeid(object) == typeid(TestObject))
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}

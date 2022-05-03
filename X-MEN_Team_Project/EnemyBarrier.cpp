@@ -28,10 +28,9 @@ void EnemyBarrier::Update()
 	if (isOpen)
 	{
 		//‘Ï‹v’l‚ª0‚É‚È‚Á‚½‚ç
-		if (hp < 0)
+		if (nowHp < 0)
 		{
 			isOpen = false;
-			nowHp = hp;
 		}
 	}
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 150, 150, 255));
@@ -39,6 +38,7 @@ void EnemyBarrier::Update()
 
 void EnemyBarrier::Draw()
 {
+	//“WŠJ’†‚Ì‚Ý•`‰æ
 	if (isOpen)
 	{
 		// ModelObjects‚É’Ç‰Á‚³‚ê‚Ä‚¢‚éModelObject‚ð‚·‚×‚Ä•`‰æ
@@ -59,3 +59,26 @@ void EnemyBarrier::Hit
 	// typeid‚È‚Ç‚Åˆ—‚ð•ª‚¯‚½‚è‚·‚é
 }
 
+void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move)
+{
+	//“WŠJ’†‚È‚ç
+	if (isOpen)
+	{
+		//‘Ì‚ÌŒü‚«‚ðmove‚©‚ç‹‚ß‚é
+		float direction = atan2f(move.x, move.z);
+		//ƒoƒŠƒA‚ð“WŠJ‚·‚éÀ•W
+		MelLib::Vector3 barrierPosition;
+		//ˆø”‚Ìposition‚ð’†S‚É”¼Œaradius•ª—£‚ê‚½À•W‚ð‹‚ß‚é
+		barrierPosition = MelLib::Vector3(positon.x + (sinf(direction) * radius), positon.y, positon.z + (cosf(direction) * radius));
+		SetPosition(barrierPosition);
+		//“x”–@¨ŒÊ“x–@
+		SetAngle(MelLib::Vector3(0.0f, direction * 57.32484076433121f, 0.0f));
+
+	}
+}
+
+void EnemyBarrier::IsOpen()
+{
+	isOpen = true;
+	nowHp = hp;
+}

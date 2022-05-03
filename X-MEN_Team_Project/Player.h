@@ -1,8 +1,9 @@
 #pragma once
 #include<GameObject.h>
 
+
 class Player :
-    public MelLib::GameObject
+	public MelLib::GameObject
 {
 private:
 
@@ -10,13 +11,13 @@ private:
 
 public:
 	Player();
-	
+
 	// XV
-    void Update()override;
-    
+	void Update()override;
+
 	//•`‰æ
 	void Draw()override;
-    
+
 	/// <summary>
 	/// “–‚½‚Á‚½‚ÉŒÄ‚Î‚ê‚éŠÖ”
 	/// </summary>
@@ -35,4 +36,3 @@ public:
 	)override;
 
 };
-
