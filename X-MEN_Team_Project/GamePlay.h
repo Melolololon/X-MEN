@@ -2,12 +2,14 @@
 #include<Scene.h>
 
 #include"Player.h"
+#include "FieldObjectManager.h"
 
 class GamePlay : public MelLib::Scene
 {
 private:
 	
 	std::shared_ptr<Player>pPlayer;
+	FieldObjectManager fieldObjectManager;
 
 public:
 	GamePlay(){}

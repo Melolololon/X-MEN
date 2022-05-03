@@ -158,6 +158,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FieldObjectManager.cpp" />
+    <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="main.cpp" />
@@ -165,6 +167,9 @@
     <ClCompile Include="TestObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FieldObject.h" />
+    <ClInclude Include="FieldObjectManager.h" />
+    <ClInclude Include="FieldObjectWall.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Player.h" />
