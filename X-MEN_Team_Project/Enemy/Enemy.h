@@ -5,8 +5,8 @@ namespace EnemyStatus
 {
 	// èâä˙âªóp
 
-	MelLib::Vector3 initPlayerDir = { 0,0,0 };
-	MelLib::Vector3 initPlayerPos = { 0,0,0 };
+	const MelLib::Vector3 initPlayerDir = { 0,0,0 };
+	const MelLib::Vector3 initPlayerPos = { 0,0,0 };
 }
 
 class Enemy : public MelLib::GameObject
