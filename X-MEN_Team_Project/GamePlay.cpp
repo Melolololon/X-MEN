@@ -23,6 +23,8 @@ void GamePlay::Initialize()
 
 	// テストオブジェクト追加
 	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
+
+	fieldObjectManager.Initialize();
 }
 
 void GamePlay::Update()
@@ -45,6 +47,7 @@ void GamePlay::Draw()
 void GamePlay::Finalize()
 {
 	// 終了処理
+	fieldObjectManager.Finalize();
 
 	// 全削除
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();
