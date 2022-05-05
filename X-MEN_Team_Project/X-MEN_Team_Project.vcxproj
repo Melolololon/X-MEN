@@ -158,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="EnemyBarrier.cpp" />
     <ClCompile Include="FieldObjectManager.cpp" />
     <ClCompile Include="FieldObjectWall.cpp" />
@@ -169,8 +170,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="UltimateSkill.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ball.h" />
     <ClInclude Include="EnemyBarrier.h" />
     <ClInclude Include="FieldObject.h" />
     <ClInclude Include="FieldObjectManager.h" />
@@ -182,6 +185,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="UltimateSkill.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj">
