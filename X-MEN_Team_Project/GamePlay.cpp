@@ -12,10 +12,12 @@ void GamePlay::Initialize()
 
 	// オブジェクトのメモリ確保
 	pPlayer = std::make_shared<Player>();
-	//
 	barrier = std::make_shared<NormalBarrier>();
+	//
 	pBall = std::make_shared<Ball>();
 	pWall = std::make_shared<Wall>();
+
+	pPlayer.get()->SetNormalBarrier(barrier);
 
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応

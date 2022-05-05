@@ -70,13 +70,14 @@ void Player::CalclateDirection()
 void Player::UseBarrier(bool key)
 {
 	if (!key)return;
+	if (!barrier)return;
 
 	// バリアを使用中なら即終了
-	if (isBarrier)return;
+	if (barrier.get()->GetIsOpen())return;
 	//// ボールを保持しているならバリアは展開できない
 	//if(ball)return;
 
-	isBarrier = true;
+	barrier.get()->SetIsOpen(true);
 }
 
 void Player::ThrowingBall(bool key)
@@ -100,13 +101,20 @@ void Player::UseUltimateSkill(bool key)
 	ultimateSkill.Use();
 }
 
+void Player::UpdateBarrierDirection()
+{
+	if (!barrier)return;
+
+	barrier.get()->SetBarrierPosition(GetPosition(), dirVector);
+}
+
 Player::Player()
 	: hp(PlayerInitializeInfo::MAX_HP)
 	, ultimateSkillValue(0)
-	, isBarrier(false)
 	, isThrowingBall(false)
 	, ultimateSkill(UltimateSkill())
 	, dirVector(MelLib::Vector3())
+	, barrier(nullptr)
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
@@ -131,6 +139,8 @@ Player::~Player()
 void Player::Update()
 {
 	Move(GetInputVector());
+
+	UpdateBarrierDirection();
 
 	ultimateSkill.Update();
 
@@ -181,7 +191,9 @@ void Player::Damage(int value)
 
 bool Player::GetIsBarrier() const
 {
-	return isBarrier;
+	if (!barrier)return false;
+
+	return barrier.get()->GetIsOpen();
 }
 
 bool Player::GetIsThrowingBall() const
@@ -201,10 +213,16 @@ MelLib::Vector3 Player::GetDirection() const
 
 void Player::SetIsBarrier(bool flag)
 {
-	isBarrier = flag;
+	if (!barrier)return;
+	barrier.get()->SetIsOpen(flag);
 }
 
 void Player::SetIsThrowingBall(bool flag)
 {
 	isThrowingBall = flag;
+}
+
+void Player::SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier)
+{
+	barrier = setBarrier;
 }
