@@ -34,14 +34,6 @@ void NormalBarrier::Update()
 			time = 0;
 		}
 	}
-	//操作テスト***Playerと統合したら消してよし***
-	if (MelLib::Input::KeyTrigger(DIK_SPACE))
-	{
-		isOpen = true;
-	}
-	//座標0,0,0を中心に半径radius離れたところに盾を展開***Playerに書いたら消してよし***
-	SetBarrierPosition(MelLib::Vector3(), MelLib::Vector3(1,0,-1));
-	
 
 	modelObjects["main"].SetMulColor(MelLib::Color(150, 150, 255, 255));
 }
@@ -71,9 +63,10 @@ void NormalBarrier::Hit
 
 void NormalBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move)
 {
-	//展開中なら
-	if (isOpen)
-	{
+	//**************更新順番がわからなくて描画おかしくなるから常時更新にするね**************//
+	////展開中なら
+	//if (isOpen)
+	//{
 		//体の向きをmoveから求める
 		float direction = atan2f(move.x, move.z);
 		//バリアを展開する座標
@@ -84,5 +77,5 @@ void NormalBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 
 		//度数法→弧度法
 		SetAngle(MelLib::Vector3(0.0f, direction * 57.32484076433121f, 0.0f));
 
-	}
+	//}
 }
