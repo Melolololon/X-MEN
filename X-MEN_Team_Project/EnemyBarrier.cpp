@@ -2,8 +2,6 @@
 
 #include<Input.h>
 
-#include"TestObject.h"
-
 EnemyBarrier::EnemyBarrier()
 {
 	// MelLib;;ModelObject‚Ì”z—ñ

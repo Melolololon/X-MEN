@@ -2,9 +2,6 @@
 
 #include<Input.h>
 
-#include"TestObject.h"
-
-
 NormalBarrier::NormalBarrier()
 {
 	// MelLib;;ModelObjectの配列
@@ -38,7 +35,7 @@ void NormalBarrier::Update()
 		}
 	}
 	//操作テスト***Playerと統合したら消してよし***
-	if (MelLib::Input::KeyState(DIK_SPACE))
+	if (MelLib::Input::KeyTrigger(DIK_SPACE))
 	{
 		isOpen = true;
 	}
