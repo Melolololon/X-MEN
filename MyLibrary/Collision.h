@@ -10,8 +10,7 @@ namespace MelLib
 	//“–‚½‚è”»’è(‚ÌŒvZ)ƒNƒ‰ƒX
 	class Collision
 	{
-
-
+	private:
 	public:
 
 #pragma region 2D

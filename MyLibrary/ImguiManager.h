@@ -123,6 +123,7 @@ namespace MelLib
 
 #pragma endregion
 
+		bool GetReleaseDrawFrag()const { return releaseDrawFlag; }
 	};
 }
 

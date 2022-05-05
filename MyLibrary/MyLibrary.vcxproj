@@ -122,7 +122,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -190,6 +190,8 @@
     <ClCompile Include="Emitter3D.cpp" />
     <ClCompile Include="ErrorProcess.cpp" />
     <ClCompile Include="GameObject2D.cpp" />
+    <ClCompile Include="GuiValue.cpp" />
+    <ClCompile Include="GuiValueManager.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -208,6 +210,7 @@
     <ClCompile Include="Particle3D.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RouteSearch.cpp" />
+    <ClCompile Include="SceneEditer.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sound3D.cpp" />
     <ClCompile Include="Sound_Unused.cpp" />
@@ -478,6 +481,8 @@
     <ClInclude Include="Emitter3D.h" />
     <ClInclude Include="ErrorProcess.h" />
     <ClInclude Include="GameObject2D.h" />
+    <ClInclude Include="GuiValue.h" />
+    <ClInclude Include="GuiValueManager.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -498,6 +503,7 @@
     <ClInclude Include="Particle3D.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="RouteSearch.h" />
+    <ClInclude Include="SceneEditer.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sound3D.h" />
     <ClInclude Include="Sound_Unused.h" />

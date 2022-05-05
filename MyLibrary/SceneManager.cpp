@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include<assert.h>
+#include<typeinfo>
 
 
 using namespace MelLib;
@@ -80,4 +81,14 @@ void SceneManager::Finalize()
 Scene* SceneManager::GetCurrentScene()
 {
 	return currentScene;
+}
+
+std::string MelLib::SceneManager::GetCurrentSceneName()
+{
+	std::string name = typeid(*currentScene).name();
+
+	// æ“ª6•¶š("class ")‚ğíœ
+	name.erase(name.begin(), name.begin() + 6);
+
+	return name;
 }
