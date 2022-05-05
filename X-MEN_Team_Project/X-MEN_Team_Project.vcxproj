@@ -160,6 +160,9 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="EnemyBarrier.cpp" />
+    <ClCompile Include="Enemy\BarrierEnemy.cpp" />
+    <ClCompile Include="Enemy\Enemy.cpp" />
+    <ClCompile Include="Enemy\FollowEnemy.cpp" />
     <ClCompile Include="FieldObjectManager.cpp" />
     <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -175,6 +178,9 @@
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="EnemyBarrier.h" />
+    <ClInclude Include="Enemy\BarrierEnemy.h" />
+    <ClInclude Include="Enemy\Enemy.h" />
+    <ClInclude Include="Enemy\FollowEnemy.h" />
     <ClInclude Include="FieldObject.h" />
     <ClInclude Include="FieldObjectManager.h" />
     <ClInclude Include="FieldObjectWall.h" />
