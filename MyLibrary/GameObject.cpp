@@ -279,6 +279,12 @@ void MelLib::GameObject::SetMulColor(const Color& color)
 	}
 }
 
+
+std::shared_ptr<GameObject> MelLib::GameObject::GetNewPtr()
+{
+	return nullptr;
+}
+
 void GameObject::CalcMovePhysics()
 {
 	Vector3 prePos = position;

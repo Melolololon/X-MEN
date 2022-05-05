@@ -53,7 +53,7 @@ namespace MelLib
 
 		Vector3 position = 0;
 		Vector3 angle = 0;
-		Vector3 scale = 0;
+		Vector3 scale = 1;
 
 #pragma region 物理関係
 
@@ -345,6 +345,7 @@ namespace MelLib
 		void SetMulColor(const Color& color);
 
 		void TrueEraseManager() { eraseManager = true; }
+
 #pragma endregion
 
 #pragma region ゲット
@@ -359,6 +360,9 @@ namespace MelLib
 		/// </summary>
 		/// <returns></returns>
 		Vector3 GetPosition()const { return position; }
+		
+		Vector3 GetAngle()const { return angle; }
+		Vector3 GetScale()const { return scale; }
 
 		/// <summary>
 		/// 速度を取得します。
@@ -408,6 +412,12 @@ namespace MelLib
 #pragma region 判定関係
 
 #pragma endregion
+
+		/// <summary>
+		/// シーンエディタからオブジェクト管理クラスに追加するときにオブジェクト管理クラスに追加するポインタを返す関数です。
+		/// </summary>
+		/// <returns>オブジェクト管理クラスに追加するshared_ptr</returns>
+		virtual std::shared_ptr<GameObject> GetNewPtr();
 
 
 #pragma endregion
@@ -462,6 +472,14 @@ namespace MelLib
 		{
 			triangleCalcResult = result;
 		}
+
+		SphereCalcResult GetSphereCalcResult()const { return sphereCalcResult; }
+		BoxCalcResult GetBoxCalcResult()const { return boxCalcResult; }
+		Segment3DCalcResult GetSegmentCalcResult()const { return segmentCalcResult; }
+		BoardCalcResult GetBoardCalcResult()const { return boardCalcResult; }
+		Segment3DCalcResult GetCapsuleCalcResult()const { return capsuleCalcResult; }
+		TriangleCalcResult GetTriangleCalcResult()const { return triangleCalcResult; }
+
 
 		//Vector3& GetLineSegmentHitPosition(const int num);
 		//Vector3& GetBoardHitPosition(const int num);

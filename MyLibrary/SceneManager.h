@@ -25,6 +25,7 @@ namespace MelLib
 		void Draw();
 		void Finalize();
 
+
 		/// <summary>
 		/// ƒV[ƒ“‚ğØ‚è‘Ö‚¦‚éˆ—‚ğs‚¢‚Ü‚·
 		/// </summary>
@@ -33,6 +34,7 @@ namespace MelLib
 
 
 		Scene* GetCurrentScene();
+		std::string GetCurrentSceneName();
 	};
 
 }

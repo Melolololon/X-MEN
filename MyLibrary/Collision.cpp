@@ -5,8 +5,8 @@
 using namespace MelLib;
 
 
-
 #pragma region 2D
+
 
 
 
@@ -470,7 +470,7 @@ bool Collision::SphereAndBox
 		BoxHitDirection hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_NO_HIT;
 		if (!isHit)
 		{
-			sphereCalcResult->boxHitDistance = hitDirection;
+			sphereCalcResult->SetBoxHitDirection(hitDirection);
 			boxCalcResult->boxHitDistance = hitDirection;
 			return false;
 		}
@@ -532,7 +532,10 @@ bool Collision::SphereAndBox
 			}
 		}
 
-		if (sphereCalcResult)sphereCalcResult->boxHitDistance = hitDirection;
+		if (sphereCalcResult)
+		{
+			sphereCalcResult->SetBoxHitDirection(hitDirection);
+		}
 		if (boxCalcResult)boxCalcResult->boxHitDistance = hitDirection;
 	}
 
