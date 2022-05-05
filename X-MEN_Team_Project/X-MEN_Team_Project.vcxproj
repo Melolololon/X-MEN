@@ -159,6 +159,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EnemyBarrier.cpp" />
+    <ClCompile Include="FieldObjectManager.cpp" />
+    <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="InputDeviceManager.cpp" />
@@ -170,6 +172,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EnemyBarrier.h" />
+    <ClInclude Include="FieldObject.h" />
+    <ClInclude Include="FieldObjectManager.h" />
+    <ClInclude Include="FieldObjectWall.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="InputDeviceManager.h" />
