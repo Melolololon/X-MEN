@@ -13,7 +13,7 @@ private:
 	
 	std::shared_ptr<Player>pPlayer;
 	std::shared_ptr<NormalBarrier>barrier;
-	FieldObjectManager fieldObjectManager;
+	FieldObjectManager* fieldObjectManager;
 	std::shared_ptr<Ball> pBall;
 	std::shared_ptr<Wall> pWall;
 

@@ -9,6 +9,7 @@ void GamePlay::Initialize()
 {
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
+	fieldObjectManager = FieldObjectManager::GetInstance();
 
 	// オブジェクトのメモリ確保
 	pPlayer = std::make_shared<Player>();
@@ -28,7 +29,7 @@ void GamePlay::Initialize()
 	// テストオブジェクト追加
 	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
 
-	fieldObjectManager.Initialize();
+	fieldObjectManager->Initialize();
 }
 
 void GamePlay::Update()
@@ -51,7 +52,7 @@ void GamePlay::Draw()
 void GamePlay::Finalize()
 {
 	// 終了処理
-	fieldObjectManager.Finalize();
+	fieldObjectManager->Finalize();
 
 	// 全削除
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();

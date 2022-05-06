@@ -28,7 +28,7 @@ public:
 private:
 	InputDeviceType GetPriorityDevice();
 
-	// シングルトンにするため各種
+	// シングルトンにするため各種コンストラクタ・デストラクタをプライベート化
 	 InputDeviceManager();
 	 InputDeviceManager(const InputDeviceManager&) = delete;
 	~InputDeviceManager() = default;

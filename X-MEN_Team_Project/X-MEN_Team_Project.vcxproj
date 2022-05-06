@@ -163,6 +163,7 @@
     <ClCompile Include="Enemy\BarrierEnemy.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="Enemy\FollowEnemy.cpp" />
+    <ClCompile Include="FieldObject.cpp" />
     <ClCompile Include="FieldObjectManager.cpp" />
     <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />

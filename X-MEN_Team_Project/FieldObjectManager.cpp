@@ -10,7 +10,8 @@ void FieldObjectManager::AddWall(const MelLib::Vector3& pos, const MelLib::Vecto
 	fieldObjectWall.get()->SetScale(size);
 	fieldObjectWall.get()->SetPosition(pos);
 
-	fieldObjects.push_back(fieldObjectWall);
+	fieldObjects[FieldObjectType::FIELD_OBJECT_TYPE_WALL].push_back(fieldObjectWall);
+
 	MelLib::GameObjectManager::GetInstance()->AddObject(fieldObjectWall);
 }
 
@@ -42,6 +43,12 @@ void FieldObjectManager::AddWalls()
 	AddWall(LEFT_POSITION, FieldObjectWallInfo::RIGHT_LEFT_SIZE);
 }
 
+FieldObjectManager* FieldObjectManager::GetInstance()
+{
+	static FieldObjectManager instance;
+	return &instance;
+}
+
 FieldObjectManager::FieldObjectManager()
 {
 }
@@ -54,4 +61,9 @@ void FieldObjectManager::Initialize()
 void FieldObjectManager::Finalize()
 {
 	fieldObjects.clear();
+}
+
+std::vector<std::shared_ptr<FieldObject>>& FieldObjectManager::GetFieldObjects(FieldObjectType hash)
+{
+	return fieldObjects[hash];
 }
