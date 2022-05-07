@@ -297,9 +297,14 @@ namespace MelLib
 		
 		BoxData GetBoxData()const { return boxData; }
 		BoxData& GetRefBoxData() { return boxData; }
+
+		Vector3 GetPosition()const { return boxData.GetPosition(); }
+		Vector3 GetSize()const { return boxData.GetSize(); }
 		Vector3 GetAngle()const { return angle; }
 
 
+		void SetPosition(const Vector3& pos) { boxData.SetPosition(pos); }
+		void SetSize(const Vector3& size) { boxData.SetSize(size); }
 		void SetAngle(const Vector3& angle) { this->angle = angle; }
 
 
@@ -541,6 +546,11 @@ namespace MelLib
 	//カプセル
 	class CapsuleData
 	{
+		// 線分の参照取得しなくてもいじれるようにする
+		// 継承はしなくていい
+		// 別にカプセルを線分の配列に入れたいわけじゃないし
+		// GameObjectみたいに配列にまとめるたりオーバーライドするつもりがないなら継承しないほうがよかったはず
+
 	private:
 		Segment3DData segmentData;
 		float r = 0.0f;
