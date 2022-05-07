@@ -1,6 +1,7 @@
 #pragma once
 #include "UltimateSkill.h"
 #include<GameObject.h>
+#include "Ball.h"
 
 namespace PlayerInitializeInfo
 {
@@ -23,7 +24,8 @@ private:
 
 	MelLib::Vector3 dirVector;
 	// Barrier* barrier;
-	// Ball* ball;
+
+	std::shared_ptr<Ball> pBall;
 
 private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
@@ -44,6 +46,9 @@ private:
 
 	// 必殺技フラグをオンにする
 	void UseUltimateSkill(bool key);
+
+	// ボールを追尾させる
+	void TrackingBall();
 
 public:
 	Player();

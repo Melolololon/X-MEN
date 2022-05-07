@@ -174,7 +174,6 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="UltimateSkill.cpp" />
-    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -192,7 +191,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="UltimateSkill.h" />
-    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj">

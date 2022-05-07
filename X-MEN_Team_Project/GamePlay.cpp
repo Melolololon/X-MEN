@@ -15,16 +15,12 @@ void GamePlay::Initialize()
 	pPlayer = std::make_shared<Player>();
 	//
 	barrier = std::make_shared<NormalBarrier>();
-	pBall = std::make_shared<Ball>();
-	pWall = std::make_shared<Wall>();
 
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
 	//バリアのテスト
 	MelLib::GameObjectManager::GetInstance()->AddObject(barrier);
-	MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
-	MelLib::GameObjectManager::GetInstance()->AddObject(pWall);
 
 	// テストオブジェクト追加
 	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));

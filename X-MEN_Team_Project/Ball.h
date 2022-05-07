@@ -6,8 +6,14 @@ class Ball
 {
 	using Vector3 = MelLib::Vector3;
 
+//定数
+private:
+	const float INIT_SPEED = 0.5f;
+
 private:
 	Vector3 velocity = { 0,0,0.1 };
+	float speed = INIT_SPEED;
+	bool isThrowed = false;
 
 private:
 
@@ -15,6 +21,7 @@ private:
 
 public:
 	Ball();
+	~Ball();
 
 	// 更新
 	void Update()override;
@@ -39,4 +46,21 @@ public:
 		const std::string& hitShapeName
 	)override;
 
+	/// <summary>
+	/// ボールを投げる プレイヤーから呼ぶこと
+	/// </summary>
+	/// <param name="initPos">ボールの初期位置 プレイヤーの位置をそのまま渡す</param>
+	void ThrowBall(const Vector3& initPos);
+
+	/// <summary>
+	/// ボールが投げられているかを返す
+	/// </summary>
+	/// <returns>ボールが投げられていればtrue それ以外はfalse</returns>
+	bool GetIsThrowed()const { return isThrowed; }
+
+	/// <summary>
+	/// ボールの位置を決め打ちでセットする プレイヤーがボールを持った状態時の追尾に使用
+	/// </summary>
+	/// <param name="pos"></param>
+	void SetBallPos(const Vector3& pos);
 };
