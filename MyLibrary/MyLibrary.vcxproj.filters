@@ -336,6 +336,9 @@
     <ClCompile Include="GuiValueManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="StringSupport.cpp">
+      <Filter>ソース ファイル\Support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SpritePixelShader.hlsl" />
@@ -613,6 +616,9 @@
     </ClInclude>
     <ClInclude Include="GuiValueManager.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StringSupport.h">
+      <Filter>ヘッダー ファイル\Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

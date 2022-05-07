@@ -10,20 +10,13 @@ namespace MelLib
 	class GuiValueManager
 	{
 	private:
-		GuiValueManager() {}
+
+		GuiValueManager();
 		~GuiValueManager() {}
 
 		// createWindowNamesに渡された名前がなかった場合追加
 		void AddCreateWindowName(const std::string& windowName);
-	private:
-		// bool型も作る
 
-		std::unordered_map<std::string, std::unordered_map<std::string, GuiInt*>>intValues;
-		std::unordered_map<std::string, std::unordered_map<std::string, GuiFloat*>>floatValues;
-		std::unordered_map<std::string, std::unordered_map<std::string, GuiVector3*>>vector3Values;
-		std::unordered_map<std::string, std::unordered_map<std::string, GuiBool*>>boolValues;
-
-		std::vector<std::string>createWindowNames;
 
 		/// <summary>
 		/// 
@@ -33,9 +26,25 @@ namespace MelLib
 		/// <param name="data">char*に変換したデータのポインタの参照</param>
 		/// <param name="dataSize">データサイズ</param>
 		/// <param name="refFlag">changeFlag(戻す用)</param>
-		void Save(const std::string& windowName, const std::string& lavel, const char*& data, size_t dataSize,bool& refFlag);
+		void Save(const std::string& windowName, const std::string& lavel, const char*& data, const type_info& type,size_t dataSize,bool& refFlag);
 
-		
+		void Load();
+
+	private:
+
+		static const std::string DATA_FORMAT;
+		static const std::unordered_map<std::string, char>DATA_FORMAT_STR;
+
+		std::unordered_map<std::string, std::unordered_map<std::string, GuiInt*>>intValues;
+		std::unordered_map<std::string, std::unordered_map<std::string, GuiFloat*>>floatValues;
+		std::unordered_map<std::string, std::unordered_map<std::string, GuiVector3*>>vector3Values;
+		std::unordered_map<std::string, std::unordered_map<std::string, GuiBool*>>boolValues;
+
+		std::vector<std::string>createWindowNames;
+
+		// std::unordered_map < Window名, std::unordered_map<ラベル名, データ>>
+		//　読み込んだデータ
+		std::unordered_map < std::string, std::unordered_map<std::string, std::string>>datas;
 
 	public:
 		GuiValueManager(GuiValueManager& m) = delete;
@@ -49,9 +58,14 @@ namespace MelLib
 
 		void EraseGuiValue(const type_info& type,const std::string& windowName, const std::string& lavel);
 
+		void Initialize();
 		void Update();
 
 		
+		int GetGuiIntData(const std::string& windowName, const std::string& lavel)const;
+		float GetGuiFloatData(const std::string& windowName, const std::string& lavel)const;
+		void GetGuiData(bool& refFlag, const std::string& windowName, const std::string& lavel)const;
+		Vector3 GetGuiVector3Data(const std::string& windowName, const std::string& lavel)const;
 	};
 
 }

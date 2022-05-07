@@ -76,7 +76,7 @@ void ModelData::MapIndices(const std::unordered_map<std::string, std::vector<USH
 	{
 
 		//Map
-		USHORT* pIndices;
+		USHORT* pIndices = nullptr;
 		indexBufferSet[objectName].indexBuffer->Map(0, nullptr, (void**)&pIndices);
 		std::copy(indices.at(objectName).begin(), indices.at(objectName).end(), pIndices);
 		indexBufferSet[objectName].indexBuffer->Unmap(0, nullptr);

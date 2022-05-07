@@ -4,8 +4,39 @@
 
 using namespace MelLib;
 
+Vector3 MelLib::Collision::CalcHitBoxSurfaceNormal(BoxHitDirection dir)
+{
+	MelLib::Vector3 normal;
+	switch (dir)
+	{
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_NO_HIT:
+		break;
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_UP:
+		normal = MelLib::Vector3(0, 1, 0);
+		break;
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_DOWN:
+		normal = MelLib::Vector3(0, -1, 0);
+		break;
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_LEFT:
+		normal = MelLib::Vector3(-1, 0, 0);
+		break;
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_RIGHT:
+		normal = MelLib::Vector3(1, 0, 0);
+		break;
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_FRONT:
+		normal = MelLib::Vector3(0, 0, -1);
+		break;
+	case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_BACK:
+		normal = MelLib::Vector3(0, 0, 1);
+		break;
+	default:
+		break;
+	}
+	return normal;
+}
 
 #pragma region 2D
+
 
 
 
@@ -535,11 +566,134 @@ bool Collision::SphereAndBox
 		if (sphereCalcResult)
 		{
 			sphereCalcResult->SetBoxHitDirection(hitDirection);
+			sphereCalcResult->SetBoxHitSurfaceNormal(CalcHitBoxSurfaceNormal(hitDirection));
 		}
 		if (boxCalcResult)boxCalcResult->boxHitDistance = hitDirection;
 	}
 
 	return isHit;
+}
+
+bool MelLib::Collision::SphereAndOBB(const SphereData& sphere, SphereCalcResult* sphereCalcResult, const OBBData& obb)
+{
+
+	// L
+	Vector3 sizeHalf = obb.GetBoxData().GetSize() / 2;
+
+	// 回転した軸3本(XYZ)方向にはみ出ているか確認する
+	// XYZの軸にOBBの回転を適応させる
+	// v1,v2,v3
+	Vector3 angle = obb.GetAngle();
+	Vector3 axisX = LibMath::RotateZXYVector3(Vector3(1, 0, 0), angle);
+	Vector3 axisY = LibMath::RotateZXYVector3(Vector3(0, 1, 0), angle);
+	Vector3 axisZ = LibMath::RotateZXYVector3(Vector3(0, 0, 1), angle);
+
+	// GP
+	// 箱の中心から球の中心へのベクトル
+	Vector3 boxToSphere = sphere.GetPosition() - obb.GetBoxData().GetPosition();
+
+	float s1 = Vector3::Dot(boxToSphere, axisX) / sizeHalf.x;
+	s1 = abs(s1);
+	if (s1 < 1)s1 = 1;
+
+	float s2 = Vector3::Dot(boxToSphere, axisY) / sizeHalf.y;
+	s2 = abs(s2);
+	if (s2 < 1)s2 = 1;
+
+	float s3 = Vector3::Dot(boxToSphere, axisZ) / sizeHalf.z;
+	s3 = abs(s3);
+	if (s3 < 1)s3 = 1;
+
+	float dis = 0.0f;
+	dis = (
+		(1 - s1) * sizeHalf.x * axisX
+		+ (1 - s2)* sizeHalf.y * axisY
+		+ (1 - s3) * sizeHalf.z * axisZ
+		).Length();
+
+	bool result = dis <= sphere.GetRadius();
+	
+
+	
+	if (!sphereCalcResult)return result;
+	
+	// 以下法線計算
+	
+	// 法線取得どうする
+	// 四角形の角度を0,0,0の時に戻し、球の位置も戻した分回転。(箱はGetBoxDataで取得すればいいので、回転させる必要はない)
+	// Boxと同じように求める
+	// 法線を回転
+	
+	BoxHitDirection hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_NO_HIT;
+	
+	BoxData box = obb.GetBoxData();
+	//1 Xが多い
+	//2 Yが多い
+	//3 Zが多い
+	char top = 0;
+
+	// 角度のマイナス分回転
+	Vector3 rotSphere = LibMath::RotateZXYVector3(sphere.GetPosition(), -angle);
+
+	//ボックスへのベクトル
+	Vector3 sphereToVector = box.GetPosition() - rotSphere;
+
+	if (abs(sphereToVector.x) > abs(sphereToVector.y) &&
+		abs(sphereToVector.x) > box.GetSize().x / 2)
+	{
+		top = 1;
+		if (abs(sphereToVector.z) > abs(sphereToVector.x) &&
+			abs(sphereToVector.z) > box.GetSize().z / 2)
+			top = 3;
+	}
+	else
+	{
+		top = 2;
+		if (abs(sphereToVector.z) > abs(sphereToVector.y) &&
+			abs(sphereToVector.z) > box.GetSize().z / 2)
+			top = 3;
+	}
+
+	if (top == 1)
+	{
+		if (sphereToVector.x >= 0)
+		{
+			hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_LEFT;
+		}
+		else
+		{
+			hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_RIGHT;
+		}
+	}
+	else if (top == 2)
+	{
+		if (sphereToVector.y >= 0)
+		{
+			hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_DOWN;
+		}
+		else
+		{
+			hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_UP;
+		}
+	}
+	else if (top == 3)
+	{
+		if (sphereToVector.z >= 0)
+		{
+			hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_FRONT;
+		}
+		else
+		{
+			hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_BACK;
+		}
+	}
+
+	
+	// 法線を求めてセット
+	Vector3 normal = CalcHitBoxSurfaceNormal(hitDirection);
+	sphereCalcResult->SetOBBHitSurfaceNormal(LibMath::RotateZXYVector3(normal, angle));
+	
+	return result;
 }
 
 bool Collision::SphereAndCapsule(const SphereData& sphere, const CapsuleData& capsule)

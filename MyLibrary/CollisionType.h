@@ -21,6 +21,7 @@ namespace MelLib
 	{
 		bool sphere = true;
 		bool box = true;
+		bool obb = true;
 		bool ray = true;
 		bool segment = true;
 		bool plane = true;
@@ -49,6 +50,7 @@ namespace MelLib
 	{
 		SPHERE,
 		BOX,
+		OBB,
 		PLANE,
 		TRIANGLE,
 		BOARD,
@@ -199,42 +201,34 @@ namespace MelLib
 	{
 		//箱のどの部分にぶつかったかという情報
 		BoxHitDirection boxHitDirection = BoxHitDirection::BOX_HIT_DIRECTION_NO_HIT;
+		
+
+		Vector3 boxHitSurfaceNormal;
+		Vector3 obbHitSurfaceNormal;
 
 
 	public:
+		/// <summary>
+		/// 当たったBOXのどこに当たったかを取得します。
+		/// </summary>
+		/// <returns></returns>
 		BoxHitDirection GetBoxHitDirection()const { return boxHitDirection; }
-		MelLib::Vector3 GetBoxHitSurfaceNormal()const 
-		{
-			MelLib::Vector3 normal;
-			switch (boxHitDirection)
-			{
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_NO_HIT:
-				break;
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_UP:
-				normal = MelLib::Vector3(0, 1, 0);
-				break;
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_DOWN:
-				normal = MelLib::Vector3(0, -1, 0);
-				break;
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_LEFT:
-				normal = MelLib::Vector3(-1, 0, 0);
-				break;
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_RIGHT:
-				normal = MelLib::Vector3(1, 0, 0);
-				break;
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_FRONT:
-				normal = MelLib::Vector3(0, 0, -1);
-				break;
-			case MelLib::BoxHitDirection::BOX_HIT_DIRECTION_BACK:
-				normal = MelLib::Vector3(0, 0, 1);
-				break;
-			default:
-				break;
-			}
-			return normal;
-		}
+		
+		/// <summary>
+		/// 当たったBOXの面の法線を取得します。
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetBoxHitSurfaceNormal()const { return boxHitSurfaceNormal; }
+		
+		/// <summary>
+		/// 当たったOBBの面の法線を取得します。
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetOBBHitSurfaceNormal()const { return obbHitSurfaceNormal; }
 
 		void SetBoxHitDirection(BoxHitDirection dir) { boxHitDirection = dir; }
+		void SetBoxHitSurfaceNormal(const Vector3& normal) { boxHitSurfaceNormal = normal; }
+		void SetOBBHitSurfaceNormal(const Vector3& normal) { obbHitSurfaceNormal = normal; }
 	};
 
 	//球
@@ -293,6 +287,23 @@ namespace MelLib
 #pragma endregion
 
 #pragma region OBB
+	
+	class OBBData
+	{
+	private:
+		BoxData boxData;
+		Vector3 angle;
+	public:
+		
+		BoxData GetBoxData()const { return boxData; }
+		BoxData& GetRefBoxData() { return boxData; }
+		Vector3 GetAngle()const { return angle; }
+
+
+		void SetAngle(const Vector3& angle) { this->angle = angle; }
+
+
+	};
 
 #pragma endregion
 

@@ -353,12 +353,12 @@ void GameObjectManager::Update()
 			{
 
 				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj1->GetSphereDatas();
-				std::unordered_map < std::string, std::vector<BoxData>>boxData = obj2->GetBoxDatas();
+				std::unordered_map < std::string, std::vector<BoxData>>boxDatas = obj2->GetBoxDatas();
 
 				// 名前分ループ
 				for (const auto& sphereData : sphereDatas)
 				{
-					for (const auto& boxData : boxData)
+					for (const auto& boxData : boxDatas)
 					{
 						std::vector<SphereData>sphereDataVec = sphereData.second;
 						size_t sphereDataSize = sphereDataVec.size();
@@ -477,6 +477,138 @@ void GameObjectManager::Update()
 			}
 
 #pragma endregion
+
+#pragma region sphere & OBB
+			if (collisionFlags[objI].sphere
+				&& collisionFlags[objJ].obb)
+			{
+
+				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj1->GetSphereDatas();
+				std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj2->GetOBBDatas();
+
+				// 名前分ループ
+				for (const auto& sphereData : sphereDatas)
+				{
+					for (const auto& obbData : obbDatas)
+					{
+						std::vector<SphereData>sphereDataVec = sphereData.second;
+						size_t sphereDataSize = sphereDataVec.size();
+						std::vector<OBBData>obbDataVec = obbData.second;
+						size_t obbDataSize = obbDataVec.size();
+
+						for (int colI = 0; colI < sphereDataSize; colI++)
+						{
+							for (int colJ = 0; colJ < obbDataSize; colJ++)
+							{
+								SphereCalcResult result1;
+								//BoxCalcResult result2;
+
+								if (Collision::SphereAndOBB
+								(
+									sphereDataVec[colI],
+									&result1,
+									obbDataVec[colJ]/*,
+									&result2*/
+								))
+								{
+									obj1->SetSphereCalcResult(result1);
+									//obj2->SetBoxCalcResult(result2);
+
+									//obj1->SetHitBoxData(boxDataVec[colJ]);
+									obj2->SetHitSphereData(sphereDataVec[colI]);
+
+									//hitを呼び出す
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::SPHERE,
+										sphereData.first,
+										ShapeType3D::OBB,
+										obbData.first
+									);
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::OBB,
+										obbData.first,
+										ShapeType3D::SPHERE,
+										sphereData.first
+									);
+								}
+							}
+						}
+
+					}
+				}
+
+
+			}
+
+			if (collisionFlags[objJ].sphere
+				&& collisionFlags[objI].obb)
+			{
+				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj2->GetSphereDatas();
+				std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj1->GetOBBDatas();
+
+				// 名前分ループ
+				for (const auto& sphereData : sphereDatas)
+				{
+					for (const auto& obbData : obbDatas)
+					{
+
+						std::vector<SphereData>sphereDataVec = sphereData.second;
+						size_t sphereDataSize = sphereDataVec.size();
+						std::vector<OBBData>obbDataVec = obbData.second;
+						size_t obbDataSize = obbDataVec.size();
+
+						for (int colI = 0; colI < sphereDataSize; colI++)
+						{
+							for (int colJ = 0; colJ < obbDataSize; colJ++)
+							{
+								SphereCalcResult result1;
+								//BoxCalcResult result2;
+
+								if (Collision::SphereAndOBB
+								(
+									sphereDataVec[colI],
+									&result1,
+									obbDataVec[colJ]/*,
+									&result2*/
+								))
+								{
+									obj2->SetSphereCalcResult(result1);
+									//obj1->SetBoxCalcResult(result2);
+
+									obj1->SetHitSphereData(sphereDataVec[colI]);
+									//obj2->SetHitBoxData(obbDataVec[colJ]);
+
+									//hitを呼び出す
+									obj2->Hit
+									(
+										*obj1,
+										ShapeType3D::SPHERE,
+										sphereData.first,
+										ShapeType3D::OBB,
+										obbData.first
+									);
+									obj1->Hit
+									(
+										*obj2,
+										ShapeType3D::OBB,
+										obbData.first,
+										ShapeType3D::SPHERE,
+										sphereData.first
+									);
+								}
+							}
+						}
+					}
+				}
+
+			}
+
+#pragma endregion
+
 
 #pragma region Sphere & Capsule
 			if (collisionFlags[objI].sphere

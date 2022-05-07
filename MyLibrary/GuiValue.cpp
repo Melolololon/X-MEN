@@ -18,6 +18,7 @@ MelLib::GuiInt::~GuiInt()
 	GuiValueManager::GetInstance()->EraseGuiValue(typeid(int), WINDOW_NAME, LAVEL);
 }
 
+
 MelLib::GuiFloat::GuiFloat(float value, const std::string& windowName, const std::string& lavel, float minNumber, float maxNumber)
 	:value(value)
 	, MIN_VALUE(minNumber)
@@ -55,12 +56,18 @@ MelLib::GuiBool::GuiBool(bool value, const std::string& windowName, const std::s
 	, WINDOW_NAME(windowName)
 	, LAVEL(lavel)
 {
+	GuiValueManager::GetInstance()->GetGuiData(value, windowName, lavel);
 	GuiValueManager::GetInstance()->AddGuiValue(this, windowName, lavel);
 }
 
 MelLib::GuiBool::~GuiBool()
 {
 	GuiValueManager::GetInstance()->EraseGuiValue(typeid(bool), WINDOW_NAME, LAVEL);
+}
+
+void MelLib::GuiBool::SetLoadData()
+{
+	GuiValueManager::GetInstance()->GetGuiData(value, WINDOW_NAME, LAVEL);
 }
 
 MelLib::GuiOption* MelLib::GuiOption::GetInstance()

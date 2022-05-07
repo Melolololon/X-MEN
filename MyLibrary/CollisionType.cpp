@@ -4,6 +4,8 @@
 
 using namespace MelLib;
 
+
+
 void  MelLib::Segment3DData::CalcRotatePosition()
 {
 

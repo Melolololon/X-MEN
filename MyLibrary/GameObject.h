@@ -122,6 +122,7 @@ namespace MelLib
 		std::unordered_map<std::string, std::vector<BoardData>>boardDatas;
 		std::unordered_map<std::string, std::vector<CapsuleData>>capsuleDatas;
 		std::unordered_map<std::string, std::vector<TriangleData>>triangleDatas;
+		std::unordered_map<std::string, std::vector<OBBData>>obbDatas;
 
 #pragma endregion
 
@@ -439,6 +440,7 @@ namespace MelLib
 
 		std::unordered_map<std::string, std::vector<SphereData>> GetSphereDatas() const { return sphereDatas; }
 		std::unordered_map<std::string, std::vector<BoxData>> GetBoxDatas() const { return boxDatas; }
+		std::unordered_map<std::string, std::vector<OBBData>> GetOBBDatas() const { return obbDatas; }
 		std::unordered_map<std::string, std::vector<Segment3DData>> GetSegmentDatas() const { return segment3DDatas; }
 		std::unordered_map<std::string, std::vector<PlaneData>> GetPlaneDatas() const { return planeDatas; }
 		std::unordered_map<std::string, std::vector<BoardData>> GetBoardDatas()const { return boardDatas; }

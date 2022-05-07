@@ -46,7 +46,7 @@ namespace MelLib
 		// 親ノードの行列も乗算したやつ
 		DirectX::XMMATRIX globalTransform;
 
-		Node* parentNode;
+		Node* parentNode = nullptr;
 	};
 
 
