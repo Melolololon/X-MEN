@@ -41,7 +41,7 @@ MelLib::Vector3 Player::GetInputVector()
 			isInput = true;
 		}
 	}
-	
+
 	// 移動キーを入力しているなら方向ベクトルを更新
 	if (isInput)dirVector = moveVector.Normalize();
 
@@ -177,6 +177,17 @@ void Player::Hit
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}
+
+	//// 壁とヒットしたとき
+	//if (typeid(object) == typeid(FieldObjectWall))
+	//{
+	//	MelLib::Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+	//	MelLib::Vector3 reflectVector = otherNormal * oldVelocity;
+	// 
+	//	MelLib::Vector3 pos = GetPosition() - reflectVector;
+	// 
+	//	SetPosition(pos);
+	//}
 }
 
 void Player::AddUltimatekillValue(int value)
