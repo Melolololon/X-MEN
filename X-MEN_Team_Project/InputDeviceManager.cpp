@@ -28,7 +28,7 @@ void InputDeviceManager::Update()
 	}
 
 	// コントローラーのスティックが入力されているならコントローラーフラグをオンにする
-	if (MelLib::Input::LeftStickAngle() > 0 || MelLib::Input::RightStickAngle() > 0)
+	if (MelLib::Input::LeftStickAngle(InputDeviceInfo::STICK_START_ANGLE) > 0 || MelLib::Input::RightStickAngle(InputDeviceInfo::STICK_START_ANGLE) > 0)
 	{
 		isInputController = true;
 		currentInputDevice = InputDeviceType::CONTROLLER;
