@@ -1,5 +1,6 @@
 #pragma once
 #include "UltimateSkill.h"
+#include "NormalBarrier.h"
 #include<GameObject.h>
 #include "Ball.h"
 
@@ -17,15 +18,14 @@ private:
 	// 必殺技ゲージ
 	float ultimateSkillValue;
 
-	bool isBarrier;
 	bool isThrowingBall;
 
 	UltimateSkill ultimateSkill;
 
 	MelLib::Vector3 dirVector;
-	// Barrier* barrier;
 
 	std::shared_ptr<Ball> pBall;
+	std::shared_ptr<NormalBarrier> barrier;
 
 private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
@@ -49,6 +49,9 @@ private:
 
 	// ボールを追尾させる
 	void TrackingBall();
+
+	// 保持している通常バリアの方向を更新する
+	void UpdateBarrierDirection();
 
 public:
 	Player();
@@ -100,6 +103,8 @@ public:
 	void SetIsBarrier(bool flag);
 	// ボールを投げるフラグを書き換える
 	void SetIsThrowingBall(bool flag);
+	// プレイヤーが使用できる通常のバリアをセット
+	void SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier);
 #pragma endregion
 };
 

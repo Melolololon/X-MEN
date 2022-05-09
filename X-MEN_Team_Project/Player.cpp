@@ -42,7 +42,7 @@ MelLib::Vector3 Player::GetInputVector()
 			isInput = true;
 		}
 	}
-	
+
 	// 移動キーを入力しているなら方向ベクトルを更新
 	if (isInput)dirVector = moveVector.Normalize();
 
@@ -71,21 +71,19 @@ void Player::CalclateDirection()
 void Player::UseBarrier(bool key)
 {
 	if (!key)return;
+	if (!barrier)return;
 
 	// バリアを使用中なら即終了
-	if (isBarrier)return;
-	//// ボールを保持しているならバリアは展開できない
-	//if(ball)return;
+	if (barrier.get()->GetIsOpen())return;
+	// ボールを保持しているならバリアは展開できない
+	if(!pBall.get()->GetIsThrowed())return;
 
-	isBarrier = true;
+	barrier.get()->SetIsOpen(true);
 }
 
 void Player::ThrowingBall(bool key)
 {
 	if (!key)return;
-
-	//// ボールを保持していないなら終了
-	//if(!ball)return;
 
 	//ボールが投げられている場合はリターン
 	if (pBall->GetIsThrowed()) {
@@ -120,14 +118,21 @@ void Player::TrackingBall()
 	pBall->SetBallPos(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f));
 }
 
+void Player::UpdateBarrierDirection()
+{
+	if (!barrier)return;
+
+	barrier.get()->SetBarrierPosition(GetPosition(), dirVector);
+}
+
 Player::Player()
 	: hp(PlayerInitializeInfo::MAX_HP)
 	, ultimateSkillValue(0)
-	, isBarrier(false)
 	, isThrowingBall(false)
 	, ultimateSkill(UltimateSkill())
 	, dirVector(MelLib::Vector3())
 	, pBall(std::make_shared<Ball>())
+	, barrier(nullptr)
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
@@ -157,6 +162,7 @@ void Player::Update()
 	Move(GetInputVector());
 
 	TrackingBall();
+	UpdateBarrierDirection();
 
 	ultimateSkill.Update();
 
@@ -165,7 +171,7 @@ void Player::Update()
 	ThrowingBall(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
-	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
 }
 
 void Player::Draw()
@@ -193,6 +199,17 @@ void Player::Hit
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}
+
+	//// 壁とヒットしたとき
+	//if (typeid(object) == typeid(FieldObjectWall))
+	//{
+	//	MelLib::Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+	//	MelLib::Vector3 reflectVector = otherNormal * oldVelocity;
+	// 
+	//	MelLib::Vector3 pos = GetPosition() - reflectVector;
+	// 
+	//	SetPosition(pos);
+	//}
 }
 
 void Player::AddUltimatekillValue(int value)
@@ -207,7 +224,9 @@ void Player::Damage(int value)
 
 bool Player::GetIsBarrier() const
 {
-	return isBarrier;
+	if (!barrier)return false;
+
+	return barrier.get()->GetIsOpen();
 }
 
 bool Player::GetIsThrowingBall() const
@@ -227,10 +246,16 @@ MelLib::Vector3 Player::GetDirection() const
 
 void Player::SetIsBarrier(bool flag)
 {
-	isBarrier = flag;
+	if (!barrier)return;
+	barrier.get()->SetIsOpen(flag);
 }
 
 void Player::SetIsThrowingBall(bool flag)
 {
 	isThrowingBall = flag;
+}
+
+void Player::SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier)
+{
+	barrier = setBarrier;
 }
