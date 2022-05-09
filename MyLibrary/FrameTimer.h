@@ -9,7 +9,7 @@
 
 namespace MelLib
 {
-	//フレームタイマー(プログラム依存)
+	//フレームタイマー(プログラム依存タイマー)
 	class FrameTimer
 	{
 	private:
@@ -146,6 +146,7 @@ namespace MelLib
 		/// </summary>
 		/// <param name="flag"></param>
 		void SetStopFlag(const bool flag) { isStop = flag; }
+
 
 		/// <summary>
 		/// 最大または最小計測時間に達したときに、時間を自動的にリセットするかどうかのフラグをセットします。

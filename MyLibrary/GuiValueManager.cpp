@@ -1,6 +1,24 @@
 #include "GuiValueManager.h"
 #include"ImguiManager.h"
+#include"Random.h"
+#include"StringSupport.h"
 #include<fstream>
+#include<filesystem>
+
+const std::string MelLib::GuiValueManager::DATA_FORMAT = ".guid";
+const std::unordered_map<std::string, char>MelLib::GuiValueManager::DATA_FORMAT_STR =
+{
+	{"int",'i'},
+	{"bool",'b'},
+	{"Vector3",'3'},
+	{"float",'f'},
+};
+
+MelLib::GuiValueManager::GuiValueManager() 
+{
+	// ここで読み込むと開くの失敗する
+	//Load();
+}
 
 void MelLib::GuiValueManager::AddCreateWindowName(const std::string& windowName)
 {
@@ -13,86 +31,208 @@ void MelLib::GuiValueManager::AddCreateWindowName(const std::string& windowName)
 
 
 
-void MelLib::GuiValueManager::Save(const std::string& windowName, const std::string& lavel, const char*& data, size_t dataSize, bool& refFlag)
+void MelLib::GuiValueManager::Save(const std::string& windowName, const std::string& lavel, const char*& data, const type_info& type,const size_t dataSize, bool& refFlag)
 {
-	const std::string EXPORT_PATH = GuiOption::GetInstance()->GetGuiDataExportPath() + windowName + ".guid";
 
-	std::ifstream file(EXPORT_PATH,std::ios_base::binary);
-	if (!file) 
+	// 削除されたGuiのパラメータは書き出さないようにする
+
+#pragma region 旧
+
+
+	//bool fileOpen = true;
+	//std::fstream file(EXPORT_PATH,std::ios_base::binary|std::ios_base::in);
+	//if (!file)
+	//{
+	//	fileOpen = false;
+	//}
+
+
+	//std::string dataName = "[" + lavel + "]";
+
+	//size_t fileSize = 0;
+	//file.seekg(std::ios_base::end);
+	//fileSize = file.tellg();
+	//file.seekg(std::ios_base::beg);
+
+	//// 見つかった名前の末端位置(]の隣)
+	//size_t dataEndPos = 0;
+
+	//bool matchName = false;
+	//while (file)
+	//{
+	//	// 確認終了か末尾まで確認したら抜ける
+	//	size_t currentPos = file.tellg();
+	//	if (matchName || currentPos == fileSize)break;
+
+	//	std::string str;
+	//	char c = '_';
+	//	file.read(&c, 1);
+
+	//	// [を読み込んだら入る
+	//	if (c == '[') 
+	//	{
+
+	//		str += c;
+
+	//		// ]まで取得する。
+	//		while (1) 
+	//		{
+	//			file.read(&c, 1);
+	//			str += c;
+	//			if (str[str.size() - 1] == ']')
+	//			{
+	//				// 名前が一致したら二重ループを抜ける。
+	//				if (str == dataName)
+	//				{
+	//					matchName = true;
+	//					dataEndPos = file.tellg();
+	//				}
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+	//file.close();
+
+	//std::fstream oFile(EXPORT_PATH,std::ios_base::binary | std::ios_base::out);
+	//// 存在したら上書き
+	//if (matchName) 
+	//{
+	//	// シークして書き込み
+	//	//oFile.seekg(0, dataEndPos);
+	//	oFile.write(data,dataSize);
+	//}
+	//else // 名前が無かったら
+	//{
+	//	// ファイルが存在していたら末尾にシーク
+	//	if(fileOpen)oFile.seekg(std::ios_base::end);
+
+	//	// 名前とデータを書き込み
+	//	oFile.write(dataName.c_str(), dataName.size());
+	//	oFile.write(data, dataSize);
+
+	//}
+
+	//oFile.close();
+
+#pragma endregion
+
+	// シークして一部だけ書き換えるには、常にファイルを開いておくしかない
+	// 開き直すと消えるから
+	
+	// 一旦ウィンドウ内全部書き出しでもいいかも
+	
+	std::string param;
+	param += -1;
+
+	// 特定対策用乱数
+	char ran = static_cast<char>(Random::GetRandomNumber(100));
+	param += ran;
+
+	if (type == typeid(int))param += DATA_FORMAT_STR.at("int");
+	else if (type == typeid(float))param += DATA_FORMAT_STR.at("float");
+	else if (type == typeid(bool))param += DATA_FORMAT_STR.at("bool");
+	else if (type == typeid(MelLib::Vector3))param += DATA_FORMAT_STR.at("Vector3");
+
+	for (size_t i = 0; i < dataSize; i++)
 	{
-		std::ofstream oFile(EXPORT_PATH);
-		oFile.close();
-		file.open(EXPORT_PATH, std::ios_base::binary);
+		param += data[i];
 	}
 
-	std::string dataName = "[" + lavel + "]";
+	datas[windowName][lavel] = param;
 
-	size_t fileSize = 0;
-	file.seekg(std::ios_base::end);
-	fileSize = file.tellg();
-	file.seekg(std::ios_base::beg);
+	const std::string EXPORT_PATH = GuiOption::GetInstance()->GetGuiDataPath() + windowName + DATA_FORMAT;
 
-	// 見つかった名前の末端位置(]の隣)
-	size_t dataEndPos = 0;
-
-	bool matchName = false;
-	while (1) 
+	// 書き出し
+	std::ofstream file(EXPORT_PATH);
+	
+	for (const auto& d : datas[windowName])
 	{
-		// 確認終了か末尾まで確認したら抜ける
-		size_t currentPos = file.tellg();
-		if (matchName || currentPos == fileSize)break;
+		std::string lavel = d.first;
+		for (auto& c : lavel) c += ran;
 
-		std::string str;
-		char c = '_';
-		file.read(&c, 1);
-
-		// [を読み込んだら入る
-		if (c == '[') 
-		{
-			
-
-			// ]まで取得する。
-			while (1) 
-			{
-				str += c;
-				file.read(&c, 1);
-				if (str[str.size() - 1] == ']')
-				{
-					// 名前が一致したら二重ループを抜ける。
-					if (str == dataName)
-					{
-						matchName = true;
-						dataEndPos = file.tellg();
-					}
-					break;
-				}
-			}
-		}
+		file.write(lavel.c_str(), lavel.size());
+		file.write(d.second.c_str(), d.second.size());
 	}
+
 	file.close();
-
-	std::fstream oFile(EXPORT_PATH);
-	// 存在したら上書き
-	if (matchName) 
-	{
-		// シークして書き込み
-		oFile.seekg(0, dataEndPos);
-		oFile.write(data,dataSize);
-	}
-	else // 名前が無かったら末尾に追加
-	{
-		// 末尾にシーク
-		oFile.seekg(std::ios_base::end);
-
-		// 名前とデータを書き込み
-		oFile.write(dataName.c_str(), dataName.size());
-		oFile.write(data, dataSize);
-	}
-
-	oFile.close();
-
 	// Imguiの変更確認フラグをfalseに
 	refFlag = false;
+}
+
+void MelLib::GuiValueManager::Load()
+{
+	std::string importPath = GuiOption::GetInstance()->GetGuiDataPath();
+
+	if (importPath.size() == 0)importPath = std::filesystem::current_path().string();
+
+	for (const auto& p : std::filesystem::directory_iterator(importPath))
+	{
+		std::string filePath = p.path().string();
+		if (filePath.find(DATA_FORMAT) != std::string::npos) 
+		{
+			std::string fileName = StringSupport::ExtractionFileName(filePath);
+			
+			fileName.erase(fileName.begin() + (fileName.size() - DATA_FORMAT.size()), fileName.end());
+
+			std::ifstream file(filePath);
+
+			if (!file) 
+			{
+				int z = 0;
+			}
+
+			std::string lavel;
+			char c = 0;
+			while (1) 
+			{
+				file.read(&c, 1);
+				if (c == -1)break;
+				lavel += c;
+			}
+
+			std::string param;
+			param += -1;
+
+			// 設定した乱数を取得
+			char randNum = 0;
+			file.read(&randNum, 1);
+			// 減算してちゃんとした名前に戻す
+			for (auto& c : lavel)c -= randNum;
+			param += randNum;
+			
+
+			// 型の取得
+			char formatChar = 0;
+			file.read(&formatChar, 1);
+			param += formatChar;
+
+			if (formatChar == DATA_FORMAT_STR.at("int")
+				|| formatChar == DATA_FORMAT_STR.at("float"))
+			{
+				char value[4];
+				file.read(value, 4);
+
+				for (int i = 0; i < 4; i++)param += value[i];
+			}
+			else if (formatChar == DATA_FORMAT_STR.at("bool"))
+			{
+				char value;
+				file.read(&value, 1); 
+				param += value;
+			}
+			else if(formatChar == DATA_FORMAT_STR.at("Vector3"))
+			{
+				char value[sizeof(Vector3)];
+				file.read(value, sizeof(Vector3));
+				for (int i = 0; i < sizeof(Vector3); i++)param += value[i];
+			}
+
+			datas[fileName][lavel] = param;
+
+			file.close();
+		}
+	}
 }
 
 
@@ -151,6 +291,11 @@ void MelLib::GuiValueManager::EraseGuiValue(const type_info& type, const std::st
 	}
 }
 
+void MelLib::GuiValueManager::Initialize()
+{
+	Load();
+}
+
 void MelLib::GuiValueManager::Update()
 {
 	// 三種類の配列見て、Window名が一緒だったら1つのウィンドウにまとめる
@@ -171,7 +316,7 @@ void MelLib::GuiValueManager::Update()
 			if (changeFlag) 
 			{
 				const char* data = reinterpret_cast<char*>(&num);
-				Save(name, LAVEL, data, sizeof(num), changeFlag);
+				Save(name, LAVEL, data, typeid(num),sizeof(num), changeFlag);
 				guiInt = num;
 			}
 		}
@@ -187,7 +332,7 @@ void MelLib::GuiValueManager::Update()
 			if (changeFlag)
 			{
 				const char* data = reinterpret_cast<char*>(&num);
-				Save(name, LAVEL, data, sizeof(num), changeFlag);
+				Save(name, LAVEL, data, typeid(num), sizeof(num), changeFlag);
 				guiFloat = num;
 			}
 		}
@@ -203,7 +348,7 @@ void MelLib::GuiValueManager::Update()
 			if (changeFlag)
 			{
 				const char* data = reinterpret_cast<char*>(&num);
-				Save(name, LAVEL, data, sizeof(num), changeFlag);
+				Save(name, LAVEL, data, typeid(num), sizeof(num), changeFlag);
 				guiVector3 = num;
 			}
 		}
@@ -219,7 +364,7 @@ void MelLib::GuiValueManager::Update()
 			if (changeFlag)
 			{
 				const char* data = reinterpret_cast<char*>(&flag);
-				Save(name, LAVEL, data, sizeof(flag), changeFlag);
+				Save(name, LAVEL, data, typeid(flag), sizeof(flag), changeFlag);
 				guiBool = flag;
 			}
 		}
@@ -227,3 +372,16 @@ void MelLib::GuiValueManager::Update()
 		ImguiManager::GetInstance()->EndDrawWindow();
 	}
 }
+
+void MelLib::GuiValueManager::GetGuiData(bool& refFlag, const std::string& windowName, const std::string& lavel) const
+{
+	// 存在するか確認
+	if (datas.find(windowName) == datas.end())return;
+	if (datas.at(windowName).find(lavel) == datas.at(windowName).end())return;
+
+	// あったら格納
+	std::string param = datas.at(windowName).at(lavel);
+	char flag = param[param.size() - 1];
+	refFlag = static_cast<bool>(flag);
+}
+

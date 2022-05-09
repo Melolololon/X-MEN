@@ -75,6 +75,13 @@ void MelLib::GameObject::SetModelAngle(const Vector3& angle)
 
 void MelLib::GameObject::SetDataAngle(const Vector3& angle)
 {
+	for (auto& d : obbDatas)
+	{
+		for (auto& d2 : d.second)
+		{
+			d2.SetAngle(angle);
+		}
+	}
 
 	for (auto& d : boardDatas)
 	{

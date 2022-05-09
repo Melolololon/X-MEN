@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES
 #include<math.h>
 #include"Library.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 //GameにMathクラスがあったから名前をMathにするとエラーが出る
 //Math意外だとエラー出なかったので、Mathという名前自体がいけないのかもしれない
 //エラー出ないこともある

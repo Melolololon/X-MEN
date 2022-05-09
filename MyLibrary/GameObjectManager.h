@@ -1,7 +1,7 @@
 #pragma once
 #include"GameObject.h"
 #include"GameObject2D.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"MouseCursor.h"
 
 #include<vector>

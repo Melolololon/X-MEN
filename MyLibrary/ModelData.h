@@ -14,7 +14,7 @@
 #include"Texture.h"
 #include"Color.h"
 #include"BufferData.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 
 #include"Material.h"
 
@@ -46,7 +46,7 @@ namespace MelLib
 		// 親ノードの行列も乗算したやつ
 		DirectX::XMMATRIX globalTransform;
 
-		Node* parentNode;
+		Node* parentNode = nullptr;
 	};
 
 

@@ -25,7 +25,7 @@ RenderTarget* RenderTarget::pCurrentSelectRTs;
 
 void MelLib::RenderTarget::ConstDataMat()
 {
-	SpriteConstBufferData* constBufferData;
+	SpriteConstBufferData* constBufferData = nullptr;
 	constBuffer->Map(0, nullptr, (void**)&constBufferData);
 
 	constBufferData->addColor = constData.addColor;
@@ -37,7 +37,7 @@ void MelLib::RenderTarget::ConstDataMat()
 
 void MelLib::RenderTarget::MatrixMap()
 {
-	SpriteConstBufferData* constBufferData;
+	SpriteConstBufferData* constBufferData = nullptr;
 	constBuffer->Map(0, nullptr, (void**)&constBufferData);
 
 	DirectX::XMMATRIX matWorld = DirectX::XMMatrixIdentity();
@@ -103,7 +103,7 @@ RenderTarget::RenderTarget(const Color& color)
 		&constBuffer
 	);
 
-	SpriteVertex* vertex;
+	SpriteVertex* vertex = nullptr;
 	vertexBufferSet.vertexBuffer->Map(0, nullptr, (void**)&vertex);
 	vertices[0].pos = { -0.5f,0.5f ,0.0f };
 	vertices[1].pos = { -0.5f,-0.5f ,0.0f };

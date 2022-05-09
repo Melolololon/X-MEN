@@ -240,7 +240,7 @@
     <ClCompile Include="Material.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionType.cpp">
+    <ClCompile Include="CollisionDetectionData.cpp">
       <Filter>ソース ファイル\Struct</Filter>
     </ClCompile>
     <ClCompile Include="Texture3D.cpp">
@@ -335,6 +335,9 @@
     </ClCompile>
     <ClCompile Include="GuiValueManager.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StringSupport.cpp">
+      <Filter>ソース ファイル\Support</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -506,7 +509,7 @@
     <ClInclude Include="Texture.h">
       <Filter>ヘッダー ファイル\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionType.h">
+    <ClInclude Include="CollisionDetectionData.h">
       <Filter>ヘッダー ファイル\Struct</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
@@ -613,6 +616,9 @@
     </ClInclude>
     <ClInclude Include="GuiValueManager.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StringSupport.h">
+      <Filter>ヘッダー ファイル\Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

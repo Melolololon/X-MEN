@@ -1,7 +1,7 @@
 #pragma once
 #include"Vector.h"
 #include"Sprite2D.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 
 #include<unordered_map>
 
