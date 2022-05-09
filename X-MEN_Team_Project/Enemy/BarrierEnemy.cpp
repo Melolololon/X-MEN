@@ -10,7 +10,7 @@ BarrierEnemy::BarrierEnemy()
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
 	// 見た目がわかりやすいように 後程モデルデータができたときに修正
-	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
 
 	// 初期位置を0,0,5に
 	SetPosition(MelLib::Vector3(0, 0, 5));
@@ -25,6 +25,9 @@ BarrierEnemy::BarrierEnemy()
 	hp = BarrierEnemyStatus::MAX_HP;
 	playerDir = EnemyStatus::initPlayerDir;
 	playerPos = EnemyStatus::initPlayerPos;
+	// マジックナンバーではあるので後で変更検討
+	ChangePoseFrameCount = 0;
+	ballDir = { 20,0.1f,10 };
 }
 
 void BarrierEnemy::Move()
@@ -48,6 +51,36 @@ void BarrierEnemy::Move()
 	// 加算
 	// AddPosition、SetPositionは当たり判定も一緒に動く
 	AddPosition(moveVector);
+
+
+	// 方向変換用
+	ChangePose();
+}
+
+
+void BarrierEnemy::ChangePose()
+{
+
+	MelLib::Vector3 temp = GetAngle();
+
+	const float PI = 3.1415926f;
+	const float CALC_ANGLE = 180;
+
+	// 方向ベクトルを元に向く方向を変更
+	
+	
+	// 前の角度を取得
+	MelLib::Vector3 angle = GetAngle();
+
+	MelLib::Vector3 result;
+
+	// atan2で方向ベクトルから計算
+	result.x = atan2f(-ballDir.z, ballDir.x) * CALC_ANGLE / PI;
+	result.y = atan2f(ballDir.x, ballDir.y) * CALC_ANGLE / PI;
+	result.z = atan2f(ballDir.y, -ballDir.z) * CALC_ANGLE / PI;
+
+	SetAngle(result);
+
 }
 
 void BarrierEnemy::Update()
@@ -61,7 +94,7 @@ void BarrierEnemy::Update()
 		eraseManager = true;
 	}
 
-	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
 
 }
 

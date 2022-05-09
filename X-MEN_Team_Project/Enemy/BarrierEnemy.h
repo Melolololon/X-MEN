@@ -6,18 +6,24 @@ namespace BarrierEnemyStatus
 	const float MAX_HP = 200;
 
 	const float DISTANCE_TO_PLAYER = 500;
+	
+	const int CHANGE_POSE_FRAME = 120;
 }
 
 class BarrierEnemy : public Enemy
 {
 private:
 
-	// ボールの方向に向くための方向ベクトル 後程使用してモデルの向きを変更する
+	// ボールの方向ベクトル 後程使用してモデルの向きを変更する
 	MelLib::Vector3 ballDir;
+	// 方向を変えるためのフレーム計測
+	int ChangePoseFrameCount;
 
 private:
 
 	void Move() override;
+
+	void ChangePose();
 
 public:
 	BarrierEnemy();
