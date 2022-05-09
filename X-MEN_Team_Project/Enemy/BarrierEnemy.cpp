@@ -27,7 +27,7 @@ BarrierEnemy::BarrierEnemy()
 	playerPos = EnemyStatus::initPlayerPos;
 	// マジックナンバーではあるので後で変更検討
 	ChangePoseFrameCount = 0;
-	ballDir = { 20,0.1f,10 };
+	ballDir = { 0,0,0 };
 }
 
 void BarrierEnemy::Move()

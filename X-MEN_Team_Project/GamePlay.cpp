@@ -17,6 +17,9 @@ void GamePlay::Initialize()
 
 	pPlayer.get()->SetNormalBarrier(barrier);
 
+	pFollowEnemy = std::make_shared<FollowEnemy>();
+	pBarrierEnemy = std::make_shared<BarrierEnemy>();
+
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
@@ -26,6 +29,10 @@ void GamePlay::Initialize()
 	// テストオブジェクト追加
 	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
 
+	// 敵のテスト
+	MelLib::GameObjectManager::GetInstance()->AddObject(pFollowEnemy);
+	MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
+
 	fieldObjectManager->Initialize();
 }
 
@@ -34,6 +41,9 @@ void GamePlay::Update()
 	// マネージャーの更新
 	// オブジェクトの更新処理、判定処理、削除処理が行われる
 	MelLib::GameObjectManager::GetInstance()->Update();
+
+	// 敵のテスト
+	pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
