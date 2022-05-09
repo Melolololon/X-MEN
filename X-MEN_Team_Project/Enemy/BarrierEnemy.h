@@ -22,6 +22,8 @@ private:
 
 	// バリア
 	std::shared_ptr<EnemyBarrier> pBarrier;
+	// 正面ベクトル
+	MelLib::Vector3 frontDir;
 
 private:
 
