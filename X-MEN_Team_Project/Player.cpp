@@ -15,8 +15,8 @@ MelLib::Vector3 Player::GetInputVector()
 	// 現在の入力デバイスをもとに移動ベクトルを計算
 	if (currentInputDevice == InputDeviceType::CONTROLLER)
 	{
-		moveVector = MelLib::Input::LeftStickVector3();
-		isInput = MelLib::Input::LeftStickAngle() > 0 ? true : false;
+		moveVector = MelLib::Input::LeftStickVector3(InputDeviceInfo::STICK_START_ANGLE);
+		isInput = MelLib::Input::LeftStickAngle(InputDeviceInfo::STICK_START_ANGLE) > 0 ? true : false;
 	}
 
 	if (currentInputDevice == InputDeviceType::KEYBOARD)
