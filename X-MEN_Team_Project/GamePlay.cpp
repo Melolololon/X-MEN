@@ -18,7 +18,10 @@ void GamePlay::Initialize()
 	pPlayer.get()->SetNormalBarrier(barrier);
 
 	pFollowEnemy = std::make_shared<FollowEnemy>();
+	pEnemyBarrier = std::make_shared<EnemyBarrier>();
+	pEnemyBarrier.get()->IsOpen();
 	pBarrierEnemy = std::make_shared<BarrierEnemy>();
+	pBarrierEnemy.get()->SetBarrier(pEnemyBarrier);
 
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
@@ -32,6 +35,8 @@ void GamePlay::Initialize()
 	// 敵のテスト
 	MelLib::GameObjectManager::GetInstance()->AddObject(pFollowEnemy);
 	MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
+	MelLib::GameObjectManager::GetInstance()->AddObject(pEnemyBarrier);
+
 
 	fieldObjectManager->Initialize();
 }

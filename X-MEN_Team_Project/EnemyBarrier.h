@@ -1,11 +1,11 @@
 #pragma once
 #include<GameObject.h>
-namespace
+namespace aaaa
 {
 	//耐久値の初期値
-	int hp = 150;
+	const int HP = 150;
 	//Playerとバリアの間の間隔
-	float radius = 3.0f;
+	const float RADIUS = 3.0f;
 }
 class EnemyBarrier :
 	public MelLib::GameObject

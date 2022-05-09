@@ -10,7 +10,7 @@ EnemyBarrier::EnemyBarrier()
 	//初期値
 	SetPosition(MelLib::Vector3(0, 0, 5));
 	SetScale(MelLib::Vector3(5, 5, 1));
-	nowHp = hp;
+	nowHp = aaaa::HP;
 	isOpen = false;
 
 	// 当たり判定の作成(球)
@@ -67,7 +67,7 @@ void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 m
 		//バリアを展開する座標
 		MelLib::Vector3 barrierPosition;
 		//引数のpositionを中心に半径radius分離れた座標を求める
-		barrierPosition = MelLib::Vector3(positon.x + (sinf(direction) * radius), positon.y, positon.z + (cosf(direction) * radius));
+		barrierPosition = MelLib::Vector3(positon.x + (sinf(direction) * aaaa::RADIUS), positon.y, positon.z + (cosf(direction) * aaaa::RADIUS));
 		SetPosition(barrierPosition);
 		//度数法→弧度法
 		SetAngle(MelLib::Vector3(0.0f, direction * 57.32484076433121f, 0.0f));
@@ -78,5 +78,5 @@ void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 m
 void EnemyBarrier::IsOpen()
 {
 	isOpen = true;
-	nowHp = hp;
+	nowHp = aaaa::HP;
 }

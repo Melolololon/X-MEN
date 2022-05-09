@@ -28,6 +28,7 @@ BarrierEnemy::BarrierEnemy()
 	// マジックナンバーではあるので後で変更検討
 	ChangePoseFrameCount = 0;
 	ballDir = { 0,0,0 };
+
 }
 
 void BarrierEnemy::Move()
@@ -55,6 +56,10 @@ void BarrierEnemy::Move()
 
 	// 方向変換用
 	ChangePose();
+
+	// バリア用
+	// 第二引数にとりあえずでボールへの方向ベクトル
+	pBarrier.get()->SetBarrierPosition(GetPosition(), ballDir);
 }
 
 
@@ -121,4 +126,9 @@ void BarrierEnemy::SetBallDir(const MelLib::Vector3& pos)
 	MelLib::Vector3 result = pos - GetPosition();
 
 	ballDir = result.Normalize();
+}
+
+void BarrierEnemy::SetBarrier(std::shared_ptr<EnemyBarrier> barrier)
+{
+	pBarrier = barrier;
 }
