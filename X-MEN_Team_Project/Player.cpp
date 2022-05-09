@@ -3,6 +3,7 @@
 #include<Input.h>
 #include "InputDeviceManager.h"
 #include"TestObject.h"
+#include <GameObjectManager.h>
 
 MelLib::Vector3 Player::GetInputVector()
 {
@@ -86,6 +87,14 @@ void Player::ThrowingBall(bool key)
 	//// ボールを保持していないなら終了
 	//if(!ball)return;
 
+	//ボールが投げられている場合はリターン
+	if (pBall->GetIsThrowed()) {
+		return;
+	}
+
+	//ボールを投げる
+	pBall->ThrowBall(GetPosition());
+
 	isThrowingBall = true;
 }
 
@@ -100,6 +109,17 @@ void Player::UseUltimateSkill(bool key)
 	ultimateSkill.Use();
 }
 
+void Player::TrackingBall()
+{
+	//ボールが投げられている場合はリターン
+	if (pBall->GetIsThrowed()) {
+		return;
+	}
+
+	//自分のちょっと右下に配置 (手に持ってるイメージ)
+	pBall->SetBallPos(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f));
+}
+
 Player::Player()
 	: hp(PlayerInitializeInfo::MAX_HP)
 	, ultimateSkillValue(0)
@@ -107,6 +127,7 @@ Player::Player()
 	, isThrowingBall(false)
 	, ultimateSkill(UltimateSkill())
 	, dirVector(MelLib::Vector3())
+	, pBall(std::make_shared<Ball>())
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
@@ -120,6 +141,9 @@ Player::Player()
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(0.5f);
+
+	//ボールをオブジェクトマネージャに追加
+	MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
 }
 
 Player::~Player()
@@ -131,6 +155,8 @@ Player::~Player()
 void Player::Update()
 {
 	Move(GetInputVector());
+
+	TrackingBall();
 
 	ultimateSkill.Update();
 
