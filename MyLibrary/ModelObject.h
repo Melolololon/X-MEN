@@ -17,7 +17,7 @@
 #include"Camera.h"
 #include"RenderTarget.h"
 #include"BufferData.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"Material.h"
 //AddColor‚Æ‚©‚Ü‚Æ‚ß‚æ‚¤!
 

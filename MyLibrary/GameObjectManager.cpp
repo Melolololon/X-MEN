@@ -1,5 +1,5 @@
 #include "GameObjectManager.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"LibMath.h"
 #include"Collision.h"
 #include"Physics.h"

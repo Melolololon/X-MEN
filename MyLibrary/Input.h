@@ -360,18 +360,30 @@ namespace MelLib
 		/// <summary>
 		/// 左スティックの角度を返します。スティックが傾いていない場合、-1を返します。
 		/// </summary>
+		/// <param name="par">何パーセント以上傾けたら入力されたことにするか</param>
+		/// <param name="padNum">コントローラー番号(1Pや2Pなどの番号のこと)</param>
 		/// <returns></returns>
-		static float LeftStickAngle(UCHAR padNum = 1);
+		static float LeftStickAngle(float par,UCHAR padNum = 1);
 
 		/// <summary>
 		/// スティックが傾いている方向をVector2で返します。
 		/// </summary>
-		static Vector2 LeftStickVector2(bool dimention3D, UCHAR padNum = 1);
+		/// <param name="par">何パーセント以上傾けたら入力されたことにするか</param>
+		/// <param name="dimention3D">Y軸を3次元と同じ(上を+)にするかどうか</param>
+		/// <param name="padNum">コントローラー番号(1Pや2Pなどの番号のこと)</param>
+		/// <returns></returns>
+		static Vector2 LeftStickVector2(float par, bool dimention3D, UCHAR padNum = 1);
 
 		/// <summary>
-		/// スティックが傾いている方向をVector3で返します。
+		/// スティックが傾いている方向をVector3で返します。上方向を入力した場合、カメラの向いている方向を返します。
 		/// </summary>
-		static Vector3 LeftStickVector3(Camera* pCamera = nullptr, bool rotX = false, bool rotY = false, UCHAR padNum = 1);
+		/// <param name="par">何パーセント以上傾けたら入力されたことにするか</param>
+		/// <param name="pCamera"></param>
+		/// <param name="rotX"></param>
+		/// <param name="rotY"></param>
+		/// <param name="padNum"></param>
+		/// <returns></returns>
+		static Vector3 LeftStickVector3(float par, Camera* pCamera = nullptr, bool rotX = false, bool rotY = false, UCHAR padNum = 1);
 #pragma endregion
 
 #pragma region 右
@@ -400,11 +412,11 @@ namespace MelLib
 		/// 右スティックが何度かを角度で返します。スティックが傾いていない場合、-1を返します。
 		/// </summary>
 		/// <returns></returns>
-		static float RightStickAngle(UCHAR padNum = 1);
+		static float RightStickAngle(float par, UCHAR padNum = 1);
 
 
-		static Vector2 RightStickVector2(bool dimention3D, UCHAR padNum = 1);
-		static Vector3 RightStickVector3(Camera* pCamera = nullptr, bool rotX = false, bool rotY = false, UCHAR padNum = 1);
+		static Vector2 RightStickVector2(float par, bool dimention3D, UCHAR padNum = 1);
+		static Vector3 RightStickVector3(float par, Camera* pCamera = nullptr, bool rotX = false, bool rotY = false, UCHAR padNum = 1);
 #pragma endregion
 
 

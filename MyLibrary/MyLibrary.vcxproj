@@ -185,7 +185,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="ClothSimulator.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="CollisionType.cpp" />
+    <ClCompile Include="CollisionDetectionData.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Emitter3D.cpp" />
     <ClCompile Include="ErrorProcess.cpp" />
@@ -510,7 +510,7 @@
     <ClInclude Include="Sound_Unused.h" />
     <ClInclude Include="BufferData.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CollisionType.h" />
+    <ClInclude Include="CollisionDetectionData.h" />
     <ClInclude Include="CreateCamera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="CreatePipeline.h" />

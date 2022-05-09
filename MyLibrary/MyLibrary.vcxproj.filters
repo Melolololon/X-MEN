@@ -240,7 +240,7 @@
     <ClCompile Include="Material.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionType.cpp">
+    <ClCompile Include="CollisionDetectionData.cpp">
       <Filter>ソース ファイル\Struct</Filter>
     </ClCompile>
     <ClCompile Include="Texture3D.cpp">
@@ -509,7 +509,7 @@
     <ClInclude Include="Texture.h">
       <Filter>ヘッダー ファイル\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionType.h">
+    <ClInclude Include="CollisionDetectionData.h">
       <Filter>ヘッダー ファイル\Struct</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">

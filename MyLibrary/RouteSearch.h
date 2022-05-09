@@ -1,7 +1,7 @@
 #pragma once
 #include"Vector.h"
 #include"Values.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 
 namespace MelLib 
 {

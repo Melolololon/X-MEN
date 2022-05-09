@@ -14,7 +14,7 @@
 #include"Texture.h"
 #include"Color.h"
 #include"BufferData.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 
 #include"Material.h"
 

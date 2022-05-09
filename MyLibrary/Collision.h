@@ -1,5 +1,5 @@
 #pragma once
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"Values.h"
 
 //計算に使う式と、計算によって得られた情報の構造体分ける?

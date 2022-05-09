@@ -3,7 +3,7 @@
 #include<vector>
 #include"Library.h"
 #include"Vector.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"Physics.h"
 
 #include"ModelObject.h"
