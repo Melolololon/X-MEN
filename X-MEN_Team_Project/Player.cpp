@@ -149,7 +149,7 @@ void Player::Update()
 	ThrowingBall(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
-	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
 }
 
 void Player::Draw()
