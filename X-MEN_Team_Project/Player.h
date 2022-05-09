@@ -9,7 +9,7 @@ namespace PlayerInitializeInfo
 }
 
 class Player :
-    public MelLib::GameObject
+	public MelLib::GameObject
 {
 private:
 	float hp;
@@ -54,13 +54,13 @@ public:
 	Player();
 
 	~Player();
-	
+
 	// XV
-    void Update()override;
-    
+	void Update()override;
+
 	//•`‰æ
 	void Draw()override;
-    
+
 	/// <summary>
 	/// “–‚½‚Á‚½‚ÉŒÄ‚Î‚ê‚éŠÖ”
 	/// </summary>
