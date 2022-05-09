@@ -53,4 +53,6 @@ public:
 	)override;
 
 
+	// セッター
+	void SetBallDir(const MelLib::Vector3& pos);
 };

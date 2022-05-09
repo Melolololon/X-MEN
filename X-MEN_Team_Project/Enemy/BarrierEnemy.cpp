@@ -75,8 +75,8 @@ void BarrierEnemy::ChangePose()
 	MelLib::Vector3 result;
 
 	// atan2で方向ベクトルから計算
-	result.x = atan2f(-ballDir.z, ballDir.x) * CALC_ANGLE / PI;
-	result.y = atan2f(ballDir.x, ballDir.y) * CALC_ANGLE / PI;
+	result.x = atan2f(ballDir.x, ballDir.y) * CALC_ANGLE / PI;
+	result.y = atan2f(-ballDir.z, ballDir.x) * CALC_ANGLE / PI;
 	result.z = atan2f(ballDir.y, -ballDir.z) * CALC_ANGLE / PI;
 
 	SetAngle(result);
@@ -113,4 +113,12 @@ void BarrierEnemy::Hit(const GameObject& object, const MelLib::ShapeType3D shape
 
 	}
 
+}
+
+void BarrierEnemy::SetBallDir(const MelLib::Vector3& pos)
+{
+	// ボールの位置への方向ベクトルをとり変数にセット
+	MelLib::Vector3 result = pos - GetPosition();
+
+	ballDir = result.Normalize();
 }

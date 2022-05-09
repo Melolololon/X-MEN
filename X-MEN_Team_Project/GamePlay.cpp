@@ -44,6 +44,7 @@ void GamePlay::Update()
 
 	// 敵のテスト
 	pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
+	pBarrierEnemy.get()->SetBallDir(pPlayer.get()->GetBallPos());
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ

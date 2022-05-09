@@ -244,6 +244,11 @@ MelLib::Vector3 Player::GetDirection() const
 	return dirVector;
 }
 
+MelLib::Vector3 Player::GetBallPos() const
+{
+	return pBall.get()->GetPosition();
+}
+
 void Player::SetIsBarrier(bool flag)
 {
 	if (!barrier)return;
