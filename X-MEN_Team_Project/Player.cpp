@@ -256,14 +256,6 @@ const MelLib::Vector3& Player::GetDirection() const
 	return dirVector;
 }
 
-const MelLib::Vector3& Player::GetBallPos() const
-{
-	//ƒ{[ƒ‹–¢ŠŽ‚Ìê‡‚Í‚Æ‚è‚ ‚¦‚¸Ž©•ª‚ÌˆÊ’u•Ô‚·
-	if (pBall == nullptr)return GetPosition();
-
-	return pBall.get()->GetPosition();
-}
-
 void Player::SetIsBarrier(bool flag)
 {
 	if (!barrier)return;

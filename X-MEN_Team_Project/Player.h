@@ -97,8 +97,6 @@ public:
 	bool GetIsUltimateSkill() const;
 	// プレイヤーが向いている方向のベクトルを取得
 	const MelLib::Vector3& GetDirection() const;
-	// ボールの位置を取得
-	const MelLib::Vector3& GetBallPos() const;
 #pragma endregion
 
 #pragma region Setter

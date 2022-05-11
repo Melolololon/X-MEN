@@ -27,9 +27,6 @@ private:
 	//“Š‚°‚ç‚ê‚½Œã‚©
 	bool isThrowed = true;
 
-	//E‚í‚ê‚½‚©
-	bool isPicked = false;
-
 private:
 
 	/// <summary>

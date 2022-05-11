@@ -38,8 +38,9 @@ void FollowEnemy::Move()
 	moveVector = playerDir * MOVE_SPEED;
 
 	// ‰ÁZ
-	// AddPositionASetPosition‚Í“–‚½‚è”»’è‚àˆê‚É“®‚­
-	AddPosition(moveVector);
+	//0512ˆê’Uˆê’è‹——£ˆÈã‹ß‚Ã‚¯‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
+	const float PLAYER_SIZE = 1.2f;
+	//AddPosition(moveVector);
 
 }
 

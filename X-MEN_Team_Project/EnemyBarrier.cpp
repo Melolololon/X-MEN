@@ -8,16 +8,18 @@ EnemyBarrier::EnemyBarrier()
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 	//初期値
-	SetPosition(MelLib::Vector3(0, 0, 5));
-	SetScale(MelLib::Vector3(5, 5, 1));
+	const MelLib::Vector3 INIT_POS = { 0,0,5 };
+	const MelLib::Vector3 INIT_SCALE = { 5,5,1 };
+	SetPosition(INIT_POS);
+	SetScale(INIT_SCALE);
 	nowHp = aaaa::HP;
 	isOpen = false;
 
-	// 当たり判定の作成(球)
-	// EnemyBarrierの座標を取得し、それをセット
-	//sphereDatas["main"].resize(1);
-	//sphereDatas["main"][0].SetPosition(GetPosition());
-	//sphereDatas["main"][0].SetRadius(0.5f);
+	// 当たり判定の作成(OBB)
+	obbDatas["main"].resize(1);
+	obbDatas["main"][0].SetPosition(GetPosition());
+	obbDatas["main"][0].SetSize(INIT_SCALE);
+	obbDatas["main"][0].SetAngle(GetAngle());
 }
 
 void EnemyBarrier::Update()

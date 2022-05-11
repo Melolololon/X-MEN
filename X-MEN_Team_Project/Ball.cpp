@@ -3,6 +3,8 @@
 #include "FieldObjectWall.h"
 #include "Enemy/FollowEnemy.h"
 #include "Enemy/BarrierEnemy.h"
+#include "NormalBarrier.h"
+#include "EnemyBarrier.h"
 #include <Random.h>
 #include <LibMath.h>
 
@@ -47,7 +49,6 @@ Ball::Ball()
 	SetColor(BALL_COLOR_YELLOW);
 
 	// 当たり判定の作成(球)
-	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(0.5f);
@@ -132,7 +133,30 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 			eraseManager = true;
 		}
 	}
+	//ノーマルバリアとの判定
+	else if (typeid(object) == typeid(NormalBarrier))
+	{
+		//反射共通処理
+		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
+		Reflection(otherNormal);
 
+		//青色セット
+		if (speed > 0) {
+			SetColor(BALL_COLOR_BLUE);
+		}
+	}
+	//エネミーバリアとの判定
+	else if (typeid(object) == typeid(EnemyBarrier))
+	{
+		//反射共通処理
+		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
+		Reflection(otherNormal);
+
+		//赤色セット
+		if (speed > 0) {
+			SetColor(BALL_COLOR_RED);
+		}
+	}
 }
 
 void Ball::ThrowBall(const Vector3& initVel)

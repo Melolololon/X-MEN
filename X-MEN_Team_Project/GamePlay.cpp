@@ -35,8 +35,8 @@ void GamePlay::Initialize()
 	//バリアのテスト
 	MelLib::GameObjectManager::GetInstance()->AddObject(barrier);
 
-	// テストオブジェクト追加
-	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
+	//// テストオブジェクト追加
+	//MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
 
 	// 敵のテスト
 	MelLib::GameObjectManager::GetInstance()->AddObject(pFollowEnemy);
@@ -54,8 +54,16 @@ void GamePlay::Update()
 	MelLib::GameObjectManager::GetInstance()->Update();
 
 	// 敵のテスト
+	pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
 	pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
-	pBarrierEnemy.get()->SetBallDir(pPlayer.get()->GetBallPos());
+
+	//ボール取得(とりあえず最初に見つかった1つ)
+	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
+		if (typeid(*v) == typeid(Ball)) {
+			pBarrierEnemy.get()->SetBallDir(v->GetPosition());
+			break;
+		}
+	}
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
