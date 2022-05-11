@@ -43,13 +43,13 @@ public:
 	/// <param name="move">バリアを持たせたいキャラクターの移動値(velocity等)</param>
 	void SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move);
 	//バリア展開
-	void IsOpen();
+	void OpenBarrier();
 	//Setter
 	void SetIsOpen(bool flag) { isOpen = flag; }
 	void SetHp(int hp) { nowHp = hp; }
 	//Getter
-	bool GetIsOpen() { return isOpen; }
-	int GetHp() { return nowHp; }
+	bool GetIsOpen()const { return isOpen; }
+	int GetHp()const { return nowHp; }
 private:
 	//展開されているか
 	bool isOpen;

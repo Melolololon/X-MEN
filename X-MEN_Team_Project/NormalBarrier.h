@@ -46,7 +46,7 @@ public:
 	//Setter
 	void SetIsOpen(bool flag) { isOpen = flag; }
 	//Getter
-	bool GetIsOpen() { return isOpen; }
+	bool GetIsOpen()const { return isOpen; }
 
 private:
 	//“WŠJ‚³‚ê‚Ä‚¢‚é‚©

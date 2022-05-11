@@ -21,7 +21,7 @@ void GamePlay::Initialize()
 
 	pFollowEnemy = std::make_shared<FollowEnemy>();
 	pEnemyBarrier = std::make_shared<EnemyBarrier>();
-	pEnemyBarrier.get()->IsOpen();
+	pEnemyBarrier.get()->OpenBarrier();
 	pBarrierEnemy = std::make_shared<BarrierEnemy>();
 	pBarrierEnemy.get()->SetBarrier(pEnemyBarrier);
 

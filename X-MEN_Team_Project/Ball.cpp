@@ -136,6 +136,14 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	//ノーマルバリアとの判定
 	else if (typeid(object) == typeid(NormalBarrier))
 	{
+		//バリア展開中か取得するために型変換
+		const NormalBarrier* other = static_cast<const NormalBarrier*>(&object);
+
+		//バリア展開中でないならリターン
+		if (other->GetIsOpen() == false) {
+			return;
+		}
+
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal);
@@ -148,6 +156,14 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	//エネミーバリアとの判定
 	else if (typeid(object) == typeid(EnemyBarrier))
 	{
+		//バリア展開中か取得するために型変換
+		const EnemyBarrier* other = static_cast<const EnemyBarrier*>(&object);
+
+		//バリア展開中でないならリターン
+		if (other->GetIsOpen() == false) {
+			return;
+		}
+
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal);
