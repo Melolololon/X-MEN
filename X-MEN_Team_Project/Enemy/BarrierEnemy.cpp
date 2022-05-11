@@ -56,10 +56,6 @@ void BarrierEnemy::Move()
 
 	// 方向変換用
 	ChangePose();
-
-	// バリア用
-	// 第二引数にとりあえずでボールへの方向ベクトル
-	pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
 }
 
 
@@ -67,16 +63,10 @@ void BarrierEnemy::ChangePose()
 {
 	if (ChangePoseFrameCount >= BarrierEnemyStatus::CHANGE_POSE_FRAME)
 	{
-		MelLib::Vector3 temp = GetAngle();
-
 		const float PI = 3.1415926f;
 		const float CALC_ANGLE = 180;
 
 		// 方向ベクトルを元に向く方向を変更
-
-
-		// 前の角度を取得
-		MelLib::Vector3 angle = GetAngle();
 
 		MelLib::Vector3 result;
 
@@ -89,6 +79,11 @@ void BarrierEnemy::ChangePose()
 
 		// 正面ベクトルの書き換え
 		frontDir = ballDir;
+
+		// バリア用
+		// 第二引数にとりあえずでボールへの方向ベクトル
+		pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
+
 		// カウントを0に
 		ChangePoseFrameCount = 0;
 	}

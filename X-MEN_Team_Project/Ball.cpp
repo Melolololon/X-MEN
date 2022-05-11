@@ -167,6 +167,9 @@ void Ball::ThrowBall(const Vector3& initVel)
 	//方向セット
 	velocity = initVel;
 
+	//位置を移動方向へオブジェクトの大きさだけずらす (投げた瞬間衝突するのを防ぐ)
+	SetPosition(GetPosition() + velocity * GetScale());
+
 	//射出フラグを有効に
 	isThrowed = true;
 }

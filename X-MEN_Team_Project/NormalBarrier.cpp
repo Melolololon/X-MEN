@@ -77,8 +77,15 @@ void NormalBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 
 		//引数のpositionを中心に半径radius分離れた座標を求める
 		barrierPosition= MelLib::Vector3(positon.x + (sinf(direction) * radius), positon.y, positon.z + (cosf(direction) * radius));
 		SetPosition(barrierPosition);
+
+		//OBBだけライブラリで勝手に反映されないっぽいのでとりあえず手動
+		obbDatas["main"][0].SetPosition(GetPosition());
+
 		//度数法→弧度法
 		SetAngle(MelLib::Vector3(0.0f, direction * 57.32484076433121f, 0.0f));
+
+		//OBBだけライブラリで勝手に反映されないっぽいのでとりあえず手動
+		obbDatas["main"][0].SetAngle(GetAngle());
 
 	//}
 }
