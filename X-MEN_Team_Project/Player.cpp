@@ -76,7 +76,7 @@ void Player::UseBarrier(bool key)
 	// バリアを使用中なら即終了
 	if (barrier.get()->GetIsOpen())return;
 	// ボールを保持しているならバリアは展開できない
-	if(!pBall.get()->GetIsThrowed())return;
+	if(pBall != nullptr)return;
 
 	barrier.get()->SetIsOpen(true);
 }
@@ -85,13 +85,16 @@ void Player::ThrowingBall(bool key)
 {
 	if (!key)return;
 
+	if (pBall == nullptr)return;
+
 	//ボールが投げられている場合はリターン
 	if (pBall->GetIsThrowed()) {
 		return;
 	}
 
 	//ボールを投げる
-	pBall->ThrowBall(GetPosition());
+	pBall->ThrowBall(dirVector);
+	pBall = nullptr;
 
 	isThrowingBall = true;
 }
@@ -109,13 +112,15 @@ void Player::UseUltimateSkill(bool key)
 
 void Player::TrackingBall()
 {
+	if (pBall == nullptr)return;
+
 	//ボールが投げられている場合はリターン
 	if (pBall->GetIsThrowed()) {
 		return;
 	}
 
 	//自分のちょっと右下に配置 (手に持ってるイメージ)
-	pBall->SetBallPos(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f));
+	pBall->SetPosition(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f));
 }
 
 void Player::UpdateBarrierDirection()
@@ -131,7 +136,7 @@ Player::Player()
 	, isThrowingBall(false)
 	, ultimateSkill(UltimateSkill())
 	, dirVector(MelLib::Vector3())
-	, pBall(std::make_shared<Ball>())
+	, pBall(nullptr)
 	, barrier(nullptr)
 {
 	// MelLib;;ModelObjectの配列
@@ -146,9 +151,6 @@ Player::Player()
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(0.5f);
-
-	//ボールをオブジェクトマネージャに追加
-	MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
 }
 
 Player::~Player()
@@ -195,9 +197,19 @@ void Player::Hit
 	// typeidなどで処理を分けたりする
 
 	// テストオブジェクトと衝突したら色変更
-	if (typeid(object) == typeid(TestObject))
-	{
+	if (typeid(object) == typeid(TestObject)){
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
+	}
+	else if (typeid(object) == typeid(Ball)) {
+		//スピード取得のために型変換
+		const Ball* other = static_cast<const Ball*>(&object);
+
+		//ボールの速さ0以下で、プレイヤーがボール未所持なら拾う
+		if (other->GetSpeed() <= 0 && pBall == nullptr) {
+			pBall = std::make_shared<Ball>();
+			MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
+			pBall->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+		}
 	}
 
 	//// 壁とヒットしたとき
@@ -239,13 +251,16 @@ bool Player::GetIsUltimateSkill() const
 	return ultimateSkill.GetIsUsingSkill();
 }
 
-MelLib::Vector3 Player::GetDirection() const
+const MelLib::Vector3& Player::GetDirection() const
 {
 	return dirVector;
 }
 
-MelLib::Vector3 Player::GetBallPos() const
+const MelLib::Vector3& Player::GetBallPos() const
 {
+	//ボール未所持の場合はとりあえず自分の位置返す
+	if (pBall == nullptr)return GetPosition();
+
 	return pBall.get()->GetPosition();
 }
 

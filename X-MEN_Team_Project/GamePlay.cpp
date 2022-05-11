@@ -13,6 +13,8 @@ void GamePlay::Initialize()
 
 	// オブジェクトのメモリ確保
 	pPlayer = std::make_shared<Player>();
+	pBall = std::make_shared<Ball>();
+	pBall->SetPosition(MelLib::Vector3(5, 0, -5));
 	barrier = std::make_shared<NormalBarrier>();
 
 	pPlayer.get()->SetNormalBarrier(barrier);
@@ -25,6 +27,10 @@ void GamePlay::Initialize()
 
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
+	MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
+	//ボールは追加終わったら確保している必要がないので解放
+	pBall = nullptr;
+
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
 	//バリアのテスト
 	MelLib::GameObjectManager::GetInstance()->AddObject(barrier);

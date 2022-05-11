@@ -1,23 +1,53 @@
 #pragma once
 #include <GameObject.h>
+#include "Player.h"
 
-class Ball    
+class Player;
+class Ball
 	: public MelLib::GameObject
 {
 	using Vector3 = MelLib::Vector3;
 
-//定数
-private:
-	const float INIT_SPEED = 0.5f;
+	//定数
+public:
+	//ボールにセットする色
+	static const MelLib::Color BALL_COLOR_RED;		//赤
+	static const MelLib::Color BALL_COLOR_BLUE;		//青
+	static const MelLib::Color BALL_COLOR_YELLOW;	//黄
 
 private:
-	Vector3 velocity = { 0,0,0.1 };
-	float speed = INIT_SPEED;
-	bool isThrowed = false;
+	//ボールの初期スピード
+	const float INIT_THROW_SPEED = 0.5f;
+
+private:
+	//移動方向
+	Vector3 velocity = { 0,0,0 };
+	//ボールの速さ
+	float speed = 0;
+	//投げられた後か
+	bool isThrowed = true;
+
+	//拾われたか
+	bool isPicked = false;
 
 private:
 
+	/// <summary>
+	/// 位置情報の変動関連
+	/// </summary>
 	void Move();
+
+	/// <summary>
+	/// モデルに色を設定する
+	/// </summary>
+	/// <param name="color">色情報</param>
+	void SetColor(const MelLib::Color& color);
+
+	/// <summary>
+	/// 反射するときの共通処理
+	/// </summary>
+	/// <param name="otherNormal">衝突したポリゴン面の法線ベクトル</param>
+	void Reflection(const Vector3& otherNormal);
 
 public:
 	Ball();
@@ -47,11 +77,19 @@ public:
 	)override;
 
 	/// <summary>
-	/// ボールを投げる プレイヤーから呼ぶこと
+	/// ボールを投げる
 	/// </summary>
-	/// <param name="initPos">ボールの初期位置 プレイヤーの位置をそのまま渡す</param>
-	void ThrowBall(const Vector3& initPos);
+	/// <param name="initVel">ボールの発射方向 投手の移動方向を渡す</param>
+	void ThrowBall(const Vector3& initVel);
 
+	/// <summary>
+	/// ボールを拾ったときの処理
+	/// </summary>
+	/// <param name="initPos">ボールの初期位置</param>
+	/// <param name="initColor">ボールの初期位置 プレイヤーなら青、敵なら赤</param>
+	void PickUp(const Vector3& ballPos, const MelLib::Color& initColor);
+
+#pragma region Getter
 	/// <summary>
 	/// ボールが投げられているかを返す
 	/// </summary>
@@ -59,8 +97,14 @@ public:
 	bool GetIsThrowed()const { return isThrowed; }
 
 	/// <summary>
-	/// ボールの位置を決め打ちでセットする プレイヤーがボールを持った状態時の追尾に使用
+	/// ボールの現在の速さを返す
 	/// </summary>
-	/// <param name="pos"></param>
-	void SetBallPos(const Vector3& pos);
+	/// <returns>速さ</returns>
+	float GetSpeed()const { return speed; }
+
+#pragma endregion
+
+#pragma region Setter
+
+#pragma endregion
 };

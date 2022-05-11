@@ -13,6 +13,7 @@ class GamePlay : public MelLib::Scene
 private:
 	
 	std::shared_ptr<Player>pPlayer;
+	std::shared_ptr<Ball>pBall;
 	std::shared_ptr<NormalBarrier>barrier;
 	FieldObjectManager* fieldObjectManager;
 	// “G

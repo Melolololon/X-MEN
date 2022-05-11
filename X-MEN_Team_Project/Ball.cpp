@@ -1,9 +1,14 @@
 #include "Ball.h"
 #include "FieldObjectManager.h"
 #include "FieldObjectWall.h"
+#include "Enemy/FollowEnemy.h"
+#include "Enemy/BarrierEnemy.h"
 #include <Random.h>
 #include <LibMath.h>
 
+const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
+const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,0 };
 
 void Ball::Move()
 {
@@ -15,21 +20,37 @@ void Ball::Move()
 	if (speed < 0) { speed = 0; }
 }
 
+void Ball::SetColor(const MelLib::Color& color)
+{
+	modelObjects["main"].SetMulColor(color);
+}
+
+void Ball::Reflection(const Vector3& otherNormal)
+{
+	//反射ベクトルを計算
+	Vector3 reflectVel = (velocity - 2.0f * velocity.Dot(otherNormal) * otherNormal);
+
+	//反映
+	velocity = reflectVel;
+
+	//speedを1.5倍に (一旦廃止)
+	//speed *= 1.5f;
+}
+
 Ball::Ball()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
-	//色セット (暫定で黄色)
-	modelObjects["main"].SetMulColor(MelLib::Color(255, 255, 64, 255));
+	//青色セット
+	SetColor(BALL_COLOR_YELLOW);
 
 	// 当たり判定の作成(球)
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(0.5f);
-
 }
 
 Ball::~Ball()
@@ -44,12 +65,15 @@ void Ball::Update()
 	if (isThrowed) {
 		Move();
 
-		//停止したら自分の手元に戻る
+		//停止
 		if (speed <= 0) {
-			isThrowed = false;
+			//色セット
+			SetColor(BALL_COLOR_YELLOW);
 		}
 	}
-
+	else {
+		//eraseManager = isPicked;
+	}
 }
 
 void Ball::Draw()
@@ -64,38 +88,73 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		return;
 	}
 
-	//壁との反射
+	//壁との衝突
 	if (typeid(object) == typeid(FieldObjectWall))
 	{
-		//反射ベクトルを計算
+		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-		Vector3 reflectVel = (velocity - 2.0f * velocity.Dot(otherNormal) * otherNormal);
+		Reflection(otherNormal);
 
-		//反映
-		velocity = reflectVel;
+		//青色セット
+		if (speed > 0) {
+			SetColor(BALL_COLOR_BLUE);
+		}
 	}
+	//敵との衝突
+	else if (typeid(object) == typeid(FollowEnemy) ||
+		typeid(object) == typeid(BarrierEnemy))
+	{
+		//反射共通処理
+		Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+		Reflection(otherNormal);
+
+		//赤色セット
+		if (speed > 0) {
+			SetColor(BALL_COLOR_RED);
+		}
+	}
+	//プレイヤーとの衝突
+	else if (typeid(object) == typeid(Player))
+	{
+		//動いているときは反射
+		if (speed > 0) {
+
+			//反射共通処理
+			Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+			Reflection(otherNormal);
+
+			//青色セット
+			SetColor(BALL_COLOR_BLUE);
+		}
+		//停止しているならこのballは削除、同位置でPlayer側で新しくballを取得しなおす
+		else {
+			// 管理クラスから削除
+			eraseManager = true;
+		}
+	}
+
 }
 
-void Ball::ThrowBall(const Vector3& initPos)
+void Ball::ThrowBall(const Vector3& initVel)
 {
-	//XZ平面のランダムな角度で射出
-	float rand = MelLib::Random::GetRandomFloatNumberRangeSelect(0, 2 * MelLib::LibMath::GetFloatPI(), 2);
-	float initX = sin(rand);
-	float initZ = cos(rand);
-
 	//スピードを初期値に
-	speed = INIT_SPEED;
+	speed = INIT_THROW_SPEED;
 
-	//位置、方向セット
-	SetBallPos(initPos);
-	velocity = { initX, 0, initZ };
+	//方向セット
+	velocity = initVel;
 
 	//射出フラグを有効に
 	isThrowed = true;
 }
 
-void Ball::SetBallPos(const Vector3& pos)
+void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
 {
-	//オブジェクトに反映
-	SetPosition(pos);
+	//位置セット
+	SetPosition(ballPos);
+
+	//色セット
+	SetColor(initColor);
+
+	//投げたフラグオフ
+	isThrowed = false;
 }
