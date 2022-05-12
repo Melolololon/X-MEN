@@ -1,5 +1,6 @@
 #pragma once
 #include"Enemy.h"
+#include"../EnemyBarrier.h"
 
 namespace BarrierEnemyStatus
 {
@@ -18,6 +19,11 @@ private:
 	MelLib::Vector3 ballDir;
 	// 方向を変えるためのフレーム計測
 	int ChangePoseFrameCount;
+
+	// バリア
+	std::shared_ptr<EnemyBarrier> pBarrier;
+	// 正面ベクトル
+	MelLib::Vector3 frontDir;
 
 private:
 
@@ -53,4 +59,7 @@ public:
 	)override;
 
 
+	// セッター
+	void SetBallDir(const MelLib::Vector3& pos);
+	void SetBarrier(std::shared_ptr<EnemyBarrier> barrier);
 };

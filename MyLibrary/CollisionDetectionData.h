@@ -5,7 +5,7 @@ namespace MelLib
 {
 
 	//CalcResultをCollisionResultにする?
-	//CollisionType.hからPrimitiveTypeに変える?
+	//CollisionDetectionData.hからPrimitiveTypeに変える?
 	//衝突確認に使うデータだからこのままでいい?プリミティブじゃないデータ(線分)あるし
 	//ShapeTypeの名前変える?
 
@@ -385,18 +385,23 @@ namespace MelLib
 	class TriangleData
 	{
 	private:
+		// 座標を3つまとめている
 		Value3<Vector3>position;
 
+		// 角度
 		Vector3 angle;
+		// 回転の座標
 		Value3<Vector3>rotPos;
 
 		//平行移動する量
-		Vector3 transVec;
+		Vector3 translationVec;
 		//平行移動後の座標
-		Value3<Vector3>transPos;
+		Value3<Vector3>translationPos;
 
+		// 法線
 		Vector3 normal;
 
+		// 現在未使用
 		TriangleCalcResult result;
 	private:
 		void CalcNormal();
@@ -408,9 +413,9 @@ namespace MelLib
 		/// 開店後に平行移動する移動量を取得します。
 		/// </summary>
 		/// <returns></returns>
-		Value3<Vector3> GetTranslationPosition()const { return transPos; }
+		Value3<Vector3> GetTranslationPosition()const { return translationPos; }
 		Vector3 GetAngle()const { return angle; }
-		Vector3 GetTransFormVector()const { return transVec; }
+		Vector3 GetTransFormVector()const { return translationVec; }
 		Vector3 GetNormal()const { return normal; }
 
 		/// <summary>
@@ -426,7 +431,7 @@ namespace MelLib
 		/// <summary>
 		/// 回転と平行移動した三角形の中心座標を取得します。
 		/// </summary>
-		Vector3 GetRotTranceFormCenter()const { return (transPos.v1 + transPos.v2 + transPos.v3) / 3; }
+		Vector3 GetRotTranceFormCenter()const { return (translationPos.v1 + translationPos.v2 + translationPos.v3) / 3; }
 
 		TriangleCalcResult GetCalcResult()const { return result; }
 

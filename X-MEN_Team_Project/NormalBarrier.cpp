@@ -8,16 +8,19 @@ NormalBarrier::NormalBarrier()
 	// 四角形をセット
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 	//初期値
-	SetPosition(MelLib::Vector3(0, 0, 5));
-	SetScale(MelLib::Vector3(5, 5, 1));
+	const MelLib::Vector3 INIT_POS = { 0,0,5 };
+	const MelLib::Vector3 INIT_SCALE = { 5,5,1 };
+	SetPosition(INIT_POS);
+	SetScale(INIT_SCALE);
 	time = 0;
 	isOpen = false;
 	//sphereDatas["main"][0].SetRadius(0.5f);
 
-	// 当たり判定の作成(球)
-	// NormalBarrierの座標を取得し、それをセット
-	//sphereDatas["main"].resize(1);
-	//sphereDatas["main"][0].SetPosition(GetPosition());
+	// 当たり判定の作成(OBB)
+	obbDatas["main"].resize(1);
+	obbDatas["main"][0].SetPosition(GetPosition());
+	obbDatas["main"][0].SetSize(INIT_SCALE);
+	obbDatas["main"][0].SetAngle(GetAngle());
 };
 
 void NormalBarrier::Update()
@@ -34,14 +37,6 @@ void NormalBarrier::Update()
 			time = 0;
 		}
 	}
-	//操作テスト***Playerと統合したら消してよし***
-	if (MelLib::Input::KeyTrigger(DIK_SPACE))
-	{
-		isOpen = true;
-	}
-	//座標0,0,0を中心に半径radius離れたところに盾を展開***Playerに書いたら消してよし***
-	SetBarrierPosition(MelLib::Vector3(), MelLib::Vector3(1,0,-1));
-	
 
 	modelObjects["main"].SetMulColor(MelLib::Color(150, 150, 255, 255));
 }
@@ -71,9 +66,10 @@ void NormalBarrier::Hit
 
 void NormalBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move)
 {
-	//展開中なら
-	if (isOpen)
-	{
+	//**************更新順番がわからなくて描画おかしくなるから常時更新にするね**************//
+	////展開中なら
+	//if (isOpen)
+	//{
 		//体の向きをmoveから求める
 		float direction = atan2f(move.x, move.z);
 		//バリアを展開する座標
@@ -81,8 +77,15 @@ void NormalBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 
 		//引数のpositionを中心に半径radius分離れた座標を求める
 		barrierPosition= MelLib::Vector3(positon.x + (sinf(direction) * radius), positon.y, positon.z + (cosf(direction) * radius));
 		SetPosition(barrierPosition);
+
+		//OBBだけライブラリで勝手に反映されないっぽいのでとりあえず手動
+		obbDatas["main"][0].SetPosition(GetPosition());
+
 		//度数法→弧度法
 		SetAngle(MelLib::Vector3(0.0f, direction * 57.32484076433121f, 0.0f));
 
-	}
+		//OBBだけライブラリで勝手に反映されないっぽいのでとりあえず手動
+		obbDatas["main"][0].SetAngle(GetAngle());
+
+	//}
 }

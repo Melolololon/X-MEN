@@ -185,7 +185,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="ClothSimulator.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="CollisionType.cpp" />
+    <ClCompile Include="CollisionDetectionData.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Emitter3D.cpp" />
     <ClCompile Include="ErrorProcess.cpp" />
@@ -253,6 +253,7 @@
     <ClCompile Include="Sprite2DBase.cpp" />
     <ClCompile Include="Sprite3D.cpp" />
     <ClCompile Include="SpriteFont2D.cpp" />
+    <ClCompile Include="StringSupport.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="TextureFont.cpp" />
@@ -509,7 +510,7 @@
     <ClInclude Include="Sound_Unused.h" />
     <ClInclude Include="BufferData.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CollisionType.h" />
+    <ClInclude Include="CollisionDetectionData.h" />
     <ClInclude Include="CreateCamera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="CreatePipeline.h" />
@@ -550,6 +551,7 @@
     <ClInclude Include="Sprite2DBase.h" />
     <ClInclude Include="Sprite3D.h" />
     <ClInclude Include="SpriteFont2D.h" />
+    <ClInclude Include="StringSupport.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Texture3D.h" />
     <ClInclude Include="TextureFont.h" />

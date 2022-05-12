@@ -5,18 +5,22 @@
 #include"NormalBarrier.h"
 #include "FieldObjectManager.h"
 #include "Ball.h"
-#include "Wall.h"
+#include"Enemy/FollowEnemy.h"
+#include"Enemy/BarrierEnemy.h"
 
 class GamePlay : public MelLib::Scene
 {
 private:
 	
 	std::shared_ptr<Player>pPlayer;
+	std::shared_ptr<Ball>pBall;
 	std::shared_ptr<NormalBarrier>barrier;
-	FieldObjectManager fieldObjectManager;
-	std::shared_ptr<Ball> pBall;
-	std::shared_ptr<Wall> pWall;
-
+	FieldObjectManager* fieldObjectManager;
+	// “G
+	std::shared_ptr<FollowEnemy> pFollowEnemy;
+	std::shared_ptr<BarrierEnemy> pBarrierEnemy;
+	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
+		
 public:
 	GamePlay(){}
 	~GamePlay(){}

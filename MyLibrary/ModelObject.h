@@ -17,7 +17,7 @@
 #include"Camera.h"
 #include"RenderTarget.h"
 #include"BufferData.h"
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"Material.h"
 //AddColorとかまとめよう!
 
@@ -299,9 +299,9 @@ namespace MelLib
 		///	アニメーションの現在のフレームを取得します。
 		/// </summary>
 		/// <returns></returns>
-		unsigned int GetAnimationFrame()const { return fbxAnimationData.currentTime.GetFrameCount(FbxTime::eFrames60); }
+		unsigned int GetAnimationFrame()const { return static_cast<unsigned int>(fbxAnimationData.currentTime.GetFrameCount(FbxTime::eFrames60)); }
 		
-		unsigned int GetAnimationFrameMax()const { return fbxAnimationData.animationTimes.endTime.GetFrameCount(FbxTime::eFrames60); }
+		unsigned int GetAnimationFrameMax()const { return static_cast<unsigned int>(fbxAnimationData.animationTimes.endTime.GetFrameCount(FbxTime::eFrames60)); }
 #pragma endregion
 
 		//コンピュートシェーダーで計算したほうがいい。

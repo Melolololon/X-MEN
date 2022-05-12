@@ -1,14 +1,17 @@
 #pragma once
 #include "UltimateSkill.h"
+#include "NormalBarrier.h"
 #include<GameObject.h>
+#include "Ball.h"
 
 namespace PlayerInitializeInfo
 {
 	const float MAX_HP = 100;
 }
 
+class Ball;
 class Player :
-    public MelLib::GameObject
+	public MelLib::GameObject
 {
 private:
 	float hp;
@@ -16,14 +19,14 @@ private:
 	// 必殺技ゲージ
 	float ultimateSkillValue;
 
-	bool isBarrier;
 	bool isThrowingBall;
 
 	UltimateSkill ultimateSkill;
 
 	MelLib::Vector3 dirVector;
-	// Barrier* barrier;
-	// Ball* ball;
+
+	std::shared_ptr<Ball> pBall;
+	std::shared_ptr<NormalBarrier> barrier;
 
 private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
@@ -45,17 +48,23 @@ private:
 	// 必殺技フラグをオンにする
 	void UseUltimateSkill(bool key);
 
+	// ボールを追尾させる
+	void TrackingBall();
+
+	// 保持している通常バリアの方向を更新する
+	void UpdateBarrierDirection();
+
 public:
 	Player();
 
 	~Player();
-	
+
 	// 更新
-    void Update()override;
-    
+	void Update()override;
+
 	//描画
 	void Draw()override;
-    
+
 	/// <summary>
 	/// 当たった時に呼ばれる関数
 	/// </summary>
@@ -87,7 +96,7 @@ public:
 	// 必殺技フラグを取得
 	bool GetIsUltimateSkill() const;
 	// プレイヤーが向いている方向のベクトルを取得
-	MelLib::Vector3 GetDirection() const;
+	const MelLib::Vector3& GetDirection() const;
 #pragma endregion
 
 #pragma region Setter
@@ -95,6 +104,8 @@ public:
 	void SetIsBarrier(bool flag);
 	// ボールを投げるフラグを書き換える
 	void SetIsThrowingBall(bool flag);
+	// プレイヤーが使用できる通常のバリアをセット
+	void SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier);
 #pragma endregion
 };
 

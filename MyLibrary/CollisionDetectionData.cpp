@@ -1,4 +1,4 @@
-#include"CollisionType.h"
+#include"CollisionDetectionData.h"
 #include"LibMath.h"
 #include"Interpolation.h"
 
@@ -391,7 +391,7 @@ void MelLib::TriangleData::SetAngle(const Vector3& angle)
 
 void MelLib::TriangleData::SetTranslationPosition(const Vector3& vec)
 {
-	transVec = vec;
-	transPos = rotPos + vec;
+	translationVec = vec;
+	translationPos = rotPos + vec;
 
 }

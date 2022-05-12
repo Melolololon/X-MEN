@@ -18,7 +18,7 @@ namespace MelLib
 	class GuiOption
 	{
 	private:
-		std::string exportPath;
+		std::string inOutPath;
 
 		GuiOption(){}
 		~GuiOption() {}
@@ -28,11 +28,11 @@ namespace MelLib
 		static GuiOption* GetInstance();
 
 		/// <summary>
-		/// Guiで設定した値の情報の出力先を設定します。
+		/// Guiで設定した値の情報の入出力先を設定します。
 		/// </summary>
 		/// <param name="path"></param>
-		void SetGuiDataExportPath(const std::string& path) { exportPath = path; }
-		std::string GetGuiDataExportPath() { return exportPath; }
+		void SetGuiDataPath(const std::string& path) { inOutPath = path; }
+		std::string GetGuiDataPath() { return inOutPath; }
 
 	};
 
@@ -162,5 +162,10 @@ namespace MelLib
 
 		bool GetValue()const { return value; }
 
+		/// <summary>
+		/// 読み込まれた値をセットします。読み込んだ値をセットしたい場合や
+		/// 初期化処理が始まる前にコンストラクタが呼び出されてしまう場合にお使いください。
+		/// </summary>
+		void SetLoadData();
 	};
 }

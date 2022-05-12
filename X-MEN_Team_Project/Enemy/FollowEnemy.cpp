@@ -10,7 +10,7 @@ FollowEnemy::FollowEnemy()
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
 	// 見た目がわかりやすいように 後程モデルデータができたときに修正
-	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
 
 
 	// 初期位置を0,0,5に
@@ -33,13 +33,14 @@ void FollowEnemy::Move()
 	// 移動ベクトル
 	MelLib::Vector3 moveVector;
 	// 移動速度
-	static const float MOVE_SPEED = 0.5f;
+	static const float MOVE_SPEED = 0.05f;
 
 	moveVector = playerDir * MOVE_SPEED;
 
 	// 加算
-	// AddPosition、SetPositionは当たり判定も一緒に動く
-	AddPosition(moveVector);
+	//0512一旦一定距離以上近づけさせないようにする
+	const float PLAYER_SIZE = 1.2f;
+	//AddPosition(moveVector);
 
 }
 
@@ -54,7 +55,7 @@ void FollowEnemy::Update()
 		eraseManager = true;
 	}
 
-	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
 
 }
 
