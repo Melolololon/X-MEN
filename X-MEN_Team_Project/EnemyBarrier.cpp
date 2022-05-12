@@ -1,4 +1,5 @@
 #include "EnemyBarrier.h"
+#include "Ball.h"
 
 #include<Input.h>
 
@@ -12,7 +13,7 @@ EnemyBarrier::EnemyBarrier()
 	const MelLib::Vector3 INIT_SCALE = { 5,5,1 };
 	SetPosition(INIT_POS);
 	SetScale(INIT_SCALE);
-	nowHp = aaaa::HP;
+	currentHp = parameter::HP;
 	isOpen = false;
 
 	// 当たり判定の作成(OBB)
@@ -28,7 +29,7 @@ void EnemyBarrier::Update()
 	if (isOpen)
 	{
 		//耐久値が0になったら
-		if (nowHp < 0)
+		if (currentHp < 0.0f)
 		{
 			isOpen = false;
 		}
@@ -55,11 +56,19 @@ void EnemyBarrier::Hit
 	const std::string& hitShapeName
 )
 {
-	// ここに当たった時の処理を記述
-	// typeidなどで処理を分けたりする
+	//盾が展開されていなければリターン
+	if (!isOpen) { return; }
+
+	//敵バリア&ボール
+	if (typeid(object) == typeid(Ball)) {
+
+		const Ball* other = static_cast<const Ball*>(&object);
+		
+		currentHp-=other->GetSpeed();
+	}
 }
 
-void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move)
+void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 position, MelLib::Vector3 move)
 {
 	//展開中なら
 	if (isOpen)
@@ -69,7 +78,7 @@ void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 m
 		//バリアを展開する座標
 		MelLib::Vector3 barrierPosition;
 		//引数のpositionを中心に半径radius分離れた座標を求める
-		barrierPosition = MelLib::Vector3(positon.x + (sinf(direction) * aaaa::RADIUS), positon.y, positon.z + (cosf(direction) * aaaa::RADIUS));
+		barrierPosition = MelLib::Vector3(position.x + (sinf(direction) * parameter::RADIUS), position.y, position.z + (cosf(direction) * parameter::RADIUS));
 		SetPosition(barrierPosition);
 
 		//OBBだけライブラリで勝手に反映されないっぽいのでとりあえず手動
@@ -86,5 +95,5 @@ void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 m
 void EnemyBarrier::OpenBarrier()
 {
 	isOpen = true;
-	nowHp = aaaa::HP;
+	currentHp = parameter::HP;
 }

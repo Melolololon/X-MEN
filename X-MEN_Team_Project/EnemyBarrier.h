@@ -1,9 +1,9 @@
 #pragma once
 #include<GameObject.h>
-namespace aaaa
+namespace parameter
 {
 	//耐久値の初期値
-	const int HP = 150;
+	const float HP = 150.0f;
 	//Playerとバリアの間の間隔
 	const float RADIUS = 3.0f;
 }
@@ -41,20 +41,20 @@ public:
 	/// </summary>
 	/// <param name="positon">バリアを持たせたいキャラクターの座標</param>
 	/// <param name="move">バリアを持たせたいキャラクターの移動値(velocity等)</param>
-	void SetBarrierPosition(MelLib::Vector3 positon, MelLib::Vector3 move);
+	void SetBarrierPosition(MelLib::Vector3 position, MelLib::Vector3 move);
 	//バリア展開
 	void OpenBarrier();
 	//Setter
 	void SetIsOpen(bool flag) { isOpen = flag; }
-	void SetHp(int hp) { nowHp = hp; }
+	void SetHp(int hp) { currentHp = hp; }
 	//Getter
 	bool GetIsOpen()const { return isOpen; }
-	int GetHp()const { return nowHp; }
+	int GetHp()const { return currentHp; }
 private:
 	//展開されているか
 	bool isOpen;
 	//現在の耐久値
-	int nowHp;
+	float currentHp;
 
 };
 
