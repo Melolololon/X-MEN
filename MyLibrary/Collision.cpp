@@ -615,7 +615,7 @@ bool MelLib::Collision::SphereAndOBB(const SphereData& sphere, SphereCalcResult*
 	
 
 	
-	if (!sphereCalcResult)return result;
+	if (!sphereCalcResult || !result)return result;
 	
 	// 以下法線計算
 	
@@ -633,7 +633,9 @@ bool MelLib::Collision::SphereAndOBB(const SphereData& sphere, SphereCalcResult*
 	char top = 0;
 
 	// 角度のマイナス分回転
-	Vector3 rotSphere = LibMath::RotateZXYVector3(sphere.GetPosition(), -angle);
+	// OBBを基準に回転させないといけない
+	Vector3 rotSphere = LibMath::RotateZXYVector3(boxToSphere, -angle);
+	rotSphere += box.GetPosition();
 
 	//ボックスへのベクトル
 	Vector3 sphereToVector = box.GetPosition() - rotSphere;

@@ -363,7 +363,7 @@ namespace MelLib
 		/// <param name="par">何パーセント以上傾けたら入力されたことにするか</param>
 		/// <param name="padNum">コントローラー番号(1Pや2Pなどの番号のこと)</param>
 		/// <returns></returns>
-		static float LeftStickAngle(float par,UCHAR padNum = 1);
+		static float LeftStickAngle(float par, UCHAR padNum = 1);
 
 		/// <summary>
 		/// スティックが傾いている方向をVector2で返します。
