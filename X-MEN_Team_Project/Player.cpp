@@ -51,7 +51,7 @@ MelLib::Vector3 Player::GetInputVector()
 
 void Player::Move(const MelLib::Vector3& vec)
 {
-	static const float MOVE_SPEED = 0.7f;
+	static const float MOVE_SPEED = 0.3f;
 	MelLib::Vector3 addVector = vec * MOVE_SPEED;
 
 	GameObject::AddPosition(addVector);
@@ -68,35 +68,39 @@ void Player::CalclateDirection()
 	GameObject::SetAngle(MelLib::Vector3(0, angleY, 0));
 }
 
-void Player::UseBarrier(bool key)
+bool Player::UseBarrier(bool key)
 {
-	if (!key)return;
-	if (!barrier)return;
+	if (!key)return false;
+	if (!barrier)return false;
+	if (!pBall)return false;
 
 	// バリアを使用中なら即終了
-	if (barrier.get()->GetIsOpen())return;
-	// ボールを保持しているならバリアは展開できない
-	if(pBall != nullptr)return;
+	if (barrier.get()->GetIsOpen())return false;
 
 	barrier.get()->SetIsOpen(true);
+	return true;
 }
 
-void Player::ThrowingBall(bool key)
+bool Player::ThrowingBall(bool key)
 {
-	if (!key)return;
+	if (!key)return false;
 
-	if (pBall == nullptr)return;
+	if (pBall == nullptr)return false;
 
 	//ボールが投げられている場合はリターン
 	if (pBall->GetIsThrowed()) {
-		return;
+		return false;
 	}
 
 	//ボールを投げる
+	pBall->SetPosition(GetPosition() + dirVector*2);
 	pBall->ThrowBall(dirVector);
-	pBall = nullptr;
+
+	pBall.get()->SetThrowingState(BallState::THROWING_PLAYER);
 
 	isThrowingBall = true;
+
+	return true;
 }
 
 void Player::UseUltimateSkill(bool key)
@@ -119,8 +123,12 @@ void Player::TrackingBall()
 		return;
 	}
 
+	MelLib::Vector3 rightVector = { -dirVector.z,0,dirVector.x };
+	MelLib::Vector3 addVector = dirVector + rightVector;
+	addVector /= 10;
+
 	//自分のちょっと右下に配置 (手に持ってるイメージ)
-	pBall->SetPosition(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f));
+	pBall->SetPosition(GetPosition() + addVector);
 }
 
 void Player::UpdateBarrierDirection()
@@ -128,6 +136,21 @@ void Player::UpdateBarrierDirection()
 	if (!barrier)return;
 
 	barrier.get()->SetBarrierPosition(GetPosition(), dirVector);
+}
+
+void Player::UseAbility(bool key)
+{
+	if (!key)return;
+
+	// ボールをプレイヤーが保持している状態かで分岐
+	if (pBall.get()->GetThrowingState() == BallState::HOLD_PLAYER)
+	{
+		ThrowingBall(key);
+	}
+	else
+	{
+		UseBarrier(key);
+	}
 }
 
 Player::Player()
@@ -161,6 +184,8 @@ Player::~Player()
 
 void Player::Update()
 {
+	bool isInputAbilityKey = MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A);
+
 	Move(GetInputVector());
 
 	TrackingBall();
@@ -169,8 +194,7 @@ void Player::Update()
 	ultimateSkill.Update();
 
 	// 各技処理を行う関数に対応したキーのトリガーを送って関数内で実行するか判断させる
-	UseBarrier(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
-	ThrowingBall(MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A));
+	UseAbility(isInputAbilityKey);
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
 	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
@@ -204,24 +228,24 @@ void Player::Hit
 		//スピード取得のために型変換
 		const Ball* other = static_cast<const Ball*>(&object);
 
-		//ボールの速さ0以下で、プレイヤーがボール未所持なら拾う
-		if (other->GetSpeed() <= 0 && pBall == nullptr) {
-			pBall = std::make_shared<Ball>();
-			MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
-			pBall->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+		if (!pBall)return;
+		BallState ballThrowingState = pBall.get()->GetThrowingState();
+		switch (ballThrowingState)
+		{
+		case BallState::NONE:
+			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
+			break;
+		case BallState::THROWING_PLAYER:
+			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
+			break;
+		case BallState::THROWING_ENEMY:
+			// 現状 0ダメージ
+			Damage(0);
+			break;
 		}
 	}
-
-	//// 壁とヒットしたとき
-	//if (typeid(object) == typeid(FieldObjectWall))
-	//{
-	//	MelLib::Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-	//	MelLib::Vector3 reflectVector = otherNormal * oldVelocity;
-	// 
-	//	MelLib::Vector3 pos = GetPosition() - reflectVector;
-	// 
-	//	SetPosition(pos);
-	//}
 }
 
 void Player::AddUltimatekillValue(int value)
@@ -270,4 +294,9 @@ void Player::SetIsThrowingBall(bool flag)
 void Player::SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier)
 {
 	barrier = setBarrier;
+}
+
+void Player::SetBall(std::shared_ptr<Ball> setBall)
+{
+	pBall = setBall;
 }

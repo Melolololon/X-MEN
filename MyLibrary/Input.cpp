@@ -910,7 +910,8 @@ float Input::LeftStickAngle(float par, const UCHAR padNum)
 
 	float absX = abs(x);
 	float absY = abs(y);
-	if (par / 100.0f * MAX_AXIS_VALUE < absX || par / 100.0f * MAX_AXIS_VALUE < absY)return -1.0f;
+	//if (par / 100.0f * MAX_AXIS_VALUE < absX || par / 100.0f * MAX_AXIS_VALUE < absY)return -1.0f;
+	if (par / 100.0f * MAX_AXIS_VALUE > absX + absY)return -1.0f;
 
 	return LibMath::Vector2ToAngle(Vector2Normalize({ x,y }), true);
 }
@@ -1069,8 +1070,8 @@ float Input::RightStickAngle(float par, const UCHAR padNum)
 
 	float absX = abs(x);
 	float absY = abs(y);
-	if (par / 100.0f * MAX_AXIS_VALUE < absX || par / 100.0f * MAX_AXIS_VALUE < absY)return -1.0f;
-
+	//if (par / 100.0f * MAX_AXIS_VALUE < absX || par / 100.0f * MAX_AXIS_VALUE < absY)return -1.0f;
+	if (par / 100.0f * MAX_AXIS_VALUE > absX + absY)return -1.0f;
 
 
 	return LibMath::Vector2ToAngle(Vector2Normalize({ x,y }), true);

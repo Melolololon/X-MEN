@@ -2,6 +2,19 @@
 #include <GameObject.h>
 #include "Player.h"
 
+enum class BallState
+{
+	NONE,
+	// プレイヤーが持ってる状態
+	HOLD_PLAYER,
+	// 敵が・・・
+	HOLD_ENEMY,
+	// プレイヤーが投げたor跳ね返した
+	THROWING_PLAYER,
+	// 敵が・・・
+	THROWING_ENEMY,
+};
+
 class Player;
 class Ball
 	: public MelLib::GameObject
@@ -26,6 +39,8 @@ private:
 	float speed = 0;
 	//投げられた後か
 	bool isThrowed = true;
+
+	BallState throwingState;
 
 private:
 
@@ -99,9 +114,19 @@ public:
 	/// <returns>速さ</returns>
 	float GetSpeed()const { return speed; }
 
+	/// <summary>
+	/// ボールを反射、投げ、を誰が行ったかの状態を返す
+	/// </summary>
+	/// <returns>状態</returns>
+	BallState GetThrowingState()const { return throwingState; }
+
 #pragma endregion
 
 #pragma region Setter
-
+	/// <summary>
+	/// ボールを反射、投げ、を誰が行ったかの状態を変更
+	/// </summary>
+	/// <param name="setState">変更後の状態</param>
+	void SetThrowingState(BallState setState) { throwingState = setState; }
 #pragma endregion
 };

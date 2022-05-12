@@ -47,11 +47,12 @@ Ball::Ball()
 
 	//青色セット
 	SetColor(BALL_COLOR_YELLOW);
+	throwingState = BallState::NONE;
 
 	// 当たり判定の作成(球)
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(0.5f);
+	sphereDatas["main"][0].SetRadius(1);
 }
 
 Ball::~Ball()
@@ -68,12 +69,34 @@ void Ball::Update()
 
 		//停止
 		if (speed <= 0) {
-			//色セット
-			SetColor(BALL_COLOR_YELLOW);
+			////色セット
+			//SetColor(BALL_COLOR_YELLOW);
+			throwingState = BallState::NONE;
 		}
 	}
 	else {
 		//eraseManager = isPicked;
+	}
+
+	switch (throwingState)
+	{
+	case BallState::NONE:
+		SetColor(BALL_COLOR_BLUE);
+		break;
+	case BallState::HOLD_PLAYER:
+		SetColor(BALL_COLOR_BLUE);
+		break;
+	case BallState::HOLD_ENEMY:
+		SetColor(BALL_COLOR_RED);
+		break;
+	case BallState::THROWING_PLAYER:
+		SetColor(BALL_COLOR_BLUE);
+		break;
+	case BallState::THROWING_ENEMY:
+		SetColor(BALL_COLOR_RED);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -95,23 +118,17 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
 		Reflection(otherNormal);
-
-		//青色セット
-		if (speed > 0) {
-			SetColor(BALL_COLOR_BLUE);
-		}
 	}
 	//敵との衝突
 	else if (typeid(object) == typeid(FollowEnemy) ||
 		typeid(object) == typeid(BarrierEnemy))
 	{
-		//反射共通処理
-		Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-		Reflection(otherNormal);
-
-		//赤色セット
-		if (speed > 0) {
-			SetColor(BALL_COLOR_RED);
+		// プレイヤーが投げたり反射させたボールなら
+		if (throwingState == BallState::THROWING_PLAYER)
+		{
+			//反射共通処理
+			Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+			Reflection(otherNormal);
 		}
 	}
 	//プレイヤーとの衝突
@@ -120,17 +137,13 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		//動いているときは反射
 		if (speed > 0) {
 
-			//反射共通処理
-			Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-			Reflection(otherNormal);
-
-			//青色セット
-			SetColor(BALL_COLOR_BLUE);
-		}
-		//停止しているならこのballは削除、同位置でPlayer側で新しくballを取得しなおす
-		else {
-			// 管理クラスから削除
-			eraseManager = true;
+			// 敵が投げたり反射させたボールなら
+			if (throwingState == BallState::THROWING_ENEMY)
+			{
+				//反射共通処理
+				Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+				Reflection(otherNormal);
+			}
 		}
 	}
 	//ノーマルバリアとの判定
@@ -147,11 +160,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal);
-
-		//青色セット
-		if (speed > 0) {
-			SetColor(BALL_COLOR_BLUE);
-		}
+		throwingState = BallState::THROWING_PLAYER;
 	}
 	//エネミーバリアとの判定
 	else if (typeid(object) == typeid(EnemyBarrier))
@@ -167,11 +176,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal);
-
-		//赤色セット
-		if (speed > 0) {
-			SetColor(BALL_COLOR_RED);
-		}
+		throwingState = BallState::THROWING_ENEMY;
 	}
 }
 

@@ -18,6 +18,7 @@ void GamePlay::Initialize()
 	barrier = std::make_shared<NormalBarrier>();
 
 	pPlayer.get()->SetNormalBarrier(barrier);
+	pPlayer.get()->SetBall(pBall);
 
 	pFollowEnemy = std::make_shared<FollowEnemy>();
 	pEnemyBarrier = std::make_shared<EnemyBarrier>();

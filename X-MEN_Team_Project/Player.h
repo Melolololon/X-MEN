@@ -40,10 +40,10 @@ private:
 	void CalclateDirection();
 
 	// バリアフラグをオンにする
-	void UseBarrier(bool key);
+	bool UseBarrier(bool key);
 
 	// 投げるフラグをオンにする
-	void ThrowingBall(bool key);
+	bool ThrowingBall(bool key);
 
 	// 必殺技フラグをオンにする
 	void UseUltimateSkill(bool key);
@@ -53,6 +53,9 @@ private:
 
 	// 保持している通常バリアの方向を更新する
 	void UpdateBarrierDirection();
+	
+	// 投げやバリア関連の分岐などを行う
+	void UseAbility(bool key);
 
 public:
 	Player();
@@ -106,6 +109,8 @@ public:
 	void SetIsThrowingBall(bool flag);
 	// プレイヤーが使用できる通常のバリアをセット
 	void SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier);
+	// ボールのポインタを取得
+	void SetBall(std::shared_ptr<Ball> setBall);
 #pragma endregion
 };
 
