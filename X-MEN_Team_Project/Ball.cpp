@@ -35,6 +35,9 @@ void Ball::Reflection(const Vector3& otherNormal)
 	//”½‰f
 	velocity = reflectVel;
 
+	//ˆÊ’uXV (‚ß‚è‚±‚İ–h~—p)
+	SetPosition(GetPosition() + velocity * speed);
+
 	//speed‚ğ1.5”{‚É (ˆê’U”p~)
 	//speed *= 1.5f;
 }
