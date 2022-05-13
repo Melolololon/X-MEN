@@ -898,7 +898,7 @@ bool Input::LeftStickDownTrigger(const float lYPar, const UCHAR padNum)
 
 #pragma endregion
 
-float Input::LeftStickAngle(float par, const UCHAR padNum)
+float Input::LeftStickAngle(const float par, const UCHAR padNum)
 {
 	if (!PadCheck(padNum))return -1.0f;
 
@@ -910,12 +910,12 @@ float Input::LeftStickAngle(float par, const UCHAR padNum)
 
 	float absX = abs(x);
 	float absY = abs(y);
-	if (par / 100.0f * MAX_AXIS_VALUE < absX || par / 100.0f * MAX_AXIS_VALUE < absY)return -1.0f;
+	if (par / 100.0f * MAX_AXIS_VALUE > absX + absY)return -1.0f;
 
 	return LibMath::Vector2ToAngle(Vector2Normalize({ x,y }), true);
 }
 
-Vector2 Input::LeftStickVector2(float par, const bool dimention3D, const UCHAR padNum)
+Vector2 Input::LeftStickVector2(const float par, const bool dimention3D, const UCHAR padNum)
 {
 	float angle = LeftStickAngle(par,padNum);
 	if (angle < 0)return 0;
@@ -925,7 +925,7 @@ Vector2 Input::LeftStickVector2(float par, const bool dimention3D, const UCHAR p
 }
 
 
-Vector3 Input::LeftStickVector3(float par, Camera* pCamera, const bool rotX, const bool rotY, const UCHAR padNum)
+Vector3 Input::LeftStickVector3(const float par, Camera* pCamera, const bool rotX, const bool rotY, const UCHAR padNum)
 {
 	float angle = LeftStickAngle(par, padNum);
 	if (angle < 0)return 0;
@@ -1032,14 +1032,14 @@ bool Input::RightStickDownTrigger(const float lYPar, const UCHAR padNum)
 
 #pragma endregion
 
-Vector2 Input::RightStickVector2(float par, const bool dimention3D, const UCHAR padNum)
+Vector2 Input::RightStickVector2(const  float par, const bool dimention3D, const UCHAR padNum)
 {
 	float angle = RightStickAngle(par,padNum);
 	if (angle < 0)return 0;
 	return LibMath::AngleToVector2(angle, dimention3D);
 }
 
-Vector3 Input::RightStickVector3(float par, Camera* pCamera, const bool rotX, const bool rotY, const UCHAR padNum)
+Vector3 Input::RightStickVector3(const  float par, Camera* pCamera, const bool rotX, const bool rotY, const UCHAR padNum)
 {
 	float angle = RightStickAngle(par, padNum);
 	if (angle < 0)return 0;
@@ -1059,7 +1059,7 @@ Vector3 Input::RightStickVector3(float par, Camera* pCamera, const bool rotX, co
 
 
 
-float Input::RightStickAngle(float par, const UCHAR padNum)
+float Input::RightStickAngle(const  float par, const UCHAR padNum)
 {
 	if (!PadCheck(padNum))return -1.0f;
 
@@ -1069,7 +1069,7 @@ float Input::RightStickAngle(float par, const UCHAR padNum)
 
 	float absX = abs(x);
 	float absY = abs(y);
-	if (par / 100.0f * MAX_AXIS_VALUE < absX || par / 100.0f * MAX_AXIS_VALUE < absY)return -1.0f;
+	if (par / 100.0f * MAX_AXIS_VALUE > absX + absY)return -1.0f;
 
 
 
