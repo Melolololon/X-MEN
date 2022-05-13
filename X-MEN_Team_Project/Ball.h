@@ -31,6 +31,7 @@ public:
 private:
 	//ボールの初期スピード
 	const float INIT_THROW_SPEED = 0.5f;
+	const float BALL_ACCEL = 0.25F;
 
 private:
 	//移動方向
