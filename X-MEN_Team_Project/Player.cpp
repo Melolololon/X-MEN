@@ -4,6 +4,7 @@
 #include "InputDeviceManager.h"
 #include"TestObject.h"
 #include <GameObjectManager.h>
+#include "FieldObjectWall.h"
 
 MelLib::Vector3 Player::GetInputVector()
 {
@@ -55,6 +56,9 @@ void Player::Move(const MelLib::Vector3& vec)
 	MelLib::Vector3 addVector = vec * MOVE_SPEED;
 
 	GameObject::AddPosition(addVector);
+
+	oldVelocity = addVector;
+
 	CalclateDirection();
 }
 
@@ -151,6 +155,9 @@ Player::Player()
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(0.5f);
+
+	//ボールをオブジェクトマネージャに追加
+	MelLib::GameObjectManager::GetInstance()->AddObject(pBall);
 }
 
 Player::~Player()
@@ -212,16 +219,27 @@ void Player::Hit
 		}
 	}
 
-	//// 壁とヒットしたとき
-	//if (typeid(object) == typeid(FieldObjectWall))
-	//{
-	//	MelLib::Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-	//	MelLib::Vector3 reflectVector = otherNormal * oldVelocity;
-	// 
-	//	MelLib::Vector3 pos = GetPosition() - reflectVector;
-	// 
-	//	SetPosition(pos);
-	//}
+	// 壁とヒットしたときの押出処理
+	if (typeid(object) == typeid(FieldObjectWall))
+	{
+		// ヒットした障害物のヒットした法線方向に押し出したいからその法線と
+		// ヒット時の速度ベクトルを絶対値同士で乗算した後、もとの法線でかける
+		MelLib::Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+		MelLib::Vector3 absOtherNormal;
+		absOtherNormal.x = std::fabsf(otherNormal.x);
+		absOtherNormal.y = std::fabsf(otherNormal.y);
+		absOtherNormal.z = std::fabsf(otherNormal.z);
+
+		MelLib::Vector3 absOldVelocity = oldVelocity;
+		absOldVelocity.x = std::fabsf(absOldVelocity.x);
+		absOldVelocity.y = std::fabsf(absOldVelocity.y);
+		absOldVelocity.z = std::fabsf(absOldVelocity.z);
+
+		MelLib::Vector3 reflectVector = absOtherNormal * absOldVelocity;
+		reflectVector *= otherNormal;
+		MelLib::Vector3 pos = GetPosition() + reflectVector;
+		SetPosition(pos);
+	}
 }
 
 void Player::AddUltimatekillValue(int value)

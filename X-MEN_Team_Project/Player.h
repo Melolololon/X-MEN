@@ -25,6 +25,8 @@ private:
 
 	MelLib::Vector3 dirVector;
 
+	MelLib::Vector3 oldVelocity;
+
 	std::shared_ptr<Ball> pBall;
 	std::shared_ptr<NormalBarrier> barrier;
 
