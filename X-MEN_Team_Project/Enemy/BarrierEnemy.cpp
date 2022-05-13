@@ -7,11 +7,12 @@ BarrierEnemy::BarrierEnemy()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
+	const float MODEL_SIZE = 2;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
 	// 見た目がわかりやすいように 後程モデルデータができたときに修正
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
-
+	modelObjects["main"].SetScale(MODEL_SIZE);
 	// 初期位置を0,0,5に
 	SetPosition(MelLib::Vector3(0, 0, 5));
 
@@ -19,7 +20,7 @@ BarrierEnemy::BarrierEnemy()
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(0.5f);
+	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
 
 	// 変数の初期化
 	hp = BarrierEnemyStatus::MAX_HP;

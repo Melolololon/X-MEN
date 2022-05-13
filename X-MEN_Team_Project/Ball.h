@@ -27,10 +27,11 @@ public:
 	static const MelLib::Color BALL_COLOR_RED;		//赤
 	static const MelLib::Color BALL_COLOR_BLUE;		//青
 	static const MelLib::Color BALL_COLOR_YELLOW;	//黄
-
+	
 private:
 	//ボールの初期スピード
 	const float INIT_THROW_SPEED = 0.5f;
+	const float MAX_SPEED = 1.8f;
 	const float BALL_ACCEL = 0.25F;
 
 private:

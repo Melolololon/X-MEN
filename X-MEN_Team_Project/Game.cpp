@@ -54,7 +54,7 @@ void Game::Run()
 void Game::Initialize()
 {
 	// ライブラリ初期化(横,縦,色,名前)
-	MelLib::Library::Initialize(1280, 720, MelLib::Color(30, 30, 160, 255), L"Game");
+	MelLib::Library::Initialize(1280, 720, MelLib::Color(125, 125, 0, 255), L"Game");
 	// 60フレーム固定
 	MelLib::Library::SetFramesPerSecond60(true);
 

@@ -18,7 +18,7 @@ void Ball::Move()
 	SetPosition(GetPosition() + velocity * speed);
 
 	//スピード少し減らす
-	speed -= 0.001f;
+	speed -= 0.0025f;
 	if (speed < 0) { speed = 0; }
 }
 
@@ -40,14 +40,20 @@ void Ball::Reflection(const Vector3& otherNormal)
 
 	//加速
 	speed += BALL_ACCEL;
+
+	if (speed > MAX_SPEED)
+	{
+		speed = MAX_SPEED;
+	}
 }
 
 Ball::Ball()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
+	const float MODEL_SIZE = 2;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-
+	modelObjects["main"].SetScale(MODEL_SIZE);
 	//青色セット
 	SetColor(BALL_COLOR_YELLOW);
 	throwingState = BallState::NONE;
@@ -55,7 +61,7 @@ Ball::Ball()
 	// 当たり判定の作成(球)
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(1);
+	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
 }
 
 Ball::~Ball()
@@ -68,8 +74,7 @@ void Ball::Update()
 {
 	//投げられていたら動かす
 	if (isThrowed) {
-		Move();
-
+		Move(); 
 		//停止
 		if (speed <= 0) {
 			////色セット

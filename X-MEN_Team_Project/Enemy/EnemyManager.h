@@ -10,9 +10,9 @@
 namespace EnemyManage
 {
 	// 最初にスポーンする数
-	const float SPAWN_ENEMY_NUM = 10;
+	const float SPAWN_ENEMY_NUM = 5;
 	// スポーンする間隔
-	const float SPAWN_TIME = 20.0f;
+	const float SPAWN_TIME = 2000.0f;
 }
 
 // シングルトンパターン

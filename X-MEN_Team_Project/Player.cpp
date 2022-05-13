@@ -52,7 +52,7 @@ MelLib::Vector3 Player::GetInputVector()
 
 void Player::Move(const MelLib::Vector3& vec)
 {
-	static const float MOVE_SPEED = 0.3f;
+	static const float MOVE_SPEED = 0.5f;
 	MelLib::Vector3 addVector = vec * MOVE_SPEED;
 
 	GameObject::AddPosition(addVector);
@@ -168,8 +168,9 @@ Player::Player()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
+	const float MODEL_SIZE = 2;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-
+	modelObjects["main"].SetScale({ MODEL_SIZE,MODEL_SIZE,MODEL_SIZE });
 	// 初期位置を0,0,5に
 	SetPosition(MelLib::Vector3(0, 0, 5));
 
@@ -177,7 +178,7 @@ Player::Player()
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(0.5f);
+	sphereDatas["main"][0].SetRadius(MODEL_SIZE * 0.5f);
 }
 
 Player::~Player()
