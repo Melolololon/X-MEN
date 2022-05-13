@@ -26,7 +26,7 @@ BarrierEnemy::BarrierEnemy()
 	playerDir = EnemyStatus::initPlayerDir;
 	playerPos = EnemyStatus::initPlayerPos;
 	// マジックナンバーではあるので後で変更検討
-	ChangePoseFrameCount = 0;
+	changePoseFrameCount = 0;
 	ballDir = { 0,0,0 };
 	frontDir = { 0,0,0 };
 }
@@ -61,7 +61,7 @@ void BarrierEnemy::Move()
 
 void BarrierEnemy::ChangePose()
 {
-	if (ChangePoseFrameCount >= BarrierEnemyStatus::CHANGE_POSE_FRAME)
+	if (changePoseFrameCount >= BarrierEnemyStatus::CHANGE_POSE_FRAME)
 	{
 		const float PI = 3.1415926f;
 		const float CALC_ANGLE = 180;
@@ -85,11 +85,11 @@ void BarrierEnemy::ChangePose()
 		pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
 
 		// カウントを0に
-		ChangePoseFrameCount = 0;
+		changePoseFrameCount = 0;
 	}
 	else
 	{
-		ChangePoseFrameCount++;
+		changePoseFrameCount++;
 	}
 }
 

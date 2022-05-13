@@ -18,7 +18,7 @@ private:
 	// ボールの方向ベクトル 後程使用してモデルの向きを変更する
 	MelLib::Vector3 ballDir;
 	// 方向を変えるためのフレーム計測
-	int ChangePoseFrameCount;
+	int changePoseFrameCount;
 
 	// バリア
 	std::shared_ptr<EnemyBarrier> pBarrier;
