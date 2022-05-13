@@ -5,6 +5,8 @@
 
 #include"TestObject.h"
 
+#include"Enemy/EnemyManager.h"
+
 void GamePlay::Initialize()
 {
 	// 初期化処理
@@ -43,6 +45,7 @@ void GamePlay::Initialize()
 	MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
 	MelLib::GameObjectManager::GetInstance()->AddObject(pEnemyBarrier);
 
+	EnemyManager::GetInstance()->Initialize();
 
 	fieldObjectManager->Initialize();
 }
@@ -56,6 +59,9 @@ void GamePlay::Update()
 	// 敵のテスト
 	pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
 	pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
+
+	EnemyManager::GetInstance()->SetPlayerPos(pPlayer.get()->GetPosition());
+	EnemyManager::GetInstance()->Update();
 
 	//ボール取得(とりあえず最初に見つかった1つ)
 	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
@@ -83,6 +89,9 @@ void GamePlay::Finalize()
 
 	// 全削除
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();
+
+	//
+	EnemyManager::GetInstance()->Destroy();
 }
 
 MelLib::Scene* GamePlay::GetNextScene()

@@ -40,7 +40,7 @@ void FollowEnemy::Move()
 	// ‰ÁZ
 	//0512ˆê’Uˆê’è‹——£ˆÈã‹ß‚Ã‚¯‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
 	const float PLAYER_SIZE = 1.2f;
-	//AddPosition(moveVector);
+	AddPosition(moveVector);
 
 }
 

@@ -81,6 +81,9 @@
     <ClCompile Include="FieldObject.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy\EnemyManager.cpp">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="Enemy\FollowEnemy.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\EnemyManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
