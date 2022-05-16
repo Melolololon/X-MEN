@@ -10,7 +10,7 @@ enum class InputDeviceType
 namespace InputDeviceInfo
 {
 	// 0 ~ 100 %表記
-	const float STICK_START_ANGLE = 10;
+	const float STICK_START_ANGLE = 20;
 }
 
 // 現在の操作デバイスを管理するシングルトンクラス
