@@ -39,8 +39,4 @@ public:
 		const MelLib::ShapeType3D hitObjShapeType,
 		const std::string& hitShapeName
 	)override;
-
-
-
-
 };

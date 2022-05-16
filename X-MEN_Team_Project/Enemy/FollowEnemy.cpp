@@ -49,6 +49,7 @@ void FollowEnemy::Move()
 void FollowEnemy::Update()
 {
 	Move();
+	PushPosition();
 
 	static const float ZERO = 0.0f;
 	// hpがなくなったときに管理クラスから削除
@@ -69,10 +70,10 @@ void FollowEnemy::Draw()
 
 void FollowEnemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
 {
+	Enemy::Hit(object, shapeType, shapeName, hitObjShapeType, hitShapeName);
 	// プレイヤーと衝突したら色変更　後程ボールと当たったときにも適用
 	if (typeid(object) == typeid(Player))
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
 	}
-
 }

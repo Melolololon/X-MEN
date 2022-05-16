@@ -1,8 +1,40 @@
 #include"Enemy.h"
+#include "FollowEnemy.h"
+#include "BarrierEnemy.h"
+
+void Enemy::PushPosition()
+{
+	if (pushTime >= 1)
+	{
+		pushVector = MelLib::Vector3();
+		isPush = false;
+		pushTime = 0;
+	}
+
+	if (!isPush)return;
+
+	// 押出ベクトルを小さくよりする
+	const float DIVIDE_VECTOR = 10;
+	const float PER_FRAME = 1.0f / 60.0f ;
+
+	AddPosition(pushVector / DIVIDE_VECTOR);
+
+	pushTime += PER_FRAME * EnemyStatus::MAX_PUSH_TIME;
+}
 
 void Enemy::Damage(float damage)
 {
 	hp -= damage;
+}
+
+void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
+{
+	if (typeid(object) == typeid(FollowEnemy) || typeid(object) == typeid(BarrierEnemy))
+	{
+		pushVector = GetPosition() - object.GetPosition();
+		pushVector = pushVector.Normalize();
+		isPush = true;
+	}
 }
 
 float Enemy::GetHP() const
