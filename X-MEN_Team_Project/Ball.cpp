@@ -27,7 +27,7 @@ void Ball::SetColor(const MelLib::Color& color)
 	modelObjects["main"].SetMulColor(color);
 }
 
-void Ball::Reflection(const Vector3& otherNormal)
+void Ball::Reflection(const Vector3& otherNormal, bool isAddSpeed)
 {
 	//反射ベクトルを計算
 	Vector3 reflectVel = (velocity - 2.0f * velocity.Dot(otherNormal) * otherNormal);
@@ -39,6 +39,10 @@ void Ball::Reflection(const Vector3& otherNormal)
 	SetPosition(GetPosition() + velocity * speed);
 
 	//加速
+	if (isAddSpeed == false) {
+		return;
+	}
+
 	speed += BALL_ACCEL;
 
 	if (speed > MAX_SPEED)
@@ -125,7 +129,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	{
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-		Reflection(otherNormal);
+		Reflection(otherNormal, false);
 	}
 	//敵との衝突
 	else if (typeid(object) == typeid(FollowEnemy) ||
@@ -136,7 +140,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		{
 			//反射共通処理
 			Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-			Reflection(otherNormal);
+			Reflection(otherNormal, false);
 		}
 	}
 	//プレイヤーとの衝突
@@ -150,7 +154,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 			{
 				//反射共通処理
 				Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-				Reflection(otherNormal);
+				Reflection(otherNormal, false);
 			}
 		}
 	}
@@ -167,7 +171,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
-		Reflection(otherNormal);
+		Reflection(otherNormal, true);
 		throwingState = BallState::THROWING_PLAYER;
 	}
 	//エネミーバリアとの判定
@@ -183,7 +187,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
-		Reflection(otherNormal);
+		Reflection(otherNormal, true);
 		throwingState = BallState::THROWING_ENEMY;
 	}
 }

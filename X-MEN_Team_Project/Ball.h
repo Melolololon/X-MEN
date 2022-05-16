@@ -61,7 +61,8 @@ private:
 	/// 反射するときの共通処理
 	/// </summary>
 	/// <param name="otherNormal">衝突したポリゴン面の法線ベクトル</param>
-	void Reflection(const Vector3& otherNormal);
+	/// <param name="isAddSpeed">加速させるか</param>
+	void Reflection(const Vector3& otherNormal, bool isAddSpeed);
 
 public:
 	Ball();
