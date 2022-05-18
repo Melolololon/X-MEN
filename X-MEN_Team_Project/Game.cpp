@@ -11,6 +11,7 @@
 #include<GameObjectManager.h>
 
 #include"GamePlay.h"
+#include"Clear.h"
 #include "InputDeviceManager.h"
 
 Game::Game() {}

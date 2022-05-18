@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Clear.cpp" />
     <ClCompile Include="EnemyBarrier.cpp" />
     <ClCompile Include="Enemy\BarrierEnemy.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="FieldObjectManager.cpp" />
     <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="InputDeviceManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -178,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="Clear.h" />
     <ClInclude Include="EnemyBarrier.h" />
     <ClInclude Include="Enemy\BarrierEnemy.h" />
     <ClInclude Include="Enemy\Enemy.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="FieldObjectManager.h" />
     <ClInclude Include="FieldObjectWall.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameOver.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="InputDeviceManager.h" />
     <ClInclude Include="NormalBarrier.h" />

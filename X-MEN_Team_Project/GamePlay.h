@@ -11,12 +11,20 @@
 class GamePlay : public MelLib::Scene
 {
 private:
-	
+	enum class NextScene
+	{
+		PLAY,
+		CLEAR,
+		GAMEOVER,
+	};
+private:
+	NextScene nextScene = NextScene::PLAY;
+
 	std::shared_ptr<Player>pPlayer;
 	std::shared_ptr<Ball>pBall;
 	std::shared_ptr<NormalBarrier>barrier;
 	FieldObjectManager* fieldObjectManager;
-	// “G
+	//// “G
 	std::shared_ptr<FollowEnemy> pFollowEnemy;
 	std::shared_ptr<BarrierEnemy> pBarrierEnemy;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
