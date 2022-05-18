@@ -17,7 +17,9 @@ void Clear::Initialize()
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 
-	//MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
+	clearFont.Create(MelLib::Color(255,0,0,255));
+	clearFont.SetScale(MelLib::Vector2(600,200));
+	clearFont.SetPosition(MelLib::Vector2(300,300));
 
 	// テストオブジェクト追加
 	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
@@ -32,11 +34,12 @@ void Clear::Update()
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
-	if (MelLib::Input::KeyTrigger(DIK_I))isEnd = true;
+	if (MelLib::Input::KeyTrigger(DIK_SPACE))isEnd = true;
 }
 
 void Clear::Draw()
 {
+	clearFont.Draw();
 	// 描画
 	MelLib::GameObjectManager::GetInstance()->Draw();
 }

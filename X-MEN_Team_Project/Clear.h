@@ -9,6 +9,8 @@ class Clear : public MelLib::Scene
 private:
 
 	std::shared_ptr<Player>pPlayer;
+	//ƒNƒŠƒA‚Ì‰æ‘œ•\¦
+	MelLib::Sprite2D clearFont;
 
 public:
 	Clear() {}

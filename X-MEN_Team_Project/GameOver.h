@@ -7,7 +7,8 @@ class GameOver : public MelLib::Scene
 {
 private:
 
-	std::shared_ptr<Player>pPlayer;
+	//GameOver‚ÌƒtƒHƒ“ƒg
+	MelLib::Sprite2D gameOverFont;
 
 public:
 	GameOver() {}
