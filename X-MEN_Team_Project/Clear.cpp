@@ -34,7 +34,7 @@ void Clear::Update()
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
-	if (MelLib::Input::KeyTrigger(DIK_SPACE))isEnd = true;
+	if (MelLib::Input::KeyTrigger(DIK_SPACE)|| MelLib::Input::PadButtonTrigger(MelLib::PadButton::A))isEnd = true;
 }
 
 void Clear::Draw()
