@@ -157,6 +157,13 @@ void Player::UseAbility(bool key)
 	}
 }
 
+void Player::Knockback(const MelLib::Vector3& vector)
+{
+	const int POWER = 3;
+
+	SetPosition(GetPosition() + vector * POWER);
+}
+
 Player::Player()
 	: hp(PlayerInitializeInfo::MAX_HP)
 	, ultimateSkillValue(0)
@@ -165,6 +172,7 @@ Player::Player()
 	, dirVector(MelLib::Vector3())
 	, pBall(nullptr)
 	, barrier(nullptr)
+	, hpGauge(GaugeUI())
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
@@ -179,6 +187,12 @@ Player::Player()
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(MODEL_SIZE * 0.5f);
+
+	hpGauge.SetFrontColor(PlayerHPUIInfo::FRONT_COLOR);
+	hpGauge.SetBackColor(PlayerHPUIInfo::BACK_COLOR);
+	hpGauge.SetMaxValue(PlayerInitializeInfo::MAX_HP);
+	hpGauge.SetPosition(PlayerHPUIInfo::DRAW_POSITION);
+	hpGauge.SetSizePercent(PlayerHPUIInfo::SIZE_PERCENT);
 }
 
 Player::~Player()
@@ -203,6 +217,8 @@ void Player::Update()
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
 	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+
+	hpGauge.Update(hp);
 }
 
 void Player::Draw()
@@ -211,6 +227,8 @@ void Player::Draw()
 	AllDraw();
 	// 必殺技ゲージの描画
 	ultimateSkill.Draw();
+
+	hpGauge.Draw();
 }
 
 void Player::Hit
@@ -246,8 +264,10 @@ void Player::Hit
 			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
 			break;
 		case BallState::THROWING_ENEMY:
-			// 現状 0ダメージ
-			Damage(0);
+			Damage(pBall.get()->GetSpeed());
+
+			MelLib::Vector3 knockbackVector = GetPosition() - pBall.get()->GetPosition();
+			Knockback(knockbackVector.Normalize());
 			break;
 		}
 	}
@@ -280,7 +300,7 @@ void Player::AddUltimatekillValue(int value)
 	ultimateSkillValue += value;
 }
 
-void Player::Damage(int value)
+void Player::Damage(float value)
 {
 	hp -= value;
 }

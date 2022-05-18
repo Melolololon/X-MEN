@@ -169,6 +169,7 @@
     <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GamePlay.cpp" />
+    <ClCompile Include="GaugeUI.cpp" />
     <ClCompile Include="InputDeviceManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NormalBarrier.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="FieldObjectWall.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GamePlay.h" />
+    <ClInclude Include="GaugeUI.h" />
     <ClInclude Include="InputDeviceManager.h" />
     <ClInclude Include="NormalBarrier.h" />
     <ClInclude Include="Player.h" />
