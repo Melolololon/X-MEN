@@ -124,7 +124,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	if (typeid(object) == typeid(FieldObjectWall))
 	{
 		//”½Ë‹¤’Êˆ—
-		Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
+		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal);
 	}
 	//“G‚Æ‚ÌÕ“Ë
