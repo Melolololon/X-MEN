@@ -8,9 +8,12 @@ private:
 	std::unordered_map<FieldObjectType,std::shared_ptr<std::vector<std::shared_ptr<FieldObject>>>> fieldObjects;
 private:
 	// •Ç‚ð’Ç‰Á‚·‚é
-	void AddWall(const MelLib::Vector3& pos,const MelLib::Vector3& size);
+	void AddWall(const MelLib::Vector3& pos,const MelLib::Vector3& size,const MelLib::Vector3& angle = MelLib::Vector3());
 	// •ÇŒQ‚ð’Ç‰Á‚·‚é
 	void AddWalls();
+
+	// ‰½ŠpŒ`‚©Žw’è‚µ‚Ä•ÇŒQ‚ð’Ç‰Á‚·‚é
+	void AddWalls(const unsigned int VALUE);
 public:
 	static FieldObjectManager* GetInstance();
 

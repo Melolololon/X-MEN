@@ -2,13 +2,16 @@
 #include "FieldObjectWall.h"
 
 #include<GameObjectManager.h>
+#include <LibMath.h>
+#include <Interpolation.h>
 
-void FieldObjectManager::AddWall(const MelLib::Vector3& pos, const MelLib::Vector3& size)
+void FieldObjectManager::AddWall(const MelLib::Vector3& pos, const MelLib::Vector3& size, const MelLib::Vector3& angle)
 {
 	auto fieldObjectWall = std::make_shared<FieldObjectWall>();
 
 	fieldObjectWall.get()->SetScale(size);
 	fieldObjectWall.get()->SetPosition(pos);
+	fieldObjectWall.get()->SetAngle(angle);
 
 	fieldObjects[FieldObjectType::FIELD_OBJECT_TYPE_WALL].get()->push_back(fieldObjectWall);
 
@@ -43,6 +46,45 @@ void FieldObjectManager::AddWalls()
 	AddWall(LEFT_POSITION, FieldObjectWallInfo::RIGHT_LEFT_SIZE);
 }
 
+void FieldObjectManager::AddWalls(const unsigned int VALUE)
+{
+	MelLib::Vector3 firstPoint = MelLib::Vector3(0, 0, 0);
+	MelLib::Vector3 secondPoint = MelLib::Vector3(0, 0, 0);
+
+	MelLib::Vector3 pos = MelLib::Vector3(0, 0, 0);
+	MelLib::Vector3 size = MelLib::Vector3(1, 1, 1);
+	MelLib::Vector3 angle = MelLib::Vector3(0,0,0);
+
+
+	for (int i = 0; i < VALUE; ++i)
+	{
+		// 現在のポイントと次のポイントから座標、角度を計算するため
+		// 次のポイントしてがVALUE(何角形かを表す値)を超えている場合は最初のポイントとして扱う
+		int nextIndex = i + 1;
+		if (nextIndex > VALUE)nextIndex = 0;
+
+		const float DOWBLE_PI = 2.0f * MelLib::LibMath::GetFloatPI();
+		const float MAX_ANGLE = 180.0f;
+
+		firstPoint.x = std::sinf((DOWBLE_PI / VALUE) * i);
+		firstPoint.y = 0;
+		firstPoint.z = std::cosf((DOWBLE_PI / VALUE) * i);
+
+		secondPoint.x = std::sinf((DOWBLE_PI / VALUE) * nextIndex);
+		secondPoint.y = 0;
+		secondPoint.z = std::cosf((DOWBLE_PI / VALUE) * nextIndex);
+
+		pos = MelLib::Interpolation::Lerp(firstPoint,secondPoint,0.5f);
+		float distance = pos.Length();
+		pos = pos.Normalize();
+		angle.y = MAX_ANGLE / MelLib::LibMath::GetFloatPI() * std::atan2f(pos.x, pos.z);
+		size = FieldObjectWallInfo::TOP_BOTTOM_SIZE * distance;
+		pos *= FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2;
+
+		AddWall(pos, size, angle);
+	}
+}
+
 FieldObjectManager* FieldObjectManager::GetInstance()
 {
 	static FieldObjectManager instance;
@@ -60,7 +102,8 @@ void FieldObjectManager::Initialize()
 
 	// 他の種類の配列のメモリ確保も基本ここから書く
 
-	AddWalls();
+	//AddWalls();
+	AddWalls(6);
 }
 
 void FieldObjectManager::Finalize()

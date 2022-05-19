@@ -11,12 +11,17 @@ FieldObjectWall::FieldObjectWall()
 
 	// ìñÇΩÇËîªíËÇÃçÏê¨(BOX)
 
-	boxDatas["main"].resize(1);
+	obbDatas["main"].resize(1);
 }
 
 void FieldObjectWall::Update()
 {
 	SetPosition(GetPosition());
+	SetScale(GetScale());
+	SetAngle(GetAngle());
+
+	obbDatas["main"][0].SetPosition(GetPosition());
+	obbDatas["main"][0].SetSize(GetScale());
 }
 
 void FieldObjectWall::Draw()
