@@ -168,6 +168,7 @@
     <ClCompile Include="FieldObjectManager.cpp" />
     <ClCompile Include="FieldObjectWall.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="InputDeviceManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="FieldObjectManager.h" />
     <ClInclude Include="FieldObjectWall.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="InputDeviceManager.h" />
     <ClInclude Include="NormalBarrier.h" />

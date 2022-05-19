@@ -7,6 +7,8 @@
 
 #include"Enemy/EnemyManager.h"
 
+#include"GameManager.h"
+
 void GamePlay::Initialize()
 {
 	// 初期化処理
@@ -47,28 +49,43 @@ void GamePlay::Initialize()
 	EnemyManager::GetInstance()->Initialize();
 
 	fieldObjectManager->Initialize();
+
+	// GameManagerのテスト
+	GameManager::GetInstance()->Initialize();
 }
 
 void GamePlay::Update()
 {
-	// マネージャーの更新
-	// オブジェクトの更新処理、判定処理、削除処理が行われる
-	MelLib::GameObjectManager::GetInstance()->Update();
 
-	// 敵のテスト
-	pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
-	pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
+	if (!GameManager::GetInstance()->IsHitStop())
+	{
+		// マネージャーの更新
+		// オブジェクトの更新処理、判定処理、削除処理が行われる
+		MelLib::GameObjectManager::GetInstance()->Update();
 
-	EnemyManager::GetInstance()->SetPlayerPos(pPlayer.get()->GetPosition());
-	EnemyManager::GetInstance()->Update();
+		// 敵のテスト
+		pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
+		pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
 
-	//ボール取得(とりあえず最初に見つかった1つ)
-	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
-		if (typeid(*v) == typeid(Ball)) {
-			pBarrierEnemy.get()->SetBallDir(v->GetPosition());
-			break;
+		EnemyManager::GetInstance()->SetPlayerPos(pPlayer.get()->GetPosition());
+		EnemyManager::GetInstance()->Update();
+
+		//ボール取得(とりあえず最初に見つかった1つ)
+		for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
+			if (typeid(*v) == typeid(Ball)) {
+				pBarrierEnemy.get()->SetBallDir(v->GetPosition());
+				break;
+			}
 		}
+
+		// 確認用
+		if (MelLib::Input::KeyTrigger(DIK_0)) GameManager::GetInstance()->SetHitStop(true);
 	}
+	else
+	{
+		GameManager::GetInstance()->Update();
+	}
+
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
@@ -88,9 +105,9 @@ void GamePlay::Finalize()
 
 	// 全削除
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();
-
 	//
 	EnemyManager::GetInstance()->Destroy();
+
 }
 
 MelLib::Scene* GamePlay::GetNextScene()

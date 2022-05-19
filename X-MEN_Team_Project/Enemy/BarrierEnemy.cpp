@@ -1,7 +1,7 @@
 #include"BarrierEnemy.h"
 
 #include"../Player.h"
-
+#include<array>
 
 BarrierEnemy::BarrierEnemy()
 {
@@ -26,10 +26,11 @@ BarrierEnemy::BarrierEnemy()
 	hp = BarrierEnemyStatus::MAX_HP;
 	playerDir = EnemyStatus::initPlayerDir;
 	playerPos = EnemyStatus::initPlayerPos;
-	// マジックナンバーではあるので後で変更検討
+	// マジックナンバー?なので後で変更検討
 	changePoseFrameCount = 0;
-	ballDir = { 0,0,0 };
 	frontDir = { 0,0,0 };
+	// 0で初期化
+	ballDir.fill(0);
 }
 
 void BarrierEnemy::Move()
@@ -72,14 +73,14 @@ void BarrierEnemy::ChangePose()
 		MelLib::Vector3 result;
 
 		// atan2で方向ベクトルから計算
-		result.x = atan2f(ballDir.x, ballDir.y) * CALC_ANGLE / PI;
-		result.y = atan2f(-ballDir.z, ballDir.x) * CALC_ANGLE / PI;
-		result.z = atan2f(ballDir.y, -ballDir.z) * CALC_ANGLE / PI;
+		result.x = atan2f(ballDir[0].x, ballDir[0].y) * CALC_ANGLE / PI;
+		result.y = atan2f(-ballDir[0].z, ballDir[0].x) * CALC_ANGLE / PI;
+		result.z = atan2f(ballDir[0].y, -ballDir[0].z) * CALC_ANGLE / PI;
 
 		SetAngle(result);
 
 		// 正面ベクトルの書き換え
-		frontDir = ballDir;
+		frontDir = ballDir[0];
 
 		// バリア用
 		// 第二引数にとりあえずでボールへの方向ベクトル
@@ -94,8 +95,20 @@ void BarrierEnemy::ChangePose()
 	}
 }
 
+void BarrierEnemy::BallDirSort()
+{
+	// 前に配列を詰める
+	for (int i = 0; i < ballDir.size() -1; i++)
+	{
+		ballDir[i] = ballDir[i + 1];
+	}
+
+}
+
 void BarrierEnemy::Update()
 {	
+	BallDirSort();
+
 	Move();
 	PushPosition();
 
@@ -131,7 +144,7 @@ void BarrierEnemy::SetBallDir(const MelLib::Vector3& pos)
 	// ボールの位置への方向ベクトルをとり変数にセット
 	MelLib::Vector3 result = pos - GetPosition();
 
-	ballDir = result.Normalize();
+	ballDir.back() = result.Normalize();
 }
 
 void BarrierEnemy::SetBarrier(std::shared_ptr<EnemyBarrier> barrier)

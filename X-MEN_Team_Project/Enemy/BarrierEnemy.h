@@ -16,7 +16,7 @@ class BarrierEnemy : public Enemy
 private:
 
 	// ボールの方向ベクトル 後程使用してモデルの向きを変更する
-	MelLib::Vector3 ballDir;
+	//MelLib::Vector3 ballDir;
 	// 方向を変えるためのフレーム計測
 	int changePoseFrameCount;
 
@@ -24,12 +24,17 @@ private:
 	std::shared_ptr<EnemyBarrier> pBarrier;
 	// 正面ベクトル
 	MelLib::Vector3 frontDir;
+	
+	std::array<MelLib::Vector3, BarrierEnemyStatus::CHANGE_POSE_FRAME> ballDir;
 
 private:
 
 	void Move() override;
 
 	void ChangePose();
+
+	// 指定フレーム分の配列の整理用　UPDATE前に使用
+	void BallDirSort();
 
 public:
 	BarrierEnemy();
@@ -62,4 +67,5 @@ public:
 	// セッター
 	void SetBallDir(const MelLib::Vector3& pos);
 	void SetBarrier(std::shared_ptr<EnemyBarrier> barrier);
+
 };

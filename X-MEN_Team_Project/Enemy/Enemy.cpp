@@ -1,6 +1,7 @@
 #include"Enemy.h"
 #include "FollowEnemy.h"
 #include "BarrierEnemy.h"
+#include"../Ball.h"
 
 void Enemy::PushPosition()
 {
@@ -29,11 +30,21 @@ void Enemy::Damage(float damage)
 
 void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
 {
+	// 敵同士で当たったら
 	if (typeid(object) == typeid(FollowEnemy) || typeid(object) == typeid(BarrierEnemy))
 	{
 		pushVector = GetPosition() - object.GetPosition();
 		pushVector = pushVector.Normalize();
 		isPush = true;
+	}
+
+	// ボールと当たったら
+	if (typeid(object) == typeid(Ball))
+	{
+		// ボールのスピード分ダメージを与える
+		const Ball* BALL = static_cast<const Ball*>(&object);
+		//Damage(BALL->GetSpeed());
+		Damage(20);
 	}
 }
 

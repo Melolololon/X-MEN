@@ -58,5 +58,37 @@ private:
 	// 時間での敵の出現
 	void PopEnemyTime();
 
+	// 敵が死んでいるか確認する
+	template<typename T>
+	void CheckEnemyDead(T& temp);
 };
 
+template<typename T>
+inline void EnemyManager::CheckEnemyDead(T& temp)
+{
+	bool enemyDead = false;
+
+	// 追従する敵が死んでいるのか確認
+	for (auto x : temp)
+	{
+		// hpが0なら消す
+		if (x.get()->GetHP() <= 0)
+		{
+			x.reset();
+			enemyDead = true;
+		}
+	}
+
+	// 
+	if (enemyDead)
+	{
+		for (int i = 0; i < temp.size(); i++)
+		{
+			if (temp[i].get()->GetHP() <= 0)
+			{
+				temp.erase(temp.begin() + i);
+			}
+		}
+	}
+
+}

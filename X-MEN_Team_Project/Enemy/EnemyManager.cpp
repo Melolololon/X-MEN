@@ -25,6 +25,7 @@ void EnemyManager::Initialize()
 
 	// 出現時間のタイマーセット
 	timerStart = clock();
+
 }
 
 void EnemyManager::Update()
@@ -32,11 +33,18 @@ void EnemyManager::Update()
 	// 時間での敵の出現
 	PopEnemyTime();
 
+	CheckEnemyDead(followEnemies);
+	CheckEnemyDead(barrierEnemies);
 }
 
 void EnemyManager::Destroy()
 {
-	if (instance != nullptr)delete instance;
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+
 }
 
 void EnemyManager::SetPlayerPos(const MelLib::Vector3& pos)
@@ -54,6 +62,7 @@ void EnemyManager::PopFollowEnemyInitialize()
 	std::random_device random;
 	std::default_random_engine engine;
 	std::uniform_int_distribution<int> dist(-10, 10);
+
 
 	for (int i = 0; i < EnemyManage::SPAWN_ENEMY_NUM; i++)
 	{
@@ -97,4 +106,3 @@ void EnemyManager::PopEnemyTime()
 
 	
 }
-
