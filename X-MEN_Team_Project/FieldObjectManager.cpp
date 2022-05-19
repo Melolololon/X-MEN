@@ -4,6 +4,7 @@
 #include<GameObjectManager.h>
 #include <LibMath.h>
 #include <Interpolation.h>
+#include <Random.h>
 
 void FieldObjectManager::AddWall(const MelLib::Vector3& pos, const MelLib::Vector3& size, const MelLib::Vector3& angle)
 {
@@ -46,21 +47,35 @@ void FieldObjectManager::AddWalls()
 	AddWall(LEFT_POSITION, FieldObjectWallInfo::RIGHT_LEFT_SIZE);
 }
 
-void FieldObjectManager::AddWalls(const unsigned int VALUE)
+void FieldObjectManager::AddWalls(const unsigned int VALUE, bool isRotate)
 {
 	MelLib::Vector3 firstPoint = MelLib::Vector3(0, 0, 0);
 	MelLib::Vector3 secondPoint = MelLib::Vector3(0, 0, 0);
 
 	MelLib::Vector3 pos = MelLib::Vector3(0, 0, 0);
 	MelLib::Vector3 size = MelLib::Vector3(1, 1, 1);
-	MelLib::Vector3 angle = MelLib::Vector3(0,0,0);
+	MelLib::Vector3 angle = MelLib::Vector3(0, 0, 0);
 
+	// ベクトルを行列で変換するラムダ式
+	auto TransformVector = [](const MelLib::Vector3& v, const MelLib::Matrix& m)
+	{
+		float w = v.x * m.matrix[0][3] + v.y * m.matrix[1][3] + v.z * m.matrix[2][3] + m.matrix[3][3];
 
-	for (int i = 0; i < VALUE; ++i)
+		MelLib::Vector3 result
+		{
+			(v.x * m.matrix[0][0] + v.y * m.matrix[1][0] + v.z * m.matrix[2][0] + m.matrix[3][0]) / w,
+			(v.x * m.matrix[0][1] + v.y * m.matrix[1][1] + v.z * m.matrix[2][1] + m.matrix[3][1]) / w,
+			(v.x * m.matrix[0][2] + v.y * m.matrix[1][2] + v.z * m.matrix[2][2] + m.matrix[3][2]) / w,
+		};
+
+		return result;
+	};
+
+	for (unsigned int i = 0; i < VALUE; ++i)
 	{
 		// 現在のポイントと次のポイントから座標、角度を計算するため
 		// 次のポイントしてがVALUE(何角形かを表す値)を超えている場合は最初のポイントとして扱う
-		int nextIndex = i + 1;
+		unsigned int nextIndex = i + 1;
 		if (nextIndex > VALUE)nextIndex = 0;
 
 		const float DOWBLE_PI = 2.0f * MelLib::LibMath::GetFloatPI();
@@ -74,12 +89,24 @@ void FieldObjectManager::AddWalls(const unsigned int VALUE)
 		secondPoint.y = 0;
 		secondPoint.z = std::cosf((DOWBLE_PI / VALUE) * nextIndex);
 
-		pos = MelLib::Interpolation::Lerp(firstPoint,secondPoint,0.5f);
+		// isRotateの場合角度を正す
+		if (isRotate)
+		{
+			const float ANGLE = DOWBLE_PI / VALUE / 2;
+
+			firstPoint = TransformVector(firstPoint, MelLib::Matrix::GetRotateYMatrix(ANGLE));
+			secondPoint = TransformVector(secondPoint, MelLib::Matrix::GetRotateYMatrix(ANGLE));
+		}
+
+		const float HALF_LERP_POINT = 0.5f;
+		pos = MelLib::Interpolation::Lerp(firstPoint, secondPoint, HALF_LERP_POINT);
 		float distance = pos.Length();
 		pos = pos.Normalize();
+
 		angle.y = MAX_ANGLE / MelLib::LibMath::GetFloatPI() * std::atan2f(pos.x, pos.z);
+
 		size = FieldObjectWallInfo::TOP_BOTTOM_SIZE * distance;
-		pos *= FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2;
+		pos *= FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2 * distance;
 
 		AddWall(pos, size, angle);
 	}
@@ -101,9 +128,10 @@ void FieldObjectManager::Initialize()
 	fieldObjects[FieldObjectType::FIELD_OBJECT_TYPE_WALL] = std::make_shared<std::vector<std::shared_ptr<FieldObject>>>();
 
 	// 他の種類の配列のメモリ確保も基本ここから書く
+	std::srand(rand());
 
-	//AddWalls();
-	AddWalls(6);
+	//AddWalls(5,true);
+	AddWalls(MelLib::Random::GetRandomNumberSetNumber({ 4,5,6 }), (bool)MelLib::Random::GetRandomNumberSetNumber({ 0,1 }));
 }
 
 void FieldObjectManager::Finalize()

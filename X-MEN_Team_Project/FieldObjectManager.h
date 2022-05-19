@@ -13,7 +13,8 @@ private:
 	void AddWalls();
 
 	// 何角形か指定して壁群を追加する
-	void AddWalls(const unsigned int VALUE);
+	// isRotateは例えば四角形の場合、斜めを正す
+	void AddWalls(const unsigned int VALUE,bool isRotate);
 public:
 	static FieldObjectManager* GetInstance();
 
