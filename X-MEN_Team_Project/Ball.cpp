@@ -171,7 +171,20 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
-		Reflection(otherNormal, true);
+		
+		//プレイヤーのバリアに当たったらバリアの方向にそのまま返す
+		velocity = MelLib::Quaternion(1,0,0,1).GetZXYRotateQuaternion({ 0,0,1 }, other->GetAngle()).ToVector3();
+		//位置更新 (めりこみ防止用)
+		SetPosition(GetPosition() + velocity * speed);
+
+		//加速
+		speed += BALL_ACCEL;
+
+		if (speed > MAX_SPEED)
+		{
+			speed = MAX_SPEED;
+		}
+
 		throwingState = BallState::THROWING_PLAYER;
 	}
 	//エネミーバリアとの判定
