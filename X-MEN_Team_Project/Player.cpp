@@ -339,7 +339,7 @@ const MelLib::Vector3& Player::GetDirection() const
 	return dirVector;
 }
 
-int Player::GetHp() const
+float Player::GetHp() const
 {
 	return hp;
 }

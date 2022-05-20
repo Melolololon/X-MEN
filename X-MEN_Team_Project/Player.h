@@ -124,6 +124,8 @@ public:
 	bool GetIsUltimateSkill() const;
 	// プレイヤーが向いている方向のベクトルを取得
 	const MelLib::Vector3& GetDirection() const;
+	// プレイヤーのHPを取得
+	float GetHp() const;
 #pragma endregion
 
 #pragma region Setter
