@@ -42,6 +42,8 @@ private:
 
 	// Å‰‚ÌUpdate‚É‚Ì‚İƒ{[ƒ‹‚ÌQÆ‚ğæ“¾‚·‚é
 	void RefBallObject();
+
+	void SetRandomPosition();
 public:
 	BarrierEnemy();
 	~BarrierEnemy() {}

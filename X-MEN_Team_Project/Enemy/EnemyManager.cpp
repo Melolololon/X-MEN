@@ -110,7 +110,7 @@ void EnemyManager::PopBarrierEnemyInitialize()
 
 
 		// ‚Æ‚è‚ ‚¦‚¸0,0,0‚ÉÝ’u
-		temp.get()->SetPosition(MelLib::Vector3(0, 0, 0));
+		//temp.get()->SetPosition(MelLib::Vector3(0, 0, 0));
 		temp.get()->SetBarrier(tempBarrier);
 
 		barrierEnemies.push_back(temp);

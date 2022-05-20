@@ -14,7 +14,7 @@ namespace EnemyManage
 	// 最初にスポーンする追従する敵の数
 	const float SPAWN_FOLLOW_ENEMY_NUM = 5;
 	// 最初にスポーンするバリア持ちの敵の数
-	const float SPAWN_BARRIER_ENEMY_NUM = 1;
+	const float SPAWN_BARRIER_ENEMY_NUM = 2;
 	// スポーンする間隔
 	const float SPAWN_TIME = 2000.0f;
 }

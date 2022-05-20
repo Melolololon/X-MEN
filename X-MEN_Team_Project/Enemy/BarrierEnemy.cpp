@@ -3,6 +3,7 @@
 #include"../Player.h"
 #include<array>
 #include"../MyLibrary/GameObjectManager.h"
+#include <Random.h>
 
 void BarrierEnemy::RefBallObject()
 {
@@ -14,6 +15,17 @@ void BarrierEnemy::RefBallObject()
 			break;
 		}
 	}
+}
+
+void BarrierEnemy::SetRandomPosition()
+{
+	std::srand(std::rand());
+
+	MelLib::Vector3 setPos;
+	setPos.x = MelLib::Random::GetRandomNumberRangeSelect(-10, 10);
+	setPos.z = MelLib::Random::GetRandomNumberRangeSelect(-10, 10);
+
+	SetPosition(setPos);
 }
 
 BarrierEnemy::BarrierEnemy()
@@ -48,6 +60,8 @@ BarrierEnemy::BarrierEnemy()
 	ballBeforeNum = 0;
 	firstCountflg = false;
 
+
+	SetRandomPosition();
 }
 
 void BarrierEnemy::Move()
