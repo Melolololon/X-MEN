@@ -98,6 +98,18 @@ namespace MelLib
 		TriangleCalcResult triangleCalcResult;
 		
 
+		// 各当たり判定の前フレームの座標
+		// 当たり判定複数回確認するときに使用(補完用)
+		std::unordered_map<std::string,std::vector<Vector3>>sphereDataPrePositions;
+		std::unordered_map<std::string, std::vector<Vector3>>boxDataPrePositions;
+		std::unordered_map<std::string, std::vector<Value2<Vector3>>>segment3DDataPrePositions;
+		std::unordered_map<std::string, std::vector<Vector3>>rayDataPrePositions;
+		std::unordered_map<std::string, std::vector<Vector3>>planeDataPrePositions;
+		std::unordered_map<std::string, std::vector<Vector3>>boardDataPrePositions;
+		std::unordered_map<std::string, std::vector<Value2<Vector3>>>capsuleDataPrePositions;
+		std::unordered_map<std::string, std::vector<Value3<Vector3>>>triangleDataPrePositions;
+		std::unordered_map<std::string, std::vector<Vector3>>obbDataPrePositions;
+
 	protected:
 
 #pragma region 判定データ
@@ -117,13 +129,31 @@ namespace MelLib
 		std::unordered_map<std::string, std::vector<SphereData>>sphereDatas;
 		std::unordered_map<std::string, std::vector<BoxData>>boxDatas;
 		std::unordered_map<std::string, std::vector<Segment3DData>>segment3DDatas;
-		std::unordered_map<std::string, std::vector<RayData>>layDatas;
+		std::unordered_map<std::string, std::vector<RayData>>rayDatas;
 		std::unordered_map<std::string, std::vector<PlaneData>>planeDatas;
 		std::unordered_map<std::string, std::vector<BoardData>>boardDatas;
 		std::unordered_map<std::string, std::vector<CapsuleData>>capsuleDatas;
 		std::unordered_map<std::string, std::vector<TriangleData>>triangleDatas;
 		std::unordered_map<std::string, std::vector<OBBData>>obbDatas;
 
+		// 1だと、通常通り行う
+		// 2だと通常のに加え、前フレームとの移動量の差の半分移動した場合の衝突確認も行う
+		// 1フレームで行う衝突判定回数
+		unsigned int sphereFrameHitCheckNum = 1;
+		unsigned int boxFrameHitCheckNum = 1;
+		unsigned int segment3DFrameHitCheckNum = 1;
+		unsigned int rayFrameHitCheckNum = 1;
+		unsigned int planeFrameHitCheckNum = 1;
+		unsigned int boardFrameHitCheckNum = 1;
+		unsigned int capsuleFrameHitCheckNum = 1;
+		unsigned int triangleFrameHitCheckNum = 1;
+		unsigned int obbFrameHitCheckNum = 1;
+
+		// 衝突した時の補間した座標
+		Vector3 lerpPosition;
+
+		// 補間で動いた座標
+		Vector3 lerpMovePosition;
 #pragma endregion
 
 		//継承したクラスを格納し、判定時に使う用
@@ -140,6 +170,7 @@ namespace MelLib
 
 		// 判定表示するかどうか
 		bool drawCollisionModel = true;
+
 
 
 	private:
@@ -426,6 +457,11 @@ namespace MelLib
 
 #pragma region 判定用関数
 
+		/// <summary>
+		/// 前フレームの当たり判定の座標をセット
+		/// Update呼び出し前に呼び出す
+		/// </summary>
+		void SetPreDataPositions();
 
 		// 判定用関数
 		CollisionDetectionFlag GetCollisionFlag() const { return collisionFlag; }
@@ -499,6 +535,40 @@ namespace MelLib
 		void SetHitSegment3DData(const Segment3DData& segment) { hitSegment3DData = segment; }
 		void SetHitCapsuleData(const CapsuleData& capsule) { hitCapsuleData = capsule; }
 		void SetHitTriangleData(const TriangleData& tri) { hitTriangleData = tri; }
+
+		unsigned int GetFrameHitCheckNumber(ShapeType3D type)const;
+
+		void GetPreSpherePositions(std::unordered_map<std::string, std::vector<Vector3>>& refPos) { refPos = sphereDataPrePositions; }
+		void GetPreBoxPositions(std::unordered_map<std::string, std::vector<Vector3>>& refPos) { refPos = boxDataPrePositions; }
+		void GetPreRayPositions(std::unordered_map<std::string, std::vector<Vector3>>& refPos) { refPos = rayDataPrePositions; }
+		void GetPrePlanePositions(std::unordered_map<std::string, std::vector<Vector3>>& refPos) { refPos = planeDataPrePositions; }
+		void GetPreBoardPositions(std::unordered_map<std::string, std::vector<Vector3>>& refPos) { refPos = boardDataPrePositions; }
+		void GetPreOBBPositions(std::unordered_map<std::string, std::vector<Vector3>>& refPos) { refPos = obbDataPrePositions; }
+		void GetPreTrianglePositions(std::unordered_map<std::string, std::vector<Value3<Vector3>>>& refPos) { refPos = triangleDataPrePositions; }
+		void GetPreSegment3DPositions(std::unordered_map<std::string, std::vector<Value2<Vector3>>>& refPos) { refPos = segment3DDataPrePositions; }
+		void GetPreCapsule3DPositions(std::unordered_map<std::string, std::vector<Value2<Vector3>>>& refPos) { refPos = capsuleDataPrePositions; }
+
+
+		void SetLerpPosition(const Vector3& pos) { lerpPosition = pos; }
+		void SetLerpMovePosition(const Vector3& pos) { lerpMovePosition = pos; }
+
+		/// <summary>
+		/// 衝突確認を1フレームで複数回行ったときに補間して衝突した時の座標を返します。
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetLerpPosition()const { return lerpPosition; }
+		
+		/// <summary>
+		/// 衝突確認を1フレームで複数回行ったときに補間した時の移動量を返します。
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetLerpMovePosition()const { return lerpMovePosition; }
+
+		/// <summary>
+		/// 衝突確認を1フレームで複数回行って補完した時に、衝突したオブジェクトと重ならないように押し出した座標を返します。
+		/// </summary>
+		/// <returns>重ならないように押し出した座標(GetLerpPosition() - GetLerpMovePosition())</returns>
+		Vector3 GetLerpExtrudePosition()const { return lerpPosition - lerpMovePosition; }
 
 		// 開発者用
 #ifdef _DEBUG

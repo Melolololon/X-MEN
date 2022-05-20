@@ -183,6 +183,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Capture.cpp" />
     <ClCompile Include="ClothSimulator.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionDetectionData.cpp" />
@@ -476,6 +477,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="Capture.h" />
     <ClInclude Include="ClothSimulator.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Counter.h" />

@@ -29,6 +29,9 @@ void Ball::SetColor(const MelLib::Color& color)
 
 void Ball::Reflection(const Vector3& otherNormal, bool isAddSpeed)
 {
+	// 当たったオブジェクトの近くの座標を取得
+	SetPosition(GetLerpExtrudePosition());
+
 	//反射ベクトルを計算
 	Vector3 reflectVel = (velocity - 2.0f * velocity.Dot(otherNormal) * otherNormal);
 
@@ -66,6 +69,8 @@ Ball::Ball()
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
+
+	sphereFrameHitCheckNum = 4;
 }
 
 Ball::~Ball()
@@ -161,6 +166,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	//ノーマルバリアとの判定
 	else if (typeid(object) == typeid(NormalBarrier))
 	{
+
 		//バリア展開中か取得するために型変換
 		const NormalBarrier* other = static_cast<const NormalBarrier*>(&object);
 

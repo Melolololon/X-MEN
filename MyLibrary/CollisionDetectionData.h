@@ -16,6 +16,8 @@ namespace MelLib
 
 	//これヘッダーファイル分けたほうがいいかも
 
+	// 名前HitCheckDataとかにしてもいいかも
+
 	//衝突確認フラグ
 	struct CollisionDetectionFlag
 	{

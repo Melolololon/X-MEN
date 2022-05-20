@@ -55,8 +55,8 @@ namespace MelLib
 
 
 		//追加したフレームごとにソートするか
-		ObjectSortType addObjectSort;
-		bool addObjectSortOrderType;
+		ObjectSortType addObjectSort = OBJECT_SORT_NONE;
+		bool addObjectSortOrderType = false;
 
 		//カーソル判定
 		bool checkMouseCollision = false;
@@ -66,6 +66,8 @@ namespace MelLib
 		//データ
 		Vector3 nearPos;
 		Vector3 farPos;
+
+
 
 	private:
 
@@ -102,6 +104,7 @@ namespace MelLib
 		/// </summary>
 		/// <param name="flag"></param>
 		void SetMouseCollisionFlag(const bool flag);
+
 
 #pragma region オブジェクトの配列関係
 

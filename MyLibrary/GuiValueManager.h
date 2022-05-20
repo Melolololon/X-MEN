@@ -7,6 +7,19 @@
 #include"GuiValue.h"
 namespace MelLib
 {
+	// .guid 仕様
+	// ファイル名　ウィンドウ名
+	// 
+	// 内部(ラベル分存在)
+	// ラベル
+	// 区切り-1
+	// 名前復元用乱数
+	// 値の型
+	// 値
+	// 終了判別値(-1がまだ続く。-2が末尾)
+	//
+
+
 	class GuiValueManager
 	{
 	private:
@@ -62,10 +75,10 @@ namespace MelLib
 		void Update();
 
 		
-		int GetGuiIntData(const std::string& windowName, const std::string& lavel)const;
-		float GetGuiFloatData(const std::string& windowName, const std::string& lavel)const;
+		void GetGuiData(int& refInt, const std::string& windowName, const std::string& lavel)const;
+		void GetGuiData(float& refFloat,const std::string& windowName, const std::string& lavel)const;
 		void GetGuiData(bool& refFlag, const std::string& windowName, const std::string& lavel)const;
-		Vector3 GetGuiVector3Data(const std::string& windowName, const std::string& lavel)const;
+		void GetGuiData(Vector3& refVectior3,const std::string& windowName, const std::string& lavel)const;
 	};
 
 }
