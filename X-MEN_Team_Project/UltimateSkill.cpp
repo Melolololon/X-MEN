@@ -5,7 +5,7 @@ void UltimateSkill::CalcLevel()
 {
 	// 現在のゲージ量をレベルアップに必要な既定値で割った値
 	// 例）74(現ゲージ量) / 25(既定値) = 2level
-	level = value / UltimateSkillInfo::LEVEL_UP_VALUE;
+	level = (int)(value / UltimateSkillInfo::LEVEL_UP_VALUE);
 }
 
 void UltimateSkill::CalcSize(const MelLib::Vector2& windowSize)
@@ -31,12 +31,14 @@ void UltimateSkill::CalcPosition(const MelLib::Vector2& windowSize)
 
 void UltimateSkill::CalcColor()
 {
-	drawColor.r = UltimateSkillGaugeDrawInfo::FRONT_COLOR.r * (level / UltimateSkillInfo::MAX_LEVEL);
+	drawColor.r = (unsigned char)(UltimateSkillGaugeDrawInfo::FRONT_COLOR.r * (level / UltimateSkillInfo::MAX_LEVEL));
+	drawColor.g = (unsigned char)(UltimateSkillGaugeDrawInfo::FRONT_COLOR.g * (level / UltimateSkillInfo::MAX_LEVEL));
+	drawColor.b = (unsigned char)(UltimateSkillGaugeDrawInfo::FRONT_COLOR.b * (level / UltimateSkillInfo::MAX_LEVEL));
 }
 
 UltimateSkill::UltimateSkill()
-	: value(UltimateSkillInfo::INITIALIZE_VALUE)
-	, level(UltimateSkillInfo::INITIALIZE_LEVEL)
+	: value((int)UltimateSkillInfo::INITIALIZE_VALUE)
+	, level((int)UltimateSkillInfo::INITIALIZE_LEVEL)
 	, isUsingSkill(false)
 	, frontGauge(MelLib::Sprite2D())
 	, backGauge(MelLib::Sprite2D())
@@ -55,10 +57,11 @@ UltimateSkill::~UltimateSkill()
 
 void UltimateSkill::Update()
 {
-	MelLib::Vector2 windowSize = MelLib::Vector2(MelLib::Library::GetWindowWidth(), MelLib::Library::GetWindowHeight());
+	MelLib::Vector2 windowSize = MelLib::Vector2((float)MelLib::Library::GetWindowWidth(), (float)MelLib::Library::GetWindowHeight());
 
 	CalcSize(windowSize);
-	CalcPosition(windowSize);
+	//CalcPosition(windowSize);
+	drawPosition = UltimateSkillGaugeDrawInfo::DRAW_POSITION;
 	CalcColor();
 
 	frontGauge.SetScale(MelLib::Vector2(frontDrawSize));

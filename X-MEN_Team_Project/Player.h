@@ -3,10 +3,23 @@
 #include "NormalBarrier.h"
 #include<GameObject.h>
 #include "Ball.h"
+#include "GaugeUI.h"
 
 namespace PlayerInitializeInfo
 {
 	const float MAX_HP = 100;
+}
+
+namespace PlayerHPUIInfo
+{
+	// windowのサイズに対する比率 0 ~ 100
+	const MelLib::Vector2 SIZE_PERCENT = MelLib::Vector2(10, 2);
+
+	// 描画色
+	const MelLib::Color FRONT_COLOR = MelLib::Color(255, 0, 0, 255);
+	const MelLib::Color BACK_COLOR = MelLib::Color(64, 64, 64, 255);
+
+	const MelLib::Vector2 DRAW_POSITION = MelLib::Vector2(20,100);
 }
 
 class Ball;
@@ -29,6 +42,8 @@ private:
 
 	std::shared_ptr<Ball> pBall;
 	std::shared_ptr<NormalBarrier> barrier;
+
+	GaugeUI hpGauge;
 
 private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
@@ -58,6 +73,8 @@ private:
 	
 	// 投げやバリア関連の分岐などを行う
 	void UseAbility(bool key);
+
+	void Knockback(const MelLib::Vector3& vector);
 
 public:
 	Player();
@@ -91,7 +108,7 @@ public:
 	void AddUltimatekillValue(int value);
 
 	// 引数の値を使ってHPを減らす
-	void Damage(int value);
+	void Damage(float value);
 
 #pragma region Getter
 	// バリアフラグを取得
