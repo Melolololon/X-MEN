@@ -30,6 +30,7 @@ private:
 	int ballBeforeNum;//バリアに入れる時のフレームの配列番号
 	bool firstCountflg;//最初、配列を入れ切るまでの関数
 
+	std::shared_ptr<GameObject> refBallObject;
 private:
 
 	void Move() override;
@@ -39,6 +40,8 @@ private:
 	// 指定フレーム分の配列の整理用　UPDATE前に使用
 	void BallDirSort();
 
+	// 最初のUpdate時にのみボールの参照を取得する
+	void RefBallObject();
 public:
 	BarrierEnemy();
 	~BarrierEnemy() {}

@@ -4,6 +4,18 @@
 #include<array>
 #include"../MyLibrary/GameObjectManager.h"
 
+void BarrierEnemy::RefBallObject()
+{
+	if (refBallObject)return;
+	// ボールの位置を設定
+	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
+		if (typeid(*v) == typeid(Ball)) {
+			refBallObject = v;
+			break;
+		}
+	}
+}
+
 BarrierEnemy::BarrierEnemy()
 {
 	// MelLib;;ModelObjectの配列
@@ -72,7 +84,6 @@ void BarrierEnemy::ChangePose()
 	const float CALC_ANGLE = 180;
 
 	// 方向ベクトルを元に向く方向を変更
-
 	MelLib::Vector3 result;
 
 	// atan2で方向ベクトルから計算
@@ -107,19 +118,14 @@ void BarrierEnemy::BallDirSort()
 
 void BarrierEnemy::Update()
 {
-	//BallDirSort();
+	RefBallObject();
+
+	if (!refBallObject)return;
 
 	Move();
 	PushPosition();
 
-	// ボールの位置を設定
-	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
-		if (typeid(*v) == typeid(Ball)) {
-			SetBallDir(v->GetPosition());
-			break;
-		}
-	}
-
+	SetBallDir(refBallObject.get()->GetPosition());
 
 	static const float ZERO = 0.0f;
 	// hpがなくなったときに管理クラスから削除
