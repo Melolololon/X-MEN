@@ -3,6 +3,7 @@
 #include "BarrierEnemy.h"
 #include"../Ball.h"
 
+
 void Enemy::PushPosition()
 {
 	if (pushTime >= 1)
@@ -43,8 +44,8 @@ void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, c
 	{
 		// ボールのスピード分ダメージを与える
 		const Ball* BALL = static_cast<const Ball*>(&object);
-		Damage(BALL->GetSpeed());
-		//Damage(20);
+		//Damage(BALL->GetSpeed());
+		Damage(20);
 	}
 }
 

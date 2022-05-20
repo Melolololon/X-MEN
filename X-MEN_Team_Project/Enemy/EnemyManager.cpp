@@ -19,6 +19,9 @@ EnemyManager* EnemyManager::GetInstance()
 
 void EnemyManager::Initialize()
 {
+	// 初期化
+	enemyCount = 0;
+
 	// 追従する敵のオブジェクトの設置
 	PopFollowEnemyInitialize();
 	// バリア持ちの敵のオブジェクトの設置
@@ -26,9 +29,6 @@ void EnemyManager::Initialize()
 
 	// 出現時間のタイマーセット
 	timerStart = clock();
-
-	// 初期化
-	enemyCount = 0;
 }
 
 void EnemyManager::Update()
@@ -36,8 +36,8 @@ void EnemyManager::Update()
 	// 時間での敵の出現
 	PopEnemyTime();
 
-	CheckEnemyDead(followEnemies);
-	CheckEnemyDead(barrierEnemies);
+	CheckEnemyDead(followEnemies,false);
+	CheckEnemyDead(barrierEnemies,true);
 }
 
 void EnemyManager::Destroy()
