@@ -20,7 +20,7 @@ void GamePlay::Initialize()
 	// オブジェクトのメモリ確保
 	pPlayer = std::make_shared<Player>();
 	pBall = std::make_shared<Ball>();
-	pBall->SetPosition(MelLib::Vector3(5, 0, -5));
+	//pBall->SetPosition(MelLib::Vector3(5, 0, -10));
 	barrier = std::make_shared<NormalBarrier>();
 
 	pPlayer.get()->SetNormalBarrier(barrier);
