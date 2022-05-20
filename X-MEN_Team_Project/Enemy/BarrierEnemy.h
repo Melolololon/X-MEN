@@ -25,6 +25,7 @@ private:
 	
 	std::array<MelLib::Vector3, BarrierEnemyStatus::CHANGE_POSE_FRAME> ballDir;
 
+	std::shared_ptr<GameObject> refBallObject;
 private:
 
 	void Move() override;
@@ -34,6 +35,8 @@ private:
 	// 指定フレーム分の配列の整理用　UPDATE前に使用
 	void BallDirSort();
 
+	// 最初のUpdate時にのみボールの参照を取得する
+	void RefBallObject();
 public:
 	BarrierEnemy();
 	~BarrierEnemy(){}

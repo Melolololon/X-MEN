@@ -4,6 +4,18 @@
 #include<array>
 #include"../MyLibrary/GameObjectManager.h"
 
+void BarrierEnemy::RefBallObject()
+{
+	if (refBallObject)return;
+	// ボールの位置を設定
+	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
+		if (typeid(*v) == typeid(Ball)) {
+			refBallObject = v;
+			break;
+		}
+	}
+}
+
 BarrierEnemy::BarrierEnemy()
 {
 	// MelLib;;ModelObjectの配列
@@ -21,7 +33,7 @@ BarrierEnemy::BarrierEnemy()
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
+	sphereDatas["main"][0].SetRadius(MODEL_SIZE * 0.5f);
 
 	// 変数の初期化
 	hp = BarrierEnemyStatus::MAX_HP;
@@ -67,7 +79,6 @@ void BarrierEnemy::ChangePose()
 	const float CALC_ANGLE = 180;
 
 	// 方向ベクトルを元に向く方向を変更
-
 	MelLib::Vector3 result;
 
 	// atan2で方向ベクトルから計算
@@ -89,7 +100,7 @@ void BarrierEnemy::ChangePose()
 void BarrierEnemy::BallDirSort()
 {
 	// 前に配列を詰める
-	for (int i = 0; i < ballDir.size() -1; i++)
+	for (int i = 0; i < ballDir.size() - 1; i++)
 	{
 		ballDir[i] = ballDir[i + 1];
 	}
@@ -97,20 +108,17 @@ void BarrierEnemy::BallDirSort()
 }
 
 void BarrierEnemy::Update()
-{	
+{
+	RefBallObject();
+
+	if (!refBallObject)return;
+
 	BallDirSort();
 
 	Move();
 	PushPosition();
 
-	// ボールの位置を設定
-	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
-		if (typeid(*v) == typeid(Ball)) {
-			SetBallDir(v->GetPosition());
-			break;
-		}
-	}
-
+	SetBallDir(refBallObject.get()->GetPosition());
 
 	static const float ZERO = 0.0f;
 	// hpがなくなったときに管理クラスから削除
