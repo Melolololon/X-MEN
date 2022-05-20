@@ -112,6 +112,7 @@ inline void EnemyManager::CheckEnemyDead(T& temp,bool isBarrier)
 
 				if (isBarrier)
 				{
+					enemyBarriers[i].get()->TrueEraseManager();
 					enemyBarriers.erase(enemyBarriers.begin() + i);
 				}
 			}

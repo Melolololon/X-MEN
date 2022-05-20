@@ -58,6 +58,13 @@ void EnemyManager::SetPlayerPos(const MelLib::Vector3& pos)
 		x.get()->SetPlayerDir(pos);
 		x.get()->SetPlayerPos(pos);
 	}
+
+	// バリア持ちの敵にプレイヤーの座標を持ってくる
+	for (auto x : barrierEnemies)
+	{
+		x.get()->SetPlayerDir(pos);
+		x.get()->SetPlayerPos(pos);
+	}
 }
 
 int EnemyManager::GetEnemyCount() const

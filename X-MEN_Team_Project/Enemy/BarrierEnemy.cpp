@@ -3,6 +3,7 @@
 #include"../Player.h"
 #include<array>
 #include"../MyLibrary/GameObjectManager.h"
+#include "../FieldObjectWall.h"
 #include <Random.h>
 
 void BarrierEnemy::RefBallObject()
@@ -69,7 +70,7 @@ void BarrierEnemy::Move()
 	// 移動ベクトル
 	MelLib::Vector3 moveVector;
 	// 移動速度
-	static const float MOVE_SPEED = 0.7f;
+	static const float MOVE_SPEED = 0.3f;
 
 	// 距離を計算し、一定距離以内なら外に出るように移動
 	const float DISTANCE_X = GetPosition().x - playerPos.x;
@@ -78,14 +79,22 @@ void BarrierEnemy::Move()
 	float distance = sqrt(DISTANCE_X * DISTANCE_X + DISTANCE_Z * DISTANCE_Z);
 	// 現在一定距離をlerpを使わず保つようになっている
 	// 後程使用するように修正
-	if (distance <= BarrierEnemyStatus::DISTANCE_TO_PLAYER)moveVector = -playerDir * MOVE_SPEED;
+	if (distance <= BarrierEnemyStatus::DISTANCE_TO_PLAYER)
+	{
+
+		moveVector = -playerDir * MOVE_SPEED;
+	}
+
 	else moveVector = { 0,0,0 };
 
 
 	// 加算
 	// AddPosition、SetPositionは当たり判定も一緒に動く
+
+
 	AddPosition(moveVector);
 
+	pastVelocity = moveVector;
 
 	// 方向変換用
 	if (firstCountflg)ChangePose();
@@ -118,6 +127,7 @@ void BarrierEnemy::ChangePose()
 	// 第二引数にとりあえずでボールへの方向ベクトル
 	pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
 
+	
 }
 
 void BarrierEnemy::BallDirSort()
@@ -141,9 +151,8 @@ void BarrierEnemy::Update()
 
 	SetBallDir(refBallObject.get()->GetPosition());
 
-	static const float ZERO = 0.0f;
 	// hpがなくなったときに管理クラスから削除
-	if (hp <= ZERO)
+	if (hp <= 0)
 	{
 		eraseManager = true;
 	}
@@ -165,6 +174,21 @@ void BarrierEnemy::Hit(const GameObject& object, const MelLib::ShapeType3D shape
 	if (typeid(object) == typeid(Player))
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
+	}
+
+	// 壁との衝突判定
+	if (typeid(object) == typeid(FieldObjectWall))
+	{
+		// ヒットした障害物のヒットした法線方向に押し出す
+		MelLib::Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
+		MelLib::Vector3 pos = GetPosition() + -pastVelocity;
+		SetPosition(pos);
+
+		// 壁ずりベクトルを計算
+		MelLib::Vector3 moveVector = pastVelocity - MelLib::Vector3Dot(pastVelocity, otherNormal) * otherNormal;
+		moveVector *= pastVelocity.Length();
+
+		AddPosition(moveVector);
 	}
 }
 

@@ -70,5 +70,7 @@ void Enemy::SetPlayerDir(const MelLib::Vector3& pos)
 
 void Enemy::SetPlayerPos(const MelLib::Vector3& pos)
 {
+	// プレイヤーの位置を保管
 	playerPos = pos;
+
 }

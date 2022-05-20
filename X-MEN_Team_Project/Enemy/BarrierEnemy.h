@@ -5,9 +5,7 @@
 namespace BarrierEnemyStatus
 {
 	const float MAX_HP = 4;
-
-	const float DISTANCE_TO_PLAYER = 500;
-
+	const float DISTANCE_TO_PLAYER = 30;
 	const int CHANGE_POSE_FRAME = 120;
 }
 
@@ -30,7 +28,9 @@ private:
 	int ballBeforeNum;//バリアに入れる時のフレームの配列番号
 	bool firstCountflg;//最初、配列を入れ切るまでの関数
 
+	// ボール参照用変数
 	std::shared_ptr<GameObject> refBallObject;
+	MelLib::Vector3 pastVelocity;
 private:
 
 	void Move() override;
