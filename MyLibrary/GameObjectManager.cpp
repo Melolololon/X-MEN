@@ -4,6 +4,7 @@
 #include"Collision.h"
 #include"Physics.h"
 #include"Values.h"
+#include"Easing.h"
 
 
 using namespace MelLib;
@@ -38,6 +39,8 @@ void GameObjectManager::Initialize()
 
 void GameObjectManager::Update()
 {
+
+
 #pragma region オブジェクトのUpdate
 	//カーソルアップデート
 	if (cursor)
@@ -49,6 +52,7 @@ void GameObjectManager::Update()
 
 	for (auto& obj : objects)
 	{
+		obj->SetPreDataPositions();
 		obj->Update();
 
 	}
@@ -63,13 +67,12 @@ void GameObjectManager::Update()
 	{
 		for (auto& a : addObjects)
 		{
-
+			a.get()->SetPreDataPositions();
 			a.get()->Update();
 			objects.push_back(a);
 		}
 
-		if (addObjectSort != OBJECT_SORT_NONE)
-			ObjectSort(addObjectSort, addObjectSortOrderType);
+		if (addObjectSort != OBJECT_SORT_NONE)ObjectSort(addObjectSort, addObjectSortOrderType);
 
 		addObjects.clear();
 	}
@@ -109,6 +112,16 @@ void GameObjectManager::Update()
 			////自分と比較、比較済の組み合わせはcontinue
 			if (objI >= objJ)continue;
 
+			unsigned int checkNum = 1;
+			auto getCheckNum = [](const GameObject& obj1, ShapeType3D type1, const GameObject& obj2, ShapeType3D type2)
+			{
+				unsigned int num1 = obj1.GetFrameHitCheckNumber(type1);
+				unsigned int num2 = obj2.GetFrameHitCheckNumber(type2);
+				if (num1 > num2)return num1;
+				return num2;
+			};
+
+
 #pragma region Sphere & Sphere
 
 
@@ -119,14 +132,19 @@ void GameObjectManager::Update()
 				std::unordered_map<std::string, std::vector<SphereData>> sphereDatas1 = obj1->GetSphereDatas();
 				std::unordered_map<std::string, std::vector<SphereData>> sphereDatas2 = obj2->GetSphereDatas();
 
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreSpherePositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreSpherePositions(prePositions2);
+
 				// 名前分ループ
-				for (const auto& shapeDatas1 : sphereDatas1)
+				for (const auto& sphereData1 : sphereDatas1)
 				{
-					for (const auto& shapeDatas2 : sphereDatas1)
+					for (const auto& sphereData2 : sphereDatas2)
 					{
-						std::vector<SphereData>sphereDataVec1 = sphereDatas1[shapeDatas1.first];
+						std::vector<SphereData>sphereDataVec1 = sphereDatas1[sphereData1.first];
 						size_t sphereData1Size = sphereDataVec1.size();
-						std::vector<SphereData>sphereDataVec2 = sphereDatas2[shapeDatas1.first];
+						std::vector<SphereData>sphereDataVec2 = sphereDatas2[sphereData1.first];
 						size_t sphereData2Size = sphereDataVec2.size();
 
 
@@ -134,28 +152,67 @@ void GameObjectManager::Update()
 						{
 							for (int colJ = 0; colJ < sphereData2Size; colJ++)
 							{
-								if (Collision::SphereAndSphere(sphereDataVec1[colI], sphereDataVec2[colJ]))
-								{
-									//hitを呼び出す
-									obj1->SetHitSphereData(sphereDataVec2[colJ]);
-									obj2->SetHitSphereData(sphereDataVec1[colJ]);
 
-									obj1->Hit
-									(
-										*obj2,
-										ShapeType3D::SPHERE,
-										shapeDatas1.first,
-										ShapeType3D::SPHERE,
-										shapeDatas2.first
-									);
-									obj2->Hit
-									(
-										*obj1,
-										ShapeType3D::SPHERE,
-										shapeDatas2.first,
-										ShapeType3D::SPHERE,
-										shapeDatas1.first
-									);
+								// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::SPHERE);
+
+								SphereData sphere1 = sphereDataVec1[colI];
+								SphereData sphere2 = sphereDataVec2[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = sphere1.GetPosition();
+								Vector3 prePos1 = prePositions1[sphereData1.first][colI];
+								Vector3 pos2 = sphere2.GetPosition();
+								Vector3 prePos2 = prePositions2[sphereData2.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+
+								for (int c = 0; c < checkNum; c++)
+								{
+									sphere1.SetPosition(easing1.PreLerp());
+									sphere2.SetPosition(easing2.PreLerp());
+
+									if (Collision::SphereAndSphere(sphere1, sphere2))
+									{
+										//hitを呼び出す
+										obj1->SetHitSphereData(sphere2);
+										obj2->SetHitSphereData(sphere1);
+
+										// オブジェクトに補間した座標をセット
+										// セットしたくないのにセットされたらいやだから
+										// 各自取得するようにする
+										obj1->SetLerpPosition(sphere1.GetPosition());
+										obj2->SetLerpPosition(sphere2.GetPosition());
+
+										obj1->SetLerpMovePosition(easingMovePos1);
+										obj2->SetLerpMovePosition(easingMovePos2);
+
+										obj1->Hit
+										(
+											*obj2,
+											ShapeType3D::SPHERE,
+											sphereData1.first,
+											ShapeType3D::SPHERE,
+											sphereData2.first
+										);
+										obj2->Hit
+										(
+											*obj1,
+											ShapeType3D::SPHERE,
+											sphereData2.first,
+											ShapeType3D::SPHERE,
+											sphereData1.first
+										);
+
+										break;
+									}
+
 								}
 							}
 						}
@@ -173,6 +230,13 @@ void GameObjectManager::Update()
 				std::unordered_map < std::string, std::vector<BoxData>>boxDatas1 = obj1->GetBoxDatas();
 
 				std::unordered_map < std::string, std::vector<BoxData>>boxDatas2 = obj2->GetBoxDatas();
+
+
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreBoxPositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreBoxPositions(prePositions2);
+
 
 				// 名前分ループ
 				for (const auto& boxData1 : boxDatas1)
@@ -355,6 +419,12 @@ void GameObjectManager::Update()
 				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj1->GetSphereDatas();
 				std::unordered_map < std::string, std::vector<BoxData>>boxDatas = obj2->GetBoxDatas();
 
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreSpherePositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreBoxPositions(prePositions2);
+
+
 				// 名前分ループ
 				for (const auto& sphereData : sphereDatas)
 				{
@@ -372,46 +442,82 @@ void GameObjectManager::Update()
 								SphereCalcResult result1;
 								BoxCalcResult result2;
 
-								if (Collision::SphereAndBox
-								(
-									sphereDataVec[colI],
-									&result1,
-									boxDataVec[colJ],
-									&result2
-								))
+
+
+								// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::BOX);
+
+								SphereData sphere1 = sphereDataVec[colI];
+								BoxData box = boxDataVec[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = sphere1.GetPosition();
+								Vector3 prePos1 = prePositions1[sphereData.first][colI];
+								Vector3 pos2 = box.GetPosition();
+								Vector3 prePos2 = prePositions2[boxData.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+								for (int c = 0; c < checkNum; c++)
 								{
-									obj1->SetSphereCalcResult(result1);
-									obj2->SetBoxCalcResult(result2);
+									sphere1.SetPosition(easing1.PreLerp());
+									box.SetPosition(easing2.PreLerp());
 
-									obj1->SetHitBoxData(boxDataVec[colJ]);
-									obj2->SetHitSphereData(sphereDataVec[colI]);
 
-									//hitを呼び出す
-									obj1->Hit
+									if (Collision::SphereAndBox
 									(
-										*obj2,
-										ShapeType3D::SPHERE,
-										sphereData.first,
-										ShapeType3D::BOX,
-										boxData.first
-									);
-									obj2->Hit
-									(
-										*obj1,
-										ShapeType3D::BOX,
-										boxData.first,
-										ShapeType3D::SPHERE,
-										sphereData.first
-									);
+										sphere1,
+										&result1,
+										box,
+										&result2
+									))
+									{
+										obj1->SetSphereCalcResult(result1);
+										obj2->SetBoxCalcResult(result2);
+
+										obj1->SetHitBoxData(box);
+										obj2->SetHitSphereData(sphere1);
+
+										obj1->SetLerpPosition(sphere1.GetPosition());
+										obj2->SetLerpPosition(box.GetPosition());
+
+										obj1->SetLerpMovePosition(easingMovePos1);
+										obj2->SetLerpMovePosition(easingMovePos2);
+
+										//hitを呼び出す
+										obj1->Hit
+										(
+											*obj2,
+											ShapeType3D::SPHERE,
+											sphereData.first,
+											ShapeType3D::BOX,
+											boxData.first
+										);
+										obj2->Hit
+										(
+											*obj1,
+											ShapeType3D::BOX,
+											boxData.first,
+											ShapeType3D::SPHERE,
+											sphereData.first
+										);
+										break;
+									}
 								}
 							}
+
 						}
-
 					}
+
+
 				}
-
-
 			}
+
 
 			if (collisionFlags[objJ].sphere
 				&& collisionFlags[objI].box)
@@ -419,6 +525,12 @@ void GameObjectManager::Update()
 				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj2->GetSphereDatas();
 				std::unordered_map < std::string, std::vector<BoxData>>boxDatas = obj1->GetBoxDatas();
 
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreBoxPositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreSpherePositions(prePositions2);
+
+
 				// 名前分ループ
 				for (const auto& sphereData : sphereDatas)
 				{
@@ -437,37 +549,67 @@ void GameObjectManager::Update()
 								SphereCalcResult result1;
 								BoxCalcResult result2;
 
-								if (Collision::SphereAndBox
-								(
-									sphereDataVec[colI],
-									&result1,
-									boxDataVec[colJ],
-									&result2
-								))
+								// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj2, ShapeType3D::SPHERE, *obj1, ShapeType3D::BOX);
+
+								SphereData sphere1 = sphereDataVec[colI];
+								BoxData box = boxDataVec[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = box.GetPosition();
+								Vector3 prePos1 = prePositions1[boxData.first][colI];
+								Vector3 pos2 = sphere1.GetPosition();
+								Vector3 prePos2 = prePositions2[sphereData.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+								for (int c = 0; c < checkNum; c++)
 								{
-									obj2->SetSphereCalcResult(result1);
-									obj1->SetBoxCalcResult(result2);
+									sphere1.SetPosition(easing2.PreLerp());
+									box.SetPosition(easing1.PreLerp());
 
-									obj1->SetHitSphereData(sphereDataVec[colI]);
-									obj2->SetHitBoxData(boxDataVec[colJ]);
+									if (Collision::SphereAndBox
+									(
+										sphere1,
+										&result1,
+										box,
+										&result2
+									))
+									{
+										obj2->SetSphereCalcResult(result1);
+										obj1->SetBoxCalcResult(result2);
 
-									//hitを呼び出す
-									obj2->Hit
-									(
-										*obj1,
-										ShapeType3D::SPHERE,
-										sphereData.first,
-										ShapeType3D::BOX,
-										boxData.first
-									);
-									obj1->Hit
-									(
-										*obj2,
-										ShapeType3D::BOX,
-										boxData.first,
-										ShapeType3D::SPHERE,
-										sphereData.first
-									);
+										obj2->SetHitSphereData(sphere1);
+										obj1->SetHitBoxData(box);
+
+										obj2->SetLerpPosition(sphere1.GetPosition());
+										obj1->SetLerpPosition(box.GetPosition());
+
+										obj2->SetLerpMovePosition(easingMovePos2);
+										obj1->SetLerpMovePosition(easingMovePos1);
+										//hitを呼び出す
+										obj2->Hit
+										(
+											*obj1,
+											ShapeType3D::SPHERE,
+											sphereData.first,
+											ShapeType3D::BOX,
+											boxData.first
+										);
+										obj1->Hit
+										(
+											*obj2,
+											ShapeType3D::BOX,
+											boxData.first,
+											ShapeType3D::SPHERE,
+											sphereData.first
+										);
+										break;
+									}
 								}
 							}
 						}
@@ -486,6 +628,12 @@ void GameObjectManager::Update()
 				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj1->GetSphereDatas();
 				std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj2->GetOBBDatas();
 
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreSpherePositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreOBBPositions(prePositions2);
+
+
 				// 名前分ループ
 				for (const auto& sphereData : sphereDatas)
 				{
@@ -500,48 +648,83 @@ void GameObjectManager::Update()
 						{
 							for (int colJ = 0; colJ < obbDataSize; colJ++)
 							{
+
 								SphereCalcResult result1;
 								//BoxCalcResult result2;
 
-								if (Collision::SphereAndOBB
-								(
-									sphereDataVec[colI],
-									&result1,
-									obbDataVec[colJ]/*,
-									&result2*/
-								))
+
+
+								// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::SPHERE);
+
+								SphereData sphere1 = sphereDataVec[colI];
+								OBBData obb = obbDataVec[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = sphere1.GetPosition();
+								Vector3 prePos1 = prePositions1[sphereData.first][colI];
+								Vector3 pos2 = obb.GetPosition();
+								Vector3 prePos2 = prePositions2[obbData.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+								for (int c = 0; c < checkNum; c++)
 								{
-									obj1->SetSphereCalcResult(result1);
-									//obj2->SetBoxCalcResult(result2);
+									sphere1.SetPosition(easing1.PreLerp());
+									obb.SetPosition(easing2.PreLerp());
 
-									//obj1->SetHitBoxData(boxDataVec[colJ]);
-									obj2->SetHitSphereData(sphereDataVec[colI]);
 
-									//hitを呼び出す
-									obj1->Hit
+									if (Collision::SphereAndOBB
 									(
-										*obj2,
-										ShapeType3D::SPHERE,
-										sphereData.first,
-										ShapeType3D::OBB,
-										obbData.first
-									);
-									obj2->Hit
-									(
-										*obj1,
-										ShapeType3D::OBB,
-										obbData.first,
-										ShapeType3D::SPHERE,
-										sphereData.first
-									);
+										sphere1,
+										&result1,
+										obb/*,
+										&result2*/
+									))
+									{
+										obj1->SetSphereCalcResult(result1);
+										//obj2->SetBoxCalcResult(result2);
+
+										//obj1->SetHitBoxData(obb);
+										obj2->SetHitSphereData(sphere1);
+
+										obj1->SetLerpPosition(sphere1.GetPosition());
+										obj2->SetLerpPosition(obb.GetPosition());
+
+										obj1->SetLerpMovePosition(easingMovePos1);
+										obj2->SetLerpMovePosition(easingMovePos2);
+
+										//hitを呼び出す
+										obj1->Hit
+										(
+											*obj2,
+											ShapeType3D::SPHERE,
+											sphereData.first,
+											ShapeType3D::OBB,
+											obbData.first
+										);
+										obj2->Hit
+										(
+											*obj1,
+											ShapeType3D::OBB,
+											obbData.first,
+											ShapeType3D::SPHERE,
+											sphereData.first
+										);
+										break;
+									}
 								}
 							}
+
 						}
-
 					}
+
+
 				}
-
-
 			}
 
 			if (collisionFlags[objJ].sphere
@@ -550,6 +733,12 @@ void GameObjectManager::Update()
 				std::unordered_map < std::string, std::vector<SphereData>>sphereDatas = obj2->GetSphereDatas();
 				std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj1->GetOBBDatas();
 
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreOBBPositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreSpherePositions(prePositions2);
+
+
 				// 名前分ループ
 				for (const auto& sphereData : sphereDatas)
 				{
@@ -567,38 +756,67 @@ void GameObjectManager::Update()
 							{
 								SphereCalcResult result1;
 								//BoxCalcResult result2;
+									// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj2, ShapeType3D::SPHERE, *obj1, ShapeType3D::SPHERE);
 
-								if (Collision::SphereAndOBB
-								(
-									sphereDataVec[colI],
-									&result1,
-									obbDataVec[colJ]/*,
-									&result2*/
-								))
+								SphereData sphere1 = sphereDataVec[colI];
+								OBBData obb = obbDataVec[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = obb.GetPosition();
+								Vector3 prePos1 = prePositions1[obbData.first][colI];
+								Vector3 pos2 = sphere1.GetPosition();
+								Vector3 prePos2 = prePositions2[sphereData.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+								for (int c = 0; c < checkNum; c++)
 								{
-									obj2->SetSphereCalcResult(result1);
-									//obj1->SetBoxCalcResult(result2);
+									obb.SetPosition(easing1.PreLerp());
+									sphere1.SetPosition(easing2.PreLerp());
 
-									obj1->SetHitSphereData(sphereDataVec[colI]);
-									//obj2->SetHitBoxData(obbDataVec[colJ]);
+									if (Collision::SphereAndOBB
+									(
+										sphere1,
+										&result1,
+										obb/*,
+										&result2*/
+									))
+									{
+										obj2->SetSphereCalcResult(result1);
+										//obj1->SetBoxCalcResult(result2);
 
-									//hitを呼び出す
-									obj2->Hit
-									(
-										*obj1,
-										ShapeType3D::SPHERE,
-										sphereData.first,
-										ShapeType3D::OBB,
-										obbData.first
-									);
-									obj1->Hit
-									(
-										*obj2,
-										ShapeType3D::OBB,
-										obbData.first,
-										ShapeType3D::SPHERE,
-										sphereData.first
-									);
+										obj1->SetHitSphereData(sphere1);
+										//obj2->SetHitBoxData(obb);
+
+										obj2->SetLerpPosition(sphere1.GetPosition());
+										obj1->SetLerpPosition(obb.GetPosition());
+
+										obj2->SetLerpMovePosition(easingMovePos2);
+										obj1->SetLerpMovePosition(easingMovePos1);
+										//hitを呼び出す
+										obj2->Hit
+										(
+											*obj1,
+											ShapeType3D::OBB,
+											sphereData.first,
+											ShapeType3D::SPHERE,
+											obbData.first
+										);
+										obj1->Hit
+										(
+											*obj2,
+											ShapeType3D::SPHERE,
+											obbData.first,
+											ShapeType3D::OBB,
+											sphereData.first
+										);
+										break;
+									}
 								}
 							}
 						}
@@ -1266,6 +1484,7 @@ void GameObjectManager::AddObject(const std::shared_ptr<GameObject>& object)
 	{
 		object.get()->FalseEraseManager();
 		addObjects.push_back(object);
+
 	}
 }
 
@@ -1290,15 +1509,15 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 	{
 	case OBJECT_SORT_XYZ_SUM:
 		std::sort(objects.begin(), objects.end(), [&orderType](const std::shared_ptr<GameObject>& obj1, const std::shared_ptr<GameObject>& obj2)
-			{
-				Vector3 pos1 = obj1->GetPosition();
-				Vector3 pos2 = obj2->GetPosition();
-				float posSum1 = pos1.x + pos1.y + pos1.z;
-				float posSum2 = pos2.x + pos2.y + pos2.z;
+		{
+			Vector3 pos1 = obj1->GetPosition();
+			Vector3 pos2 = obj2->GetPosition();
+			float posSum1 = pos1.x + pos1.y + pos1.z;
+			float posSum2 = pos2.x + pos2.y + pos2.z;
 
-				if (orderType)return posSum1 < posSum2;
-				return posSum1 > posSum2;
-			});
+			if (orderType)return posSum1 < posSum2;
+			return posSum1 > posSum2;
+		});
 		break;
 
 	case OBJECT_SORT_X:
@@ -1311,13 +1530,13 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-			{
-				Vector3 pos1 = obj1->GetPosition();
-				Vector3 pos2 = obj2->GetPosition();
+		{
+			Vector3 pos1 = obj1->GetPosition();
+			Vector3 pos2 = obj2->GetPosition();
 
-				if (orderType)return pos1.x < pos2.x;
-				return pos1.x > pos2.x;
-			});
+			if (orderType)return pos1.x < pos2.x;
+			return pos1.x > pos2.x;
+		});
 		break;
 
 	case OBJECT_SORT_Y:
@@ -1330,13 +1549,13 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-			{
-				Vector3 pos1 = obj1->GetPosition();
-				Vector3 pos2 = obj2->GetPosition();
+		{
+			Vector3 pos1 = obj1->GetPosition();
+			Vector3 pos2 = obj2->GetPosition();
 
-				if (orderType)return pos1.y < pos2.y;
-				return pos1.y > pos2.y;
-			});
+			if (orderType)return pos1.y < pos2.y;
+			return pos1.y > pos2.y;
+		});
 		break;
 
 	case OBJECT_SORT_Z:
@@ -1349,13 +1568,13 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-			{
-				Vector3 pos1 = obj1->GetPosition();
-				Vector3 pos2 = obj2->GetPosition();
+		{
+			Vector3 pos1 = obj1->GetPosition();
+			Vector3 pos2 = obj2->GetPosition();
 
-				if (orderType)return pos1.z < pos2.z;
-				return pos1.z > pos2.z;
-			});
+			if (orderType)return pos1.z < pos2.z;
+			return pos1.z > pos2.z;
+		});
 		break;
 
 	case OBJECT_SORT_NEAR_DISTANCE:
@@ -1369,16 +1588,16 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-			{
-				Vector3 pos1 = obj1->GetPosition();
-				Vector3 pos2 = obj2->GetPosition();
+		{
+			Vector3 pos1 = obj1->GetPosition();
+			Vector3 pos2 = obj2->GetPosition();
 
-				float dis1 = LibMath::CalcDistance3D(pos1, nearPos);
-				float dis2 = LibMath::CalcDistance3D(pos2, nearPos);
+			float dis1 = LibMath::CalcDistance3D(pos1, nearPos);
+			float dis2 = LibMath::CalcDistance3D(pos2, nearPos);
 
-				if (orderType)return dis1 < dis2;
-				return dis1 > dis2;
-			});
+			if (orderType)return dis1 < dis2;
+			return dis1 > dis2;
+		});
 		break;
 
 	case OBJECT_SORT_FAR_DISTANCE:
@@ -1392,16 +1611,16 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-			{
-				Vector3 pos1 = obj1->GetPosition();
-				Vector3 pos2 = obj2->GetPosition();
+		{
+			Vector3 pos1 = obj1->GetPosition();
+			Vector3 pos2 = obj2->GetPosition();
 
-				float dis1 = LibMath::CalcDistance3D(pos1, farPos);
-				float dis2 = LibMath::CalcDistance3D(pos2, farPos);
+			float dis1 = LibMath::CalcDistance3D(pos1, farPos);
+			float dis2 = LibMath::CalcDistance3D(pos2, farPos);
 
-				if (orderType)return dis1 < dis2;
-				return dis1 > dis2;
-			});
+			if (orderType)return dis1 < dis2;
+			return dis1 > dis2;
+		});
 		break;
 
 	case OBJECT_SORT_SORT_NUMBER:
@@ -1414,12 +1633,12 @@ void GameObjectManager::ObjectSort(const ObjectSortType& sort, const bool& order
 			const std::shared_ptr<GameObject>& obj1,
 			const std::shared_ptr<GameObject>& obj2
 			)
-			{
-				short obj1Num = obj1->GetSortNumber();
-				short obj2Num = obj2->GetSortNumber();
-				if (orderType)return obj1Num < obj2Num;
-				return obj1Num > obj2Num;
-			});
+		{
+			short obj1Num = obj1->GetSortNumber();
+			short obj2Num = obj2->GetSortNumber();
+			if (orderType)return obj1Num < obj2Num;
+			return obj1Num > obj2Num;
+		});
 		break;
 	}
 }

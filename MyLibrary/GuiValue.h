@@ -61,6 +61,11 @@ namespace MelLib
 		~GuiInt();
 		
 		void operator=(const int num) { this->value = num; }
+		GuiInt& operator=(GuiInt& value) 
+		{
+			*this = value;
+			return value;
+		}
 
 		void operator++() { value++; }
 		void operator--() { value--; }
@@ -70,6 +75,11 @@ namespace MelLib
 		int GetMaxValue() const { return MAX_VALUE; }
 		int GetMinValue()const { return MIN_VALUE; }
 
+		/// <summary>
+		/// 読み込まれた値をセットします。読み込んだ値をセットしたい場合や
+		/// 初期化処理が始まる前にコンストラクタが呼び出されてしまう場合にお使いください。
+		/// </summary>
+		void SetLoadData();
 	};
 
 	class GuiFloat
@@ -103,6 +113,11 @@ namespace MelLib
 		float GetMaxValue() const { return MAX_VALUE; }
 		float GetMinValue()const { return MIN_VALUE; }
 
+		/// <summary>
+		/// 読み込まれた値をセットします。読み込んだ値をセットしたい場合や
+		/// 初期化処理が始まる前にコンストラクタが呼び出されてしまう場合にお使いください。
+		/// </summary>
+		void SetLoadData();
 	};
 
 	class GuiVector3
@@ -125,7 +140,7 @@ namespace MelLib
 		/// <param name="lavel"></param>
 		/// <param name="minNumber"></param>
 		/// <param name="maxNumber"></param>
-		GuiVector3(MelLib::Vector3 value, const std::string& windowName, const std::string& lavel, float minNumber, float maxNumber);
+		GuiVector3(const MelLib::Vector3& value, const std::string& windowName, const std::string& lavel, float minNumber, float maxNumber);
 		~GuiVector3();
 		void operator=(const MelLib::Vector3& num) { this->value = num; }
 
@@ -135,7 +150,12 @@ namespace MelLib
 		MelLib::Vector3 GetValue()const { return value; }
 		float GetMaxValue() const { return MAX_VALUE; }
 		float GetMinValue()const { return MIN_VALUE; }
-
+		
+		/// <summary>
+		/// 読み込まれた値をセットします。読み込んだ値をセットしたい場合や
+		/// 初期化処理が始まる前にコンストラクタが呼び出されてしまう場合にお使いください。
+		/// </summary>
+		void SetLoadData();
 	};
 
 	class GuiBool

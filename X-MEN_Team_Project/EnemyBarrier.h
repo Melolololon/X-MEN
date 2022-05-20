@@ -3,7 +3,7 @@
 namespace parameter
 {
 	//耐久値の初期値
-	const float HP = 150.0f;
+	const float HP = 50.0f;
 	//Playerとバリアの間の間隔
 	const float RADIUS = 3.0f;
 }

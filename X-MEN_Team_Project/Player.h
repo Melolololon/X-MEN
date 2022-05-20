@@ -8,6 +8,7 @@
 namespace PlayerInitializeInfo
 {
 	const float MAX_HP = 100;
+	const float MAX_THROWING_TIME = 0.3f;
 }
 
 namespace PlayerHPUIInfo
@@ -33,6 +34,7 @@ private:
 	float ultimateSkillValue;
 
 	bool isThrowingBall;
+	float throwingElapsedTime;
 
 	UltimateSkill ultimateSkill;
 
@@ -75,6 +77,9 @@ private:
 	void UseAbility(bool key);
 
 	void Knockback(const MelLib::Vector3& vector);
+
+	// ボールを投げたフラグを経過時間で管理する関数
+	void UpdateIsThrowing(const float PER_FRAME);
 
 public:
 	Player();

@@ -35,6 +35,7 @@ void MelLib::GameObject::SetDataPosition(const Vector3& vec)
 		}
 	}
 	for (auto& d : boxDatas)
+	for (auto& d : obbDatas)
 	{
 		for (auto& d2 : d.second)
 		{
@@ -62,6 +63,7 @@ void MelLib::GameObject::SetDataPosition(const Vector3& vec)
 			d2.GetRefSegment3DData().SetPosition(d2.GetSegment3DData().GetPosition() + vec);
 		}
 	}
+	
 }
 
 void MelLib::GameObject::SetModelAngle(const Vector3& angle)
@@ -128,6 +130,13 @@ void MelLib::GameObject::SetDataScale(const Vector3& scale)
 		}
 	}
 	for (auto& d : boxDatas)
+	{
+		for (auto& d2 : d.second)
+		{
+			d2.SetSize(scale);
+		}
+	}
+	for (auto& d : obbDatas)
 	{
 		for (auto& d2 : d.second)
 		{
@@ -292,6 +301,136 @@ std::shared_ptr<GameObject> MelLib::GameObject::GetNewPtr()
 	return nullptr;
 }
 
+void MelLib::GameObject::SetPreDataPositions()
+{
+	for (auto& data : sphereDatas)
+	{
+		std::vector<Vector3>& refPrePositions = sphereDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++) 
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : boxDatas)
+	{
+		std::vector<Vector3>& refPrePositions = boxDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : segment3DDatas)
+	{
+		std::vector<Value2<Vector3>>& refPrePositions = segment3DDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : rayDatas)
+	{
+		std::vector<Vector3>& refPrePositions = rayDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : planeDatas)
+	{
+		std::vector<Vector3>& refPrePositions = planeDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : boardDatas)
+	{
+		std::vector<Vector3>& refPrePositions = boardDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : capsuleDatas)
+	{
+		std::vector<Value2<Vector3>>& refPrePositions = capsuleDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetSegment3DData().GetPosition();
+		}
+	}
+	for (auto& data : triangleDatas)
+	{
+		std::vector<Value3<Vector3>>& refPrePositions = triangleDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+	for (auto& data : obbDatas)
+	{
+		std::vector<Vector3>& refPrePositions = obbDataPrePositions[data.first];
+
+		// サイズが違ったら変更
+		size_t preDataSize = refPrePositions.size();
+		size_t dataSize = data.second.size();
+		if (preDataSize != dataSize)refPrePositions.resize(dataSize);
+
+		for (int i = 0; i < dataSize; i++)
+		{
+			refPrePositions[i] = data.second[i].GetPosition();
+		}
+	}
+}
+
 void GameObject::CalcMovePhysics()
 {
 	Vector3 prePos = position;
@@ -356,6 +495,44 @@ void GameObject::AllDraw()
 #ifdef _DEBUG
 
 
+
+unsigned int MelLib::GameObject::GetFrameHitCheckNumber(ShapeType3D type) const
+{
+	switch (type)
+	{
+	case MelLib::ShapeType3D::SPHERE:
+		return sphereFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::BOX:
+		return boxFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::OBB:
+		return obbFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::PLANE:
+		return planeFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::TRIANGLE:
+		return triangleFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::BOARD:
+		return boardFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::SEGMENT:
+		return segment3DFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::RAY:
+		return rayFrameHitCheckNum;
+		break;
+	case MelLib::ShapeType3D::CAPSULE:
+		return capsuleFrameHitCheckNum;
+		break;
+	default:
+		break;
+	}
+
+	return 1;
+}
 
 void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 {
@@ -521,7 +698,7 @@ void MelLib::GameObject::SetCollisionCheckModelData()
 	{
 		for (size_t i = 0; i < data.second.size(); i++)
 		{
-			Value2<Vector3>lineSegmentPos = segment3DDatas[data.first][i].GetRotatePosition();
+			Value2<Vector3>& lineSegmentPos = segment3DDatas[data.first][i].GetRotatePosition();
 
 
 			segmentModelObjects[data.first][0][i].SetScale(1);
@@ -541,7 +718,7 @@ void MelLib::GameObject::SetCollisionCheckModelData()
 	{
 		for (size_t i = 0; i < data.second.size(); i++)
 		{
-			Value2<Vector3>lineSegmentPos = capsuleDatas[data.first][i].GetSegment3DData().GetRotatePosition();
+			Value2<Vector3>& lineSegmentPos = capsuleDatas[data.first][i].GetSegment3DData().GetRotatePosition();
 
 
 			capsuleModelObjects[data.first][0][i].SetScale(1);

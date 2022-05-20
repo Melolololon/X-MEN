@@ -15,7 +15,7 @@ class Enemy : public MelLib::GameObject
 {
 protected:
 
-	float hp = 1;
+	float hp = 10;
 
 	// プレイヤーの方向を保管しておく 追従に使用予定
 	MelLib::Vector3 playerDir;

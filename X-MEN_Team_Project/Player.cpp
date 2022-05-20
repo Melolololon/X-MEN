@@ -5,6 +5,7 @@
 #include"TestObject.h"
 #include <GameObjectManager.h>
 #include "FieldObjectWall.h"
+#include <ImguiManager.h>
 
 MelLib::Vector3 Player::GetInputVector()
 {
@@ -164,10 +165,24 @@ void Player::Knockback(const MelLib::Vector3& vector)
 	SetPosition(GetPosition() + vector * POWER);
 }
 
+void Player::UpdateIsThrowing(const float PER_FRAME)
+{
+	if (!isThrowingBall)return;
+
+	if (throwingElapsedTime >= PlayerInitializeInfo::MAX_THROWING_TIME)
+	{
+		throwingElapsedTime = 0;
+		isThrowingBall = false;
+	}
+
+	throwingElapsedTime += PER_FRAME;
+}
+
 Player::Player()
 	: hp(PlayerInitializeInfo::MAX_HP)
 	, ultimateSkillValue(0)
 	, isThrowingBall(false)
+	, throwingElapsedTime(0)
 	, ultimateSkill(UltimateSkill())
 	, dirVector(MelLib::Vector3())
 	, pBall(nullptr)
@@ -219,6 +234,9 @@ void Player::Update()
 	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
 
 	hpGauge.Update(hp);
+
+	const float PER_FRAME = 1.0f / 60.0f;
+	UpdateIsThrowing(PER_FRAME);
 }
 
 void Player::Draw()
@@ -252,15 +270,17 @@ void Player::Hit
 		const Ball* other = static_cast<const Ball*>(&object);
 
 		if (!pBall)return;
+		if (isThrowingBall)return;
+
 		BallState ballThrowingState = pBall.get()->GetThrowingState();
 		switch (ballThrowingState)
 		{
 		case BallState::NONE:
-			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE2);
 			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
 			break;
 		case BallState::THROWING_PLAYER:
-			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE2);
 			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
 			break;
 		case BallState::THROWING_ENEMY:

@@ -51,9 +51,9 @@ namespace MelLib
 		//関数呼び出し時の加算値
 		float addPar = 0.0f;
 
-		void CalcEasing(const V startPos, const V endPos, const float t)
+		V CalcEasing (const V startPos, const V endPos, const float t)const
 		{
-			value = startPos * (1.0f - t) + endPos * t;
+			return startPos * (1.0f - t) + endPos * t;
 		}
 
 		void Clamp()
@@ -67,20 +67,40 @@ namespace MelLib
 		Easing(V start, V end, const float addPar) :start(start), end(end), addPar(addPar) {}
 		Easing(V start, V end, const float addPar, const float par) :start(start), end(end), par(par), addPar(addPar) {}
 
-		V Lerp()
+		V Lerp(V v)
+		{
+			float max1Par = (v / 100.0f);
+			value = CalcEasing(start, end, max1Par);
+			return value;
+		}
+
+		/// <summary>
+		/// パーセントの加算を先に行ってから補完します。
+		/// </summary>
+		/// <returns></returns>
+		V PreLerp()
 		{
 			par += addPar;
 			float max1Par = (par / 100.0f);
-			CalcEasing(start, end, max1Par);
+			value = CalcEasing(start, end, max1Par);
 			return value;
 		}
+		V Lerp()
+		{
+			float max1Par = (par / 100.0f);
+			value = CalcEasing(start, end, max1Par);
+			par += addPar;
+			return value;
+		}
+
+
 
 		V EaseIn()
 		{
 			par += addPar;
 			float max1Par = (par / 100.0f);
 			float t = (max1Par * max1Par);
-			CalcEasing(start, end, t);
+			value = CalcEasing(start, end, t);
 			return value;
 		}
 
@@ -89,7 +109,7 @@ namespace MelLib
 			par += addPar;
 			float max1Par = (par / 100.0f);
 			float t = max1Par * (2 - max1Par);
-			CalcEasing(start, end, t);
+			value = CalcEasing(start, end, t);
 			return value;
 		}
 
@@ -98,7 +118,7 @@ namespace MelLib
 			par += addPar;
 			float max1Par = (par / 100.0f);
 			float t = max1Par * max1Par * (3 - 2 * max1Par);
-			CalcEasing(start, end, t);
+			value = CalcEasing(start, end, t);
 			return value;
 		}
 
@@ -126,10 +146,19 @@ namespace MelLib
 		/// <param name="par"></param>
 		void SetAddPar(const float par) { addPar = par; }
 
-		V GetValue() { return value; }
-		V GetStart() { return start; }
-		V GetEnd() { return end; }
-		float GetPar() { return par; }
-		float GetAddPar() { return addPar; }
+		V GetValue()const { return value; }
+		V GetStart()const { return start; }
+		V GetEnd() const { return end; }
+		float GetPar()const { return par; }
+		float GetAddPar()const { return addPar; }
+
+		// 補間した時の1フレームの変化量を返します
+		V GetFrameLarpValue()const
+		{
+			float oneFramePar = (addPar / 100.0f);
+			V moveStartPos = CalcEasing(start, end, 0);
+			V moveEndPos = CalcEasing(start, end, oneFramePar);
+			return moveEndPos - moveStartPos;
+		}
 	};
 }
