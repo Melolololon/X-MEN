@@ -6,7 +6,7 @@ namespace BarrierEnemyStatus
 {
 	const float MAX_HP = 200;
 
-	const float DISTANCE_TO_PLAYER = 500;
+	const float DISTANCE_TO_PLAYER = 30;
 	
 	const int CHANGE_POSE_FRAME = 120;
 }
@@ -24,6 +24,8 @@ private:
 	MelLib::Vector3 frontDir;
 	
 	std::array<MelLib::Vector3, BarrierEnemyStatus::CHANGE_POSE_FRAME> ballDir;
+
+	MelLib::Vector3 pastVelocity;
 
 private:
 

@@ -58,6 +58,13 @@ void EnemyManager::SetPlayerPos(const MelLib::Vector3& pos)
 		x.get()->SetPlayerDir(pos);
 		x.get()->SetPlayerPos(pos);
 	}
+
+	// バリア持ちの敵にプレイヤーの座標を持ってくる
+	for (auto x : barrierEnemies)
+	{
+		x.get()->SetPlayerDir(pos);
+		x.get()->SetPlayerPos(pos);
+	}
 }
 
 int EnemyManager::GetEnemyCount() const
@@ -94,7 +101,7 @@ void EnemyManager::PopBarrierEnemyInitialize()
 {
 
 	// バリア持ちの敵を生成
-	for (int i = 0; i < EnemyManage::SPAWN_FOLLOW_ENEMY_NUM; i++)
+	for (int i = 0; i < EnemyManage::SPAWN_BARRIER_ENEMY_NUM; i++)
 	{
 		std::shared_ptr<BarrierEnemy> temp = std::make_shared<BarrierEnemy>();
 
