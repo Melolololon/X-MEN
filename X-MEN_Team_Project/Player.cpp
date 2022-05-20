@@ -275,23 +275,15 @@ void Player::Hit
 	// 壁とヒットしたときの押出処理
 	if (typeid(object) == typeid(FieldObjectWall))
 	{
-		// ヒットした障害物のヒットした法線方向に押し出したいからその法線と
-		// ヒット時の速度ベクトルを絶対値同士で乗算した後、もとの法線でかける
-		MelLib::Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-		MelLib::Vector3 absOtherNormal;
-		absOtherNormal.x = std::fabsf(otherNormal.x);
-		absOtherNormal.y = std::fabsf(otherNormal.y);
-		absOtherNormal.z = std::fabsf(otherNormal.z);
-
-		MelLib::Vector3 absOldVelocity = oldVelocity;
-		absOldVelocity.x = std::fabsf(absOldVelocity.x);
-		absOldVelocity.y = std::fabsf(absOldVelocity.y);
-		absOldVelocity.z = std::fabsf(absOldVelocity.z);
-
-		MelLib::Vector3 reflectVector = absOtherNormal * absOldVelocity;
-		reflectVector *= otherNormal;
-		MelLib::Vector3 pos = GetPosition() + reflectVector;
+		// ヒットした障害物のヒットした法線方向に押し出したいからその法線を取得
+		MelLib::Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
+		MelLib::Vector3 pos = GetPosition() + -oldVelocity;
 		SetPosition(pos);
+
+		// 壁ずりベクトルを計算してAddPosition
+		MelLib::Vector3 moveVector = oldVelocity - MelLib::Vector3Dot(oldVelocity, otherNormal) * otherNormal;
+		moveVector *= oldVelocity.Length();
+		AddPosition(moveVector);
 	}
 }
 

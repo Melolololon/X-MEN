@@ -8,9 +8,13 @@ private:
 	std::unordered_map<FieldObjectType,std::shared_ptr<std::vector<std::shared_ptr<FieldObject>>>> fieldObjects;
 private:
 	// 壁を追加する
-	void AddWall(const MelLib::Vector3& pos,const MelLib::Vector3& size);
+	void AddWall(const MelLib::Vector3& pos,const MelLib::Vector3& size,const MelLib::Vector3& angle = MelLib::Vector3());
 	// 壁群を追加する
 	void AddWalls();
+
+	// 何角形か指定して壁群を追加する
+	// isRotateは例えば四角形の場合、斜めを正す
+	void AddWalls(const unsigned int VALUE,bool isRotate);
 public:
 	static FieldObjectManager* GetInstance();
 
