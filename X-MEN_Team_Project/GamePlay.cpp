@@ -24,11 +24,11 @@ void GamePlay::Initialize()
 	pPlayer.get()->SetNormalBarrier(barrier);
 	pPlayer.get()->SetBall(pBall);
 
-	pFollowEnemy = std::make_shared<FollowEnemy>();
-	pEnemyBarrier = std::make_shared<EnemyBarrier>();
-	pEnemyBarrier.get()->OpenBarrier();
-	pBarrierEnemy = std::make_shared<BarrierEnemy>();
-	pBarrierEnemy.get()->SetBarrier(pEnemyBarrier);
+	//pFollowEnemy = std::make_shared<FollowEnemy>();
+	//pEnemyBarrier = std::make_shared<EnemyBarrier>();
+	//pEnemyBarrier.get()->OpenBarrier();
+	//pBarrierEnemy = std::make_shared<BarrierEnemy>();
+	//pBarrierEnemy.get()->SetBarrier(pEnemyBarrier);
 
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
@@ -42,9 +42,9 @@ void GamePlay::Initialize()
 	//MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
 
 	// 敵のテスト
-	MelLib::GameObjectManager::GetInstance()->AddObject(pFollowEnemy);
-	MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
-	MelLib::GameObjectManager::GetInstance()->AddObject(pEnemyBarrier);
+	//MelLib::GameObjectManager::GetInstance()->AddObject(pFollowEnemy);
+	//MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
+	//MelLib::GameObjectManager::GetInstance()->AddObject(pEnemyBarrier);
 
 	EnemyManager::GetInstance()->Initialize();
 
@@ -64,19 +64,19 @@ void GamePlay::Update()
 		MelLib::GameObjectManager::GetInstance()->Update();
 
 		// 敵のテスト
-		pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
-		pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
+		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
+		//pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());
 
 		EnemyManager::GetInstance()->SetPlayerPos(pPlayer.get()->GetPosition());
 		EnemyManager::GetInstance()->Update();
 
 		//ボール取得(とりあえず最初に見つかった1つ)
-		for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
-			if (typeid(*v) == typeid(Ball)) {
-				pBarrierEnemy.get()->SetBallDir(v->GetPosition());
-				break;
-			}
-		}
+		//for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
+		//	if (typeid(*v) == typeid(Ball)) {
+		//		pBarrierEnemy.get()->SetBallDir(v->GetPosition());
+		//		break;
+		//	}
+		//}
 
 		// 確認用
 		if (MelLib::Input::KeyTrigger(DIK_0)) GameManager::GetInstance()->SetHitStop(true);

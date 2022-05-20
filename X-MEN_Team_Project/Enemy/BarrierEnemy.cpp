@@ -2,6 +2,7 @@
 
 #include"../Player.h"
 #include<array>
+#include"../MyLibrary/GameObjectManager.h"
 
 BarrierEnemy::BarrierEnemy()
 {
@@ -101,6 +102,15 @@ void BarrierEnemy::Update()
 
 	Move();
 	PushPosition();
+
+	// ボールの位置を設定
+	for (const auto& v : MelLib::GameObjectManager::GetInstance()->GetRefGameObject()) {
+		if (typeid(*v) == typeid(Ball)) {
+			SetBallDir(v->GetPosition());
+			break;
+		}
+	}
+
 
 	static const float ZERO = 0.0f;
 	// hpがなくなったときに管理クラスから削除

@@ -17,8 +17,8 @@ private:
 	std::shared_ptr<NormalBarrier>barrier;
 	FieldObjectManager* fieldObjectManager;
 	// “G
-	std::shared_ptr<FollowEnemy> pFollowEnemy;
-	std::shared_ptr<BarrierEnemy> pBarrierEnemy;
+	//std::shared_ptr<FollowEnemy> pFollowEnemy;
+	//std::shared_ptr<BarrierEnemy> pBarrierEnemy;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
 		
 public:
