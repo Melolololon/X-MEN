@@ -78,11 +78,11 @@ private:
 
 	// “G‚ªŽ€‚ñ‚Å‚¢‚é‚©Šm”F‚·‚é
 	template<typename T>
-	void CheckEnemyDead(T& temp);
+	void CheckEnemyDead(T& temp,bool isBarrier);
 };
 
 template<typename T>
-inline void EnemyManager::CheckEnemyDead(T& temp)
+inline void EnemyManager::CheckEnemyDead(T& temp,bool isBarrier)
 {
 	bool enemyDead = false;
 
@@ -109,6 +109,11 @@ inline void EnemyManager::CheckEnemyDead(T& temp)
 			if (temp[i].get()->GetHP() <= 0)
 			{
 				temp.erase(temp.begin() + i);
+
+				if (isBarrier)
+				{
+					enemyBarriers.erase(enemyBarriers.begin() + i);
+				}
 			}
 		}
 	}

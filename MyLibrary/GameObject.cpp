@@ -491,11 +491,6 @@ void GameObject::AllDraw()
 }
 
 
-
-#ifdef _DEBUG
-
-
-
 unsigned int MelLib::GameObject::GetFrameHitCheckNumber(ShapeType3D type) const
 {
 	switch (type)
@@ -533,6 +528,11 @@ unsigned int MelLib::GameObject::GetFrameHitCheckNumber(ShapeType3D type) const
 
 	return 1;
 }
+
+#ifdef _DEBUG
+
+
+
 
 void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 {

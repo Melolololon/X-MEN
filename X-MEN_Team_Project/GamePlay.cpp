@@ -88,6 +88,9 @@ void GamePlay::Update()
 		// ゲームクリア条件 
 		// 敵の総数が0以下になったときに
 		if (EnemyManager::GetInstance()->GetEnemyCount() <= 0)GameManager::GetInstance()->SetCanGameClear(true);
+		
+		// ゲームオーバー条件
+		if (pPlayer.get()->GetHp() <= 0)GameManager::GetInstance()->SetCanGameOver(true);
 	}
 	else
 	{
@@ -100,6 +103,10 @@ void GamePlay::Update()
 	//if (MelLib::Input::KeyTrigger(DIK_I))isEnd = true;
 	if (MelLib::Input::KeyTrigger(DIK_L))nextScene = NextScene::CLEAR;
 	if (MelLib::Input::KeyTrigger(DIK_P) || pPlayer.get()->GetHp() <= 0)nextScene = NextScene::GAMEOVER;
+
+	if (GameManager::GetInstance()->GetCanGameClear())nextScene = NextScene::CLEAR;
+	else if (GameManager::GetInstance()->GetCanGameOver())nextScene = NextScene::GAMEOVER;
+
 
 	if (nextScene != NextScene::PLAY)
 	{
