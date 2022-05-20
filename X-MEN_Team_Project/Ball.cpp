@@ -9,8 +9,8 @@
 #include <LibMath.h>
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
-//const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
-const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 120,120,255,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 void Ball::Move()
@@ -72,6 +72,8 @@ Ball::Ball()
 	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
 
 	sphereFrameHitCheckNum = 4;
+
+	SetPosition({ 0,0,-10 });
 }
 
 Ball::~Ball()

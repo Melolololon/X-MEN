@@ -94,7 +94,7 @@ void EnemyManager::PopBarrierEnemyInitialize()
 {
 
 	// ƒoƒŠƒA‚¿‚Ì“G‚ğ¶¬
-	for (int i = 0; i < EnemyManage::SPAWN_FOLLOW_ENEMY_NUM; i++)
+	for (int i = 0; i < EnemyManage::SPAWN_BARRIER_ENEMY_NUM; i++)
 	{
 		std::shared_ptr<BarrierEnemy> temp = std::make_shared<BarrierEnemy>();
 

@@ -195,7 +195,7 @@ Player::Player()
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 	modelObjects["main"].SetScale({ MODEL_SIZE,MODEL_SIZE,MODEL_SIZE });
 	// 初期位置を0,0,5に
-	SetPosition(MelLib::Vector3(0, 0, 5));
+	SetPosition(MelLib::Vector3(0, 0, -10));
 
 	// 当たり判定の作成(球)
 	// Playerの座標を取得し、それをセット

@@ -3,7 +3,7 @@
 namespace GameManageData
 {
 	// ヒットストップするフレーム数
-	const int HITSTOP_FRAME = 20;
+	const int HITSTOP_FRAME = 2;
 }
 
 // シングルトンパターン

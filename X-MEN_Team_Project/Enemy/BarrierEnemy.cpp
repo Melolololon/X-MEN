@@ -21,7 +21,7 @@ BarrierEnemy::BarrierEnemy()
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
+	sphereDatas["main"][0].SetRadius(MODEL_SIZE * 0.5f);
 
 	// 変数の初期化
 	hp = BarrierEnemyStatus::MAX_HP;
@@ -31,6 +31,11 @@ BarrierEnemy::BarrierEnemy()
 	frontDir = { 0,0,0 };
 	// 0で初期化
 	ballDir.fill(0);
+
+	ballCurrentNum = 0;
+	ballBeforeNum = 0;
+	firstCountflg = false;
+
 }
 
 void BarrierEnemy::Move()
@@ -57,7 +62,7 @@ void BarrierEnemy::Move()
 
 
 	// 方向変換用
-	ChangePose();
+	if (firstCountflg)ChangePose();
 }
 
 
@@ -71,14 +76,18 @@ void BarrierEnemy::ChangePose()
 	MelLib::Vector3 result;
 
 	// atan2で方向ベクトルから計算
-	result.x = atan2f(ballDir[0].x, ballDir[0].y) * CALC_ANGLE / PI;
-	result.y = atan2f(-ballDir[0].z, ballDir[0].x) * CALC_ANGLE / PI;
-	result.z = atan2f(ballDir[0].y, -ballDir[0].z) * CALC_ANGLE / PI;
+	result.y = atan2f(-ballDir[ballBeforeNum].z, ballDir[ballBeforeNum].x) * CALC_ANGLE / PI;
 
 	SetAngle(result);
 
 	// 正面ベクトルの書き換え
-	frontDir = ballDir[0];
+	frontDir = ballDir[ballBeforeNum];
+
+	++ballBeforeNum;
+	if (ballBeforeNum >= ballDir.size())
+	{
+		ballBeforeNum = 0;
+	}
 
 	// バリア用
 	// 第二引数にとりあえずでボールへの方向ベクトル
@@ -89,7 +98,7 @@ void BarrierEnemy::ChangePose()
 void BarrierEnemy::BallDirSort()
 {
 	// 前に配列を詰める
-	for (int i = 0; i < ballDir.size() -1; i++)
+	for (int i = 0; i < ballDir.size() - 1; i++)
 	{
 		ballDir[i] = ballDir[i + 1];
 	}
@@ -97,8 +106,8 @@ void BarrierEnemy::BallDirSort()
 }
 
 void BarrierEnemy::Update()
-{	
-	BallDirSort();
+{
+	//BallDirSort();
 
 	Move();
 	PushPosition();
@@ -144,7 +153,13 @@ void BarrierEnemy::SetBallDir(const MelLib::Vector3& pos)
 	// ボールの位置への方向ベクトルをとり変数にセット
 	MelLib::Vector3 result = pos - GetPosition();
 
-	ballDir.back() = result.Normalize();
+	ballDir[ballCurrentNum] = result.Normalize();
+	++ballCurrentNum;
+	if (ballCurrentNum >= ballDir.size())
+	{
+		ballCurrentNum = 0;
+		firstCountflg = true;
+	}
 }
 
 void BarrierEnemy::SetBarrier(std::shared_ptr<EnemyBarrier> barrier)

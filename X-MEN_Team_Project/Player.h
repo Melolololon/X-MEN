@@ -7,7 +7,7 @@
 
 namespace PlayerInitializeInfo
 {
-	const float MAX_HP = 100;
+	const float MAX_HP = 10;
 	const float MAX_THROWING_TIME = 0.3f;
 }
 

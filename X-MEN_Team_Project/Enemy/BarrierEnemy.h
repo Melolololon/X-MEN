@@ -4,10 +4,10 @@
 
 namespace BarrierEnemyStatus
 {
-	const float MAX_HP = 200;
+	const float MAX_HP = 4;
 
 	const float DISTANCE_TO_PLAYER = 500;
-	
+
 	const int CHANGE_POSE_FRAME = 120;
 }
 
@@ -22,8 +22,13 @@ private:
 	std::shared_ptr<EnemyBarrier> pBarrier;
 	// 正面ベクトル
 	MelLib::Vector3 frontDir;
-	
+
 	std::array<MelLib::Vector3, BarrierEnemyStatus::CHANGE_POSE_FRAME> ballDir;
+
+	//バリアソート用int
+	int ballCurrentNum;//最新のボールの情報を入れる配列番号
+	int ballBeforeNum;//バリアに入れる時のフレームの配列番号
+	bool firstCountflg;//最初、配列を入れ切るまでの関数
 
 private:
 
@@ -36,7 +41,7 @@ private:
 
 public:
 	BarrierEnemy();
-	~BarrierEnemy(){}
+	~BarrierEnemy() {}
 
 	// 更新
 	void Update()override;
