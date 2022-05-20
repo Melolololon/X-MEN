@@ -1,4 +1,6 @@
 #include "GamePlay.h"
+#include"Clear.h"
+#include"GameOver.h"
 
 #include<GameObjectManager.h>
 #include<Input.h>
@@ -89,7 +91,14 @@ void GamePlay::Update()
 
 	// Aキーで現在のシーンを終了して次のシーンへ
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
-	if (MelLib::Input::KeyTrigger(DIK_I))isEnd = true;
+	//if (MelLib::Input::KeyTrigger(DIK_I))isEnd = true;
+	if (MelLib::Input::KeyTrigger(DIK_L))nextScene = NextScene::CLEAR;
+	if (MelLib::Input::KeyTrigger(DIK_P))nextScene = NextScene::GAMEOVER;
+
+	if (nextScene != NextScene::PLAY)
+	{
+		isEnd = true;
+	}
 }
 
 void GamePlay::Draw()
@@ -105,14 +114,22 @@ void GamePlay::Finalize()
 
 	// 全削除
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();
-	//
-	EnemyManager::GetInstance()->Destroy();
 
+	EnemyManager::GetInstance()->Destroy();
 }
 
 MelLib::Scene* GamePlay::GetNextScene()
 {
 	// 次のシーンのポインタを返す
-	// 例 return new Title();
-	return new GamePlay();
+	switch (nextScene)
+	{
+	case NextScene::CLEAR:
+		return new Clear();
+		nextScene = NextScene::PLAY;
+		break;
+	case NextScene::GAMEOVER:
+		return new GameOver();
+		nextScene = NextScene::PLAY;
+		break;
+	}
 }
