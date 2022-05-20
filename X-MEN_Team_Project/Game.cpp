@@ -55,7 +55,7 @@ void Game::Run()
 void Game::Initialize()
 {
 	// ライブラリ初期化(横,縦,色,名前)
-	MelLib::Library::Initialize(1280, 720, MelLib::Color(125, 125, 0, 255), L"Game");
+	MelLib::Library::Initialize(1280, 720, MelLib::Color(125, 125, 0, 255), L"ボールバウンドバトル!!!!");
 	// 60フレーム固定
 	MelLib::Library::SetFramesPerSecond60(true);
 
@@ -77,7 +77,7 @@ void Game::Initialize()
 	// メインカメラを取得(Get関数に何も指定しないとメインカメラを取得する)
 	// SetRotateCriteriaPositionで回転基準をセット
 	//(初期設定だとFSPカメラのため、実質カメラの座標。TPS視点の時はこれでセットした数値が注視点の座標になる)
-	MelLib::Camera::Get()->SetRotateCriteriaPosition(MelLib::Vector3(0,90,-60));
+	MelLib::Camera::Get()->SetRotateCriteriaPosition(MelLib::Vector3(0, 90, -60));
 
 	MelLib::Camera::Get()->SetAngle(MelLib::Vector3(60, 0, 0));
 
@@ -101,7 +101,7 @@ void Game::Update()
 	InputDeviceManager::GetInstance()->Update();
 
 	MelLib::SceneManager::GetInstance()->Update();
-	
+
 #pragma region キーボードと色変えのチュートリアル
 
 	//// 毎フレームY軸基準で3度回転

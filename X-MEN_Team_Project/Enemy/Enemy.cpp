@@ -17,7 +17,7 @@ void Enemy::PushPosition()
 
 	// 押出ベクトルを小さくよりする
 	const float DIVIDE_VECTOR = 10;
-	const float PER_FRAME = 1.0f / 60.0f ;
+	const float PER_FRAME = 1.0f / 60.0f;
 
 	AddPosition(pushVector / DIVIDE_VECTOR);
 
@@ -44,8 +44,8 @@ void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, c
 	{
 		// ボールのスピード分ダメージを与える
 		const Ball* BALL = static_cast<const Ball*>(&object);
-		//Damage(BALL->GetSpeed());
-		Damage(20);
+		if (BALL->GetThrowingState() != BallState::HOLD_PLAYER) Damage(BALL->GetSpeed());
+		//Damage(20);
 	}
 }
 
