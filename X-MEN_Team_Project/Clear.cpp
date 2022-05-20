@@ -5,24 +5,18 @@
 #include<Input.h>
 
 #include"TestObject.h"
+#include"TextWrite.h"
 
 void Clear::Initialize()
 {
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
-
-	// オブジェクトのメモリ確保
-	//pPlayer = std::make_shared<Player>();
 	
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 
-	clearFont.Create(MelLib::Color(255,0,0,255));
-	clearFont.SetScale(MelLib::Vector2(600,200));
-	clearFont.SetPosition(MelLib::Vector2(300,300));
-
-	// テストオブジェクト追加
-	MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
+	//Clearフォント
+	MelLib::TextWrite::CreateFontData(L"Arial", 100, "Test");
 
 }
 
@@ -39,7 +33,9 @@ void Clear::Update()
 
 void Clear::Draw()
 {
-	clearFont.Draw();
+	//Clearフォント
+	MelLib::TextWrite::Draw(MelLib::Vector2(500, 300), MelLib::Color(255, 0, 0, 255), L"Clear", "Test");
+
 	// 描画
 	MelLib::GameObjectManager::GetInstance()->Draw();
 }

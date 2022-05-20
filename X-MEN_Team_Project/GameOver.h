@@ -5,11 +5,6 @@
 
 class GameOver : public MelLib::Scene
 {
-private:
-
-	//GameOver‚ÌƒtƒHƒ“ƒg
-	MelLib::Sprite2D gameOverFont;
-
 public:
 	GameOver() {}
 	~GameOver() {}

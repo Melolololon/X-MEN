@@ -3,6 +3,7 @@
 
 #include<Input.h>
 
+
 EnemyBarrier::EnemyBarrier()
 {
 	// MelLib;;ModelObjectの配列
@@ -86,7 +87,6 @@ void EnemyBarrier::SetBarrierPosition(MelLib::Vector3 position, MelLib::Vector3 
 
 		//度数法→弧度法
 		SetAngle(MelLib::Vector3(0.0f, direction * 57.32484076433121f, 0.0f));
-
 		//OBBだけライブラリで勝手に反映されないっぽいのでとりあえず手動
 		obbDatas["main"][0].SetAngle(GetAngle());
 	}

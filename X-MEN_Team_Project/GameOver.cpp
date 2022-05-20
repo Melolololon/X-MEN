@@ -4,6 +4,7 @@
 #include<GameObjectManager.h>
 #include<Input.h>
 
+#include"TextWrite.h"
 #include"TestObject.h"
 
 void GameOver::Initialize()
@@ -14,10 +15,9 @@ void GameOver::Initialize()
 	// 管理クラスにオブジェクトを追加
 	// ObjectManagerはshared_ptrのみ対応
 
-	//スプライト
-	gameOverFont.Create(MelLib::Color(0, 0, 255, 255));
-	gameOverFont.SetScale(MelLib::Vector2(600, 200));
-	gameOverFont.SetPosition(MelLib::Vector2(300, 300));
+	//GameOverフォント
+	MelLib::TextWrite::CreateFontData(L"Arial", 100, "Test");
+	
 	//// テストオブジェクト追加
 	//MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
 
@@ -36,10 +36,13 @@ void GameOver::Update()
 
 void GameOver::Draw()
 {
-	//スプライト
-	gameOverFont.Draw();
+	//GameOverフォント
+	MelLib::TextWrite::Draw(MelLib::Vector2(400,300), MelLib::Color(0,0,255,255), L"GameOver", "Test");
+
 	// 描画
 	MelLib::GameObjectManager::GetInstance()->Draw();
+
+
 }
 
 void GameOver::Finalize()
