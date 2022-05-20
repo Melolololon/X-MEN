@@ -4,7 +4,7 @@
 
 namespace BarrierEnemyStatus
 {
-	const float MAX_HP = 200;
+	const float MAX_HP = 3;
 
 	const float DISTANCE_TO_PLAYER = 500;
 	
