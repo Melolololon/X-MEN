@@ -270,7 +270,7 @@ void Player::Hit
 		const Ball* other = static_cast<const Ball*>(&object);
 
 		if (!pBall)return;
-		if (!isThrowingBall)return;
+		if (isThrowingBall)return;
 
 		BallState ballThrowingState = pBall.get()->GetThrowingState();
 		switch (ballThrowingState)
