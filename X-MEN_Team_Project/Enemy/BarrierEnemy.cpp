@@ -27,7 +27,6 @@ BarrierEnemy::BarrierEnemy()
 	playerDir = EnemyStatus::initPlayerDir;
 	playerPos = EnemyStatus::initPlayerPos;
 	// マジックナンバー?なので後で変更検討
-	changePoseFrameCount = 0;
 	frontDir = { 0,0,0 };
 	// 0で初期化
 	ballDir.fill(0);
@@ -63,36 +62,27 @@ void BarrierEnemy::Move()
 
 void BarrierEnemy::ChangePose()
 {
-	if (changePoseFrameCount >= BarrierEnemyStatus::CHANGE_POSE_FRAME)
-	{
-		const float PI = 3.1415926f;
-		const float CALC_ANGLE = 180;
+	const float PI = 3.1415926f;
+	const float CALC_ANGLE = 180;
 
-		// 方向ベクトルを元に向く方向を変更
+	// 方向ベクトルを元に向く方向を変更
 
-		MelLib::Vector3 result;
+	MelLib::Vector3 result;
 
-		// atan2で方向ベクトルから計算
-		result.x = atan2f(ballDir[0].x, ballDir[0].y) * CALC_ANGLE / PI;
-		result.y = atan2f(-ballDir[0].z, ballDir[0].x) * CALC_ANGLE / PI;
-		result.z = atan2f(ballDir[0].y, -ballDir[0].z) * CALC_ANGLE / PI;
+	// atan2で方向ベクトルから計算
+	result.x = atan2f(ballDir[0].x, ballDir[0].y) * CALC_ANGLE / PI;
+	result.y = atan2f(-ballDir[0].z, ballDir[0].x) * CALC_ANGLE / PI;
+	result.z = atan2f(ballDir[0].y, -ballDir[0].z) * CALC_ANGLE / PI;
 
-		SetAngle(result);
+	SetAngle(result);
 
-		// 正面ベクトルの書き換え
-		frontDir = ballDir[0];
+	// 正面ベクトルの書き換え
+	frontDir = ballDir[0];
 
-		// バリア用
-		// 第二引数にとりあえずでボールへの方向ベクトル
-		pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
+	// バリア用
+	// 第二引数にとりあえずでボールへの方向ベクトル
+	pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
 
-		// カウントを0に
-		changePoseFrameCount = 0;
-	}
-	else
-	{
-		changePoseFrameCount++;
-	}
 }
 
 void BarrierEnemy::BallDirSort()
