@@ -319,6 +319,11 @@ const MelLib::Vector3& Player::GetDirection() const
 	return dirVector;
 }
 
+int Player::GetHp() const
+{
+	return hp;
+}
+
 void Player::SetIsBarrier(bool flag)
 {
 	if (!barrier)return;

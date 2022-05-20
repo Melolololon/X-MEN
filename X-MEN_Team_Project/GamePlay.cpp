@@ -54,6 +54,8 @@ void GamePlay::Initialize()
 
 	// GameManagerのテスト
 	GameManager::GetInstance()->Initialize();
+
+	nextScene = NextScene::PLAY;
 }
 
 void GamePlay::Update()
@@ -93,7 +95,7 @@ void GamePlay::Update()
 	// 今は次のシーンに今と同じシーンをセットしているため、位置がリセットされるだけ
 	//if (MelLib::Input::KeyTrigger(DIK_I))isEnd = true;
 	if (MelLib::Input::KeyTrigger(DIK_L))nextScene = NextScene::CLEAR;
-	if (MelLib::Input::KeyTrigger(DIK_P))nextScene = NextScene::GAMEOVER;
+	if (MelLib::Input::KeyTrigger(DIK_P) || pPlayer.get()->GetHp() <= 0)nextScene = NextScene::GAMEOVER;
 
 	if (nextScene != NextScene::PLAY)
 	{
