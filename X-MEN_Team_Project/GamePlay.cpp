@@ -81,9 +81,9 @@ void GamePlay::Update()
 		// 確認用
 		if (MelLib::Input::KeyTrigger(DIK_0)) GameManager::GetInstance()->SetHitStop(true);
 
-		// ゲームオーバー条件 
+		// ゲームクリア条件 
 		// 敵の総数が0以下になったときに
-		if (EnemyManager::GetInstance()->GetEnemyCount() <= 0)GameManager::GetInstance()->SetCanGameOver(true);
+		if (EnemyManager::GetInstance()->GetEnemyCount() <= 0)GameManager::GetInstance()->SetCanGameClear(true);
 	}
 	else
 	{
