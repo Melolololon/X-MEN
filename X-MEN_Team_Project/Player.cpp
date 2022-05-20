@@ -276,11 +276,11 @@ void Player::Hit
 		switch (ballThrowingState)
 		{
 		case BallState::NONE:
-			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE2);
 			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
 			break;
 		case BallState::THROWING_PLAYER:
-			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE);
+			pBall.get()->PickUp(GetPosition() + MelLib::Vector3(0.25f, 0, -0.25f), Ball::BALL_COLOR_BLUE2);
 			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
 			break;
 		case BallState::THROWING_ENEMY:

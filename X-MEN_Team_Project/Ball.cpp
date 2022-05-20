@@ -9,8 +9,9 @@
 #include <LibMath.h>
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
-const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
-const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,0 };
+//const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 120,120,255,255 };
+const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 void Ball::Move()
 {
@@ -98,16 +99,16 @@ void Ball::Update()
 	switch (throwingState)
 	{
 	case BallState::NONE:
-		SetColor(BALL_COLOR_BLUE);
+		SetColor(BALL_COLOR_BLUE2);
 		break;
 	case BallState::HOLD_PLAYER:
-		SetColor(BALL_COLOR_BLUE);
+		SetColor(BALL_COLOR_BLUE2);
 		break;
 	case BallState::HOLD_ENEMY:
 		SetColor(BALL_COLOR_RED);
 		break;
 	case BallState::THROWING_PLAYER:
-		SetColor(BALL_COLOR_BLUE);
+		SetColor(BALL_COLOR_BLUE2);
 		break;
 	case BallState::THROWING_ENEMY:
 		SetColor(BALL_COLOR_RED);
