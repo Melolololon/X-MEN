@@ -147,8 +147,11 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		if (throwingState == BallState::THROWING_PLAYER)
 		{
 			//îΩéÀã§í èàóù
-			Vector3 otherNormal = GetSphereCalcResult().GetBoxHitSurfaceNormal();
-			Reflection(otherNormal, false);
+			Vector3 otherNormal = GetPosition() - object.GetPosition();
+			otherNormal = otherNormal.Normalize();
+			Reflection(otherNormal, true);
+
+			throwingState = BallState::THROWING_ENEMY;
 		}
 	}
 	//ÉvÉåÉCÉÑÅ[Ç∆ÇÃè’ìÀ
