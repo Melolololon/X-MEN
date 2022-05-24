@@ -6,6 +6,8 @@
 #include <GameObjectManager.h>
 #include "FieldObjectWall.h"
 #include <ImguiManager.h>
+#include "Enemy/BarrierEnemy.h"
+#include "Enemy/FollowEnemy.h"
 
 MelLib::Vector3 Player::GetInputVector()
 {
@@ -304,6 +306,16 @@ void Player::Hit
 		MelLib::Vector3 moveVector = oldVelocity - MelLib::Vector3Dot(oldVelocity, otherNormal) * otherNormal;
 		moveVector *= oldVelocity.Length();
 		AddPosition(moveVector);
+	}
+
+	if (typeid(object) == typeid(FollowEnemy) ||
+		typeid(object) == typeid(BarrierEnemy))
+	{
+		const Enemy* other = static_cast<const Enemy*>(&object);
+		MelLib::Vector3 knockbackVector = GetPosition() - other->GetPosition();
+
+		Damage(PlayerDamageInfo::HIT_ENEMY_DAMAGE);
+		Knockback(knockbackVector.Normalize());
 	}
 }
 
