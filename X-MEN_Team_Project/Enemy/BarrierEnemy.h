@@ -7,6 +7,8 @@ namespace BarrierEnemyStatus
 	const float MAX_HP = 4;
 	const float DISTANCE_TO_PLAYER = 30;
 	const int CHANGE_POSE_FRAME = 120;
+	// 移動用のディレイ
+	const int MOVE_DELAY = 20;
 }
 
 class BarrierEnemy : public Enemy
@@ -28,6 +30,13 @@ private:
 	int ballBeforeNum;//バリアに入れる時のフレームの配列番号
 	bool firstCountflg;//最初、配列を入れ切るまでの関数
 
+	// 距離保つ用　
+	int moveCurrentNum; // 最新のプレイヤーの位置を入れる配列番号
+	int moveBeforeNum;  // 移動に使用する配列番号
+	std::array<MelLib::Vector3, BarrierEnemyStatus::MOVE_DELAY> delayPlayerPos;
+	bool delayStartFlg; // 最初にディレイ用配列を入れ切ったかどうかのフラグ
+
+
 	// ボール参照用変数
 	std::shared_ptr<GameObject> refBallObject;
 	MelLib::Vector3 pastVelocity;
@@ -36,9 +45,6 @@ private:
 	void Move() override;
 
 	void ChangePose();
-
-	// 指定フレーム分の配列の整理用　UPDATE前に使用
-	void BallDirSort();
 
 	// 最初のUpdate時にのみボールの参照を取得する
 	void RefBallObject();
@@ -75,5 +81,5 @@ public:
 	// セッター
 	void SetBallDir(const MelLib::Vector3& pos);
 	void SetBarrier(std::shared_ptr<EnemyBarrier> barrier);
-
+	void SetPlayerPos(const MelLib::Vector3& pos) override;
 };

@@ -61,6 +61,11 @@ BarrierEnemy::BarrierEnemy()
 	ballBeforeNum = 0;
 	firstCountflg = false;
 
+	// 敵の移動ディレイ用
+	delayPlayerPos.fill(0);
+	moveCurrentNum = 0;
+	moveBeforeNum = 0;
+	delayStartFlg = false;
 
 	SetRandomPosition();
 }
@@ -72,72 +77,98 @@ void BarrierEnemy::Move()
 	// 移動速度
 	static const float MOVE_SPEED = 0.3f;
 
-	// 距離を計算し、一定距離以内なら外に出るように移動
-	const float DISTANCE_X = GetPosition().x - playerPos.x;
-	const float DISTANCE_Z = GetPosition().z - playerPos.z;
-
-	float distance = sqrt(DISTANCE_X * DISTANCE_X + DISTANCE_Z * DISTANCE_Z);
-	// 現在一定距離をlerpを使わず保つようになっている
-	// 後程使用するように修正
-	if (distance <= BarrierEnemyStatus::DISTANCE_TO_PLAYER)
+	if (delayStartFlg)
 	{
 
-		moveVector = -playerDir * MOVE_SPEED;
+		// 距離を計算し、一定距離以内なら外に出るように移動
+		const float DISTANCE_X = GetPosition().x - delayPlayerPos[moveBeforeNum].x;
+		const float DISTANCE_Z = GetPosition().z - delayPlayerPos[moveBeforeNum].z;
+
+		// moveBeforeNumの値を変更して次のフレームで使う配列番号の準備
+		++moveBeforeNum;
+		if (moveBeforeNum >= delayPlayerPos.size())
+		{
+			moveBeforeNum = 0;
+		}
+
+		float distance = sqrt(DISTANCE_X * DISTANCE_X + DISTANCE_Z * DISTANCE_Z);
+		// 現在一定距離をlerpを使わず保つようになっている
+		// 後程使用するように修正
+
+		const float DISTANCE_RESULT = distance - BarrierEnemyStatus::DISTANCE_TO_PLAYER;
+
+		// 距離を保つ時の誤差範囲
+		const float EPSILON = 0.5f;
+
+		// 距離に応じて近づくかどうかを修正
+		if (DISTANCE_RESULT <= 0)
+		{
+
+			moveVector = -playerDir * MOVE_SPEED;
+		}
+		else if (DISTANCE_RESULT > EPSILON)
+		{
+			moveVector = playerDir * MOVE_SPEED;
+		}
+
+		else moveVector = { 0,0,0 };
+
+
+		// 加算
+		// AddPosition、SetPositionは当たり判定も一緒に動く
+		AddPosition(moveVector);
+
+		pastVelocity = moveVector;
+	}
+	else
+	{
+		// delay入る前の動作を追加する場合はここに
+
 	}
 
-	else moveVector = { 0,0,0 };
-
-
-	// 加算
-	// AddPosition、SetPositionは当たり判定も一緒に動く
-
-
-	AddPosition(moveVector);
-
-	pastVelocity = moveVector;
 
 	// 方向変換用
-	if (firstCountflg)ChangePose();
+	ChangePose();
 }
 
 
 void BarrierEnemy::ChangePose()
 {
-	const float PI = 3.1415926f;
-	const float CALC_ANGLE = 180;
-
-	// 方向ベクトルを元に向く方向を変更
-	MelLib::Vector3 result;
-
-	// atan2で方向ベクトルから計算
-	result.y = atan2f(-ballDir[ballBeforeNum].z, ballDir[ballBeforeNum].x) * CALC_ANGLE / PI;
-
-	SetAngle(result);
-
-	// 正面ベクトルの書き換え
-	frontDir = ballDir[ballBeforeNum];
-
-	++ballBeforeNum;
-	if (ballBeforeNum >= ballDir.size())
+	if (firstCountflg)
 	{
-		ballBeforeNum = 0;
+
+		const float PI = 3.1415926f;
+		const float CALC_ANGLE = 180;
+
+		// 方向ベクトルを元に向く方向を変更
+		MelLib::Vector3 result;
+
+		// atan2で方向ベクトルから計算
+		result.y = atan2f(-ballDir[ballBeforeNum].z, ballDir[ballBeforeNum].x) * CALC_ANGLE / PI;
+
+		SetAngle(result);
+
+		// 正面ベクトルの書き換え
+		frontDir = ballDir[ballBeforeNum];
+
+		++ballBeforeNum;
+		if (ballBeforeNum >= ballDir.size())
+		{
+			ballBeforeNum = 0;
+		}
+
+		// バリア用
+		// 第二引数にとりあえずでボールへの方向ベクトル
+		pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
 	}
+	else
+	{
+		// 正面ベクトルの書き換え
+		frontDir = ballDir[0];
 
-	// バリア用
-	// 第二引数にとりあえずでボールへの方向ベクトル
-	pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
-
+		pBarrier.get()->SetBarrierPosition(GetPosition(), frontDir);
+	}
 	
-}
-
-void BarrierEnemy::BallDirSort()
-{
-	// 前に配列を詰める
-	for (int i = 0; i < ballDir.size() - 1; i++)
-	{
-		ballDir[i] = ballDir[i + 1];
-	}
-
 }
 
 void BarrierEnemy::Update()
@@ -209,4 +240,18 @@ void BarrierEnemy::SetBallDir(const MelLib::Vector3& pos)
 void BarrierEnemy::SetBarrier(std::shared_ptr<EnemyBarrier> barrier)
 {
 	pBarrier = barrier;
+}
+
+void BarrierEnemy::SetPlayerPos(const MelLib::Vector3& pos)
+{
+	// プレイヤーの位置を配列に格納
+	delayPlayerPos[moveCurrentNum] = pos;
+
+	++moveCurrentNum;
+	// 配列数よりも大きくなったら0に
+	if (moveCurrentNum >= delayPlayerPos.size())
+	{
+		moveCurrentNum = 0;
+		delayStartFlg = true;
+	}
 }

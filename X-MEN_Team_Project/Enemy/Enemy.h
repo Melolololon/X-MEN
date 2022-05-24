@@ -69,9 +69,9 @@ public:
 #pragma region Setter
 
 	void SetHP(const float& hp);
-	void SetPlayerDir(const MelLib::Vector3& pos);
+	virtual void SetPlayerDir(const MelLib::Vector3& pos);
 	// プレイヤーの位置を変数で持っておくため実装　後で消す可能性大
-	void SetPlayerPos(const MelLib::Vector3& pos);
+	virtual void SetPlayerPos(const MelLib::Vector3& pos);
 
 #pragma endregion
 
