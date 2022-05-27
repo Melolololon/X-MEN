@@ -23,6 +23,8 @@ private:
 	std::shared_ptr<Player>pPlayer;
 	std::shared_ptr<Ball>pBall;
 	std::shared_ptr<NormalBarrier>barrier;
+	//^‚ñ’†‚Ì’Œ
+	std::shared_ptr<NormalBarrier>centerBarrier;
 	FieldObjectManager* fieldObjectManager;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
 		

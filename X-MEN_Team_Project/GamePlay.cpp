@@ -23,6 +23,9 @@ void GamePlay::Initialize()
 	//pBall->SetPosition(MelLib::Vector3(5, 0, -10));
 	barrier = std::make_shared<NormalBarrier>();
 
+	//真ん中の柱
+	centerBarrier = std::make_shared<NormalBarrier>();
+
 	pPlayer.get()->SetNormalBarrier(barrier);
 	pPlayer.get()->SetBall(pBall);
 
@@ -39,6 +42,8 @@ void GamePlay::Initialize()
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
 	//バリアのテスト
 	MelLib::GameObjectManager::GetInstance()->AddObject(barrier);
+	//真ん中の柱
+	MelLib::GameObjectManager::GetInstance()->AddObject(centerBarrier);
 
 	//// テストオブジェクト追加
 	//MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
@@ -66,6 +71,12 @@ void GamePlay::Update()
 		// マネージャーの更新
 		// オブジェクトの更新処理、判定処理、削除処理が行われる
 		MelLib::GameObjectManager::GetInstance()->Update();
+
+		//真ん中の柱の色々セット
+		centerBarrier->SetBarrierPosition(MelLib::Vector3(), MelLib::Vector3());
+		centerBarrier->SetIsOpen(true);
+		centerBarrier->SetScale(MelLib::Vector3(5,5,5));
+		centerBarrier->SetMulColor(MelLib::Color(255,255,255,255));
 
 		// 敵のテスト
 		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
