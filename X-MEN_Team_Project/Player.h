@@ -23,6 +23,11 @@ namespace PlayerHPUIInfo
 	const MelLib::Vector2 DRAW_POSITION = MelLib::Vector2(20,100);
 }
 
+namespace PlayerDamageInfo
+{
+	const float HIT_ENEMY_DAMAGE = 0.1f;
+}
+
 class Ball;
 class Player :
 	public MelLib::GameObject
