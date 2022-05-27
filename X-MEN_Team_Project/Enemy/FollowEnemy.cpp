@@ -8,7 +8,8 @@ FollowEnemy::FollowEnemy()
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
 
-	const float MODEL_SIZE = 2;
+	const float SCALE = 2;
+	const float MODEL_SIZE = 2 * SCALE;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 
 	// 見た目がわかりやすいように 後程モデルデータができたときに修正

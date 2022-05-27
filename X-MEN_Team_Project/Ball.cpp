@@ -59,7 +59,8 @@ Ball::Ball()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
-	const float MODEL_SIZE = 2;
+	const float SCALE = 2;
+	const float MODEL_SIZE = 2 * SCALE;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 	modelObjects["main"].SetScale(MODEL_SIZE);
 	//青色セット

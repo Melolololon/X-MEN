@@ -193,9 +193,10 @@ Player::Player()
 {
 	// MelLib;;ModelObjectの配列
 	// 四角形をセット
-	const float MODEL_SIZE = 2;
+	const float SCALE = 2;
+	const float MODEL_SIZE = 2 * SCALE;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-	modelObjects["main"].SetScale({ MODEL_SIZE,MODEL_SIZE,MODEL_SIZE });
+	modelObjects["main"].SetScale(MODEL_SIZE);
 	// 初期位置を0,0,5に
 	SetPosition(MelLib::Vector3(0, 0, -10));
 
