@@ -33,6 +33,7 @@ private:
 	//ボールの初期スピード
 	const float INIT_THROW_SPEED = 0.5f;
 	const float MAX_SPEED = 3.0f;
+	const float MAX_SCALE = 10.0f;
 	const float BALL_ACCEL = 0.25F;
 
 private:
@@ -40,6 +41,8 @@ private:
 	Vector3 velocity = { 0,0,0 };
 	//ボールの速さ
 	float speed = 0;
+	//ボールの大きさ
+	float scale = 4.0f;
 	//投げられた後か
 	bool isThrowed = true;
 
@@ -123,6 +126,11 @@ public:
 	/// </summary>
 	/// <returns>状態</returns>
 	BallState GetThrowingState()const { return throwingState; }
+
+	/// <summary>
+	/// ボールを定量大きくする
+	/// </summary>
+	void AddScale();
 
 #pragma endregion
 

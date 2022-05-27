@@ -5,12 +5,14 @@
 #include "Enemy/BarrierEnemy.h"
 #include "NormalBarrier.h"
 #include "EnemyBarrier.h"
+#include "Enemy/EnemyManager.h"
 #include <Random.h>
 #include <LibMath.h>
+#include <ModelData.cpp>
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
-const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,128 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 void Ball::Move()
@@ -58,11 +60,9 @@ void Ball::Reflection(const Vector3& otherNormal, bool isAddSpeed)
 Ball::Ball()
 {
 	// MelLib;;ModelObjectの配列
-	// 四角形をセット
-	const float SCALE = 2;
-	const float MODEL_SIZE = 2 * SCALE;
-	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-	modelObjects["main"].SetScale(MODEL_SIZE);
+	MelLib::ModelData::Load("Resources/Model/Ball/Ball.obj", true, "objBall");
+	modelObjects["main"].Create(MelLib::ModelData::Get("objBall"));
+	modelObjects["main"].SetScale(scale);
 	//青色セット
 	SetColor(BALL_COLOR_YELLOW);
 	throwingState = BallState::NONE;
@@ -70,11 +70,13 @@ Ball::Ball()
 	// 当たり判定の作成(球)
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
+	sphereDatas["main"][0].SetRadius(scale * 0.5);
 
 	sphereFrameHitCheckNum = 4;
 
 	SetPosition({ 0,0,-10 });
+
+	collisionCheckDistance = MAX_SCALE;
 }
 
 Ball::~Ball()
@@ -88,6 +90,7 @@ void Ball::Update()
 	//投げられていたら動かす
 	if (isThrowed) {
 		Move(); 
+		AddScale();
 		//停止
 		if (speed <= 0) {
 			////色セット
@@ -226,9 +229,6 @@ void Ball::ThrowBall(const Vector3& initVel)
 	//方向セット
 	velocity = initVel;
 
-	//位置を移動方向へオブジェクトの大きさだけずらす (投げた瞬間衝突するのを防ぐ)
-	SetPosition(GetPosition() + velocity * GetScale());
-
 	//射出フラグを有効に
 	isThrowed = true;
 }
@@ -243,4 +243,25 @@ void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
 
 	//投げたフラグオフ
 	isThrowed = false;
+}
+
+void Ball::AddScale()
+{
+	if (EnemyManager::GetInstance()->GetIsDeadFlame() == false) {
+		return;
+	}
+
+	//加算
+	const float INIT_SCALE = MAX_SCALE / 4;
+	//ひとまず5回敵倒すと最大値になるように
+	scale += (MAX_SCALE - INIT_SCALE) / 5;
+
+	if (scale > MAX_SCALE) {
+		scale = MAX_SCALE;
+	}
+
+	//オブジェクトに反映
+	SetScale({ scale,scale,scale });
+
+	EnemyManager::GetInstance()->SetIsDeadFlame(false);
 }

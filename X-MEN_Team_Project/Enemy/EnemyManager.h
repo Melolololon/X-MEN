@@ -39,6 +39,9 @@ private:
 	// oŒ»‚µ‚Ä‚¢‚é“G‚Ì‘”
 	int enemyCount;
 
+	//“G‚ª“|‚³‚ê‚½ƒtƒŒ[ƒ€‚©
+	bool isDeadFlame = false;
+
 public:
 
 	static EnemyManager* GetInstance();
@@ -53,10 +56,16 @@ public:
 
 	void SetPlayerPos(const MelLib::Vector3& pos);
 
+	//“G‚ª“|‚³‚ê‚½ƒtƒŒ[ƒ€‚©‚Ìƒtƒ‰ƒOƒZƒbƒg
+	void SetIsDeadFlame(bool isDeadFlame) { this->isDeadFlame = isDeadFlame; }
+
 	// ƒQƒbƒ^[
 
 	// “G‚Ì‘”‚ð•Ô‚·
 	int GetEnemyCount() const;
+
+	//“G‚ª“|‚³‚ê‚½ƒtƒŒ[ƒ€‚©•Ô‚·
+	bool GetIsDeadFlame() { return isDeadFlame; }
 
 private:
 
@@ -96,6 +105,9 @@ inline void EnemyManager::CheckEnemyDead(T& temp,bool isBarrier)
 			enemyDead = true;
 
 			enemyCount--;
+
+			//ƒ{[ƒ‹‚É“G‚ªŽ€‚ñ‚¾‚±‚Æ‚ð“`‚¦‚éˆ×‚Ìƒtƒ‰ƒO
+			isDeadFlame = true;
 
 			GameManager::GetInstance()->SetHitStop(true);
 		}

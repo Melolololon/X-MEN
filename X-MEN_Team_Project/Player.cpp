@@ -100,7 +100,8 @@ bool Player::ThrowingBall(bool key)
 	}
 
 	//ƒ{[ƒ‹‚ð“Š‚°‚é
-	pBall->SetPosition(GetPosition() + dirVector * 2);
+	const float MODEL_SIZE = 4;
+	pBall->SetPosition(GetPosition() + (dirVector * pBall->GetScale().x * 0.5) + (dirVector * MODEL_SIZE * 0.5));
 	pBall->ThrowBall(dirVector);
 
 	pBall.get()->SetThrowingState(BallState::THROWING_PLAYER);
