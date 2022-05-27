@@ -529,8 +529,8 @@ unsigned int MelLib::GameObject::GetFrameHitCheckNumber(ShapeType3D type) const
 	return 1;
 }
 
-#ifdef _DEBUG
 
+#ifdef _DEBUG
 
 
 

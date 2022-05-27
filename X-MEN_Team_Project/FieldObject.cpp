@@ -3,6 +3,7 @@
 FieldObject::FieldObject()
 	: fieldObjectType(FieldObjectType::FIELD_OBJECT_TYPE_NONE)
 {
+	collisionCheckDistance = FLT_MAX;
 }
 
 FieldObject::~FieldObject()

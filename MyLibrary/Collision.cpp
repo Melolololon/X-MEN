@@ -1323,3 +1323,13 @@ bool MelLib::Collision::TriangleAndSegment3D(const TriangleData& triangle, Trian
 
 	return isHit;
 }
+
+bool MelLib::Collision::OBBAndRay(const OBBData& obb, const RayData& ray, RayCalcResult* rayResult)
+{
+	// BoxとRayの判定があるので、
+	// OBBの角度 * -1の角度分レイを回転させてあげればいい?
+	// そんなことないわやっぱ
+	// やっぱいける?
+	// OBBを中心にレイの点を回転させればいけそう
+	return false;
+}
