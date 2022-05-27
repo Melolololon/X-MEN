@@ -121,7 +121,13 @@ void GameObjectManager::Update()
 				return num2;
 			};
 
-
+			// ‰ž‹}ˆ’u
+			float checkDistance = obj1->GetCollisionCheckDistance();
+			if (checkDistance < obj2->GetCollisionCheckDistance())checkDistance = obj2->GetCollisionCheckDistance();
+			
+			float distance = LibMath::CalcDistance3D(obj1->GetPosition(), obj2->GetPosition());
+			if (distance > checkDistance)continue;
+			
 #pragma region Sphere & Sphere
 
 

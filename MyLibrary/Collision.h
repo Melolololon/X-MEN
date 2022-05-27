@@ -198,6 +198,13 @@ namespace MelLib
 			const Segment3DData& lineSegment,
 			Segment3DCalcResult* lineSegmentCalcResult
 		);
+
+		static bool OBBAndRay
+		(
+			const OBBData& obb,
+			const RayData& ray,
+			RayCalcResult* rayResult
+		);
 #pragma endregion
 	};
 

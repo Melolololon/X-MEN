@@ -1,6 +1,7 @@
 #include "Sprite.h"
 #include"CreateBuffer.h"
 #include"PipelineState.h"
+#include"DrawManager.h"
 
 using namespace MelLib;
 
@@ -148,34 +149,41 @@ void Sprite::ConstDataMat()
 
 void Sprite::SetCmdList()
 {
+	DrawManager* drawManager = DrawManager::GetInstance();
+
 	Texture* pTex = nullptr;
 	if (drawMode == SpriteDrawMode::DRAW_TEXTURE)pTex = pTexture;
 
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	cmdList->SetGraphicsRootSignature(rootSignature.Get());
-	cmdList->SetPipelineState(pipeline.Get());
-
+	
 
 	//頂点
-	cmdList->IASetVertexBuffers(0, 1, &vertexBufferSet.vertexBufferView);
-
+	//if (drawManager->GetPreDrawType() != DrawType::SPRITE)
+	{
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		cmdList->SetGraphicsRootSignature(rootSignature.Get());
+		cmdList->IASetVertexBuffers(0, 1, &vertexBufferSet.vertexBufferView);
+	}
+	cmdList->SetPipelineState(pipeline.Get());
 
 	std::vector<ID3D12DescriptorHeap*> ppHeaps;
 	ppHeaps.push_back(textureHeap.Get());
 	cmdList->SetDescriptorHeaps(1, &ppHeaps[0]);
 
 	//テクスチャ
-	UINT heapNum = 0;
-	if (pTex)heapNum = pTex->GetTextureNumber();
-	
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandle;
-	gpuDescHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE
-	(
-		textureHeap->GetGPUDescriptorHandleForHeapStart(),
-		heapNum,
-		device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
-	);
-	cmdList->SetGraphicsRootDescriptorTable(1, gpuDescHandle);
+	//if (drawManager->GetPreTexture()) 
+	{
+		UINT heapNum = 0;
+		if (pTex)heapNum = pTex->GetTextureNumber();
+
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandle;
+		gpuDescHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE
+		(
+			textureHeap->GetGPUDescriptorHandleForHeapStart(),
+			heapNum,
+			device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+		);
+		cmdList->SetGraphicsRootDescriptorTable(1, gpuDescHandle);
+	}
 
 	//定数セット
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuffer->GetGPUVirtualAddress());
@@ -183,6 +191,7 @@ void Sprite::SetCmdList()
 
 	cmdList->DrawInstanced(vertices.size(), 1, 0, 0);
 	
+	drawManager->SetDrawData(*this);
 }
 
 
