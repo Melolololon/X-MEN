@@ -71,6 +71,7 @@ void FieldObjectManager::AddWalls(const unsigned int VALUE, bool isRotate)
 		return result;
 	};
 
+	float distance = 0;
 	for (unsigned int i = 0; i < VALUE; ++i)
 	{
 		// 現在のポイントと次のポイントから座標、角度を計算するため
@@ -100,13 +101,19 @@ void FieldObjectManager::AddWalls(const unsigned int VALUE, bool isRotate)
 
 		const float HALF_LERP_POINT = 0.5f;
 		pos = MelLib::Interpolation::Lerp(firstPoint, secondPoint, HALF_LERP_POINT);
-		float distance = pos.Length();
+		distance = MelLib::LibMath::CalcDistance3D(firstPoint, secondPoint);
 		pos = pos.Normalize();
 
 		angle.y = MAX_ANGLE / MelLib::LibMath::GetFloatPI() * std::atan2f(pos.x, pos.z);
 
-		size = FieldObjectWallInfo::TOP_BOTTOM_SIZE * distance;
-		pos *= FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2 * distance;
+		size = FieldObjectWallInfo::TOP_BOTTOM_SIZE;
+
+		// サイズを角形ごとに調整するための係数
+		const float K = 15;
+		size.x = FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2 * distance + (distance * distance * K);
+
+		// 半径分ずらす
+		pos *= FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2;
 
 		AddWall(pos, size, angle);
 	}
