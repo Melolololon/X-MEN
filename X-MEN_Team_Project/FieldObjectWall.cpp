@@ -1,4 +1,33 @@
 #include "FieldObjectWall.h"
+#include "FieldObjectManager.h"
+
+void FieldObjectWall::LoomingPosition()
+{
+	const float DIVIDE = 100;
+	MelLib::Vector3 addVector = centerPos - GetPosition();
+	addVector = addVector.Normalize() / DIVIDE;
+
+	AddPosition(addVector);
+}
+
+void FieldObjectWall::LoomingScale()
+{
+	// ‰¡•‚ð100•ª—¦‚µ‚½’l
+	const float MINUS_VALUE = FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 100;
+
+	MelLib::Vector3 scale = GetScale();
+	scale.x -= MINUS_VALUE / 100;
+
+	SetScale(scale);
+}
+
+void FieldObjectWall::Looming()
+{
+	if (!FieldObjectManager::GetInstance()->IsLooming())return;
+
+	LoomingPosition();
+	LoomingScale();
+}
 
 FieldObjectWall::FieldObjectWall()
 {
@@ -16,6 +45,7 @@ FieldObjectWall::FieldObjectWall()
 
 void FieldObjectWall::Update()
 {
+	Looming();
 	SetPosition(GetPosition());
 	SetScale(GetScale());
 	SetAngle(GetAngle());
@@ -27,4 +57,9 @@ void FieldObjectWall::Update()
 void FieldObjectWall::Draw()
 {
 	AllDraw();
+}
+
+void FieldObjectWall::SetCenterPosition(const MelLib::Vector3& setpos)
+{
+	centerPos = setpos;
 }

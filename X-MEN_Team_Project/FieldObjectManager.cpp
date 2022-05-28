@@ -10,6 +10,7 @@ void FieldObjectManager::AddWall(const MelLib::Vector3& pos, const MelLib::Vecto
 {
 	auto fieldObjectWall = std::make_shared<FieldObjectWall>();
 
+	fieldObjectWall.get()->SetCenterPosition(MelLib::Vector3());
 	fieldObjectWall.get()->SetScale(size);
 	fieldObjectWall.get()->SetPosition(pos);
 	fieldObjectWall.get()->SetAngle(angle);
@@ -112,6 +113,27 @@ void FieldObjectManager::AddWalls(const unsigned int VALUE, bool isRotate)
 	}
 }
 
+void FieldObjectManager::LoomingUpdate()
+{
+	if (!isLooming)return;
+
+	if (loomingTime > 1)
+	{
+		// 縮小カウントが残っていないなら終了
+		if (loomingCount <= 0)
+		{
+			isLooming = false;
+		}
+
+		loomingTime = 0;
+		--loomingCount;
+		return;
+	}
+
+	const float FRAME = 1.0f / 60.0f;
+	loomingTime += FRAME / FieldObjectManagerInfo::MAX_LOOMING_TIME;
+}
+
 FieldObjectManager* FieldObjectManager::GetInstance()
 {
 	static FieldObjectManager instance;
@@ -119,6 +141,8 @@ FieldObjectManager* FieldObjectManager::GetInstance()
 }
 
 FieldObjectManager::FieldObjectManager()
+	: isLooming(false)
+	, loomingTime(0)
 {
 }
 
@@ -134,6 +158,11 @@ void FieldObjectManager::Initialize()
 	AddWalls(MelLib::Random::GetRandomNumberSetNumber({ 4,5,6 }), (bool)MelLib::Random::GetRandomNumberSetNumber({ 0,1 }));
 }
 
+void FieldObjectManager::Update()
+{
+	LoomingUpdate();
+}
+
 void FieldObjectManager::Finalize()
 {
 	fieldObjects.clear();
@@ -142,4 +171,15 @@ void FieldObjectManager::Finalize()
 std::shared_ptr<std::vector<std::shared_ptr<FieldObject>>> FieldObjectManager::GetFieldObjects(FieldObjectType hash)
 {
 	return fieldObjects[hash];
+}
+
+void FieldObjectManager::Looming()
+{
+	isLooming = true;
+	++loomingCount;
+}
+
+bool FieldObjectManager::IsLooming() const
+{
+	return isLooming;
 }

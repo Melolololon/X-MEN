@@ -2,10 +2,20 @@
 #include "FieldObject.h"
 #include <vector>
 
+namespace FieldObjectManagerInfo
+{
+	// sec
+	const float MAX_LOOMING_TIME = 1;
+}
+
 class FieldObjectManager
 {
 private:
 	std::unordered_map<FieldObjectType,std::shared_ptr<std::vector<std::shared_ptr<FieldObject>>>> fieldObjects;
+
+	bool isLooming;
+	float loomingTime;
+	int loomingCount;
 private:
 	// 壁を追加する
 	void AddWall(const MelLib::Vector3& pos,const MelLib::Vector3& size,const MelLib::Vector3& angle = MelLib::Vector3());
@@ -15,11 +25,16 @@ private:
 	// 何角形か指定して壁群を追加する
 	// isRotateは例えば四角形の場合、斜めを正す
 	void AddWalls(const unsigned int VALUE,bool isRotate);
+
+	// マップ縮まるフラグ関係の更新
+	void LoomingUpdate();
 public:
 	static FieldObjectManager* GetInstance();
 
 	// メモリ確保など
 	void Initialize();
+
+	void Update();
 
 	// 保持しているオブジェクトのポインタ配列をクリアしたり、追加した数を保持する変数を初期化する
 	void Finalize();
@@ -29,6 +44,14 @@ public:
 	// auto& だけの 例) auto& fieldObjects = FieldObjectManager::GetInstance()->GetFieldObjects(FieldObjectType::FIELD_OBJECT_TYPE_WALL);
 	std::shared_ptr<std::vector<std::shared_ptr<FieldObject>>> GetFieldObjects(FieldObjectType hash);
 
+	// マップを縮めるフラグを立てる
+	void Looming();
+
+#pragma region Getter
+
+	// マップが縮まるフラグを確認する
+	bool IsLooming() const;
+#pragma endregion
 
 private:
 	// シングルトン用

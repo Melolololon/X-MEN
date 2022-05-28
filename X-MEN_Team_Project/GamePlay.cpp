@@ -67,6 +67,8 @@ void GamePlay::Update()
 		// オブジェクトの更新処理、判定処理、削除処理が行われる
 		MelLib::GameObjectManager::GetInstance()->Update();
 
+		FieldObjectManager::GetInstance()->Update();
+
 		// 敵のテスト
 		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
 		//pFollowEnemy.get()->SetPlayerDir(pPlayer.get()->GetPosition());

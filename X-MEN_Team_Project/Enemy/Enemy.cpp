@@ -2,6 +2,7 @@
 #include "FollowEnemy.h"
 #include "BarrierEnemy.h"
 #include"../Ball.h"
+#include "../FieldObjectManager.h"
 
 
 void Enemy::PushPosition()
@@ -27,6 +28,8 @@ void Enemy::PushPosition()
 void Enemy::Damage(float damage)
 {
 	hp -= damage;
+
+	if (hp <= 0)FieldObjectManager::GetInstance()->Looming();
 }
 
 void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
