@@ -46,11 +46,15 @@ float4 main(GSOutput input) : SV_TARGET
 	// Ç±ÇÃèàóùñYÇÍÇøÇ·Ç¡ÇΩÇ©ÇÁóvämîF(2022/4/11)
 	float alphaSum = (shaderColor.a + texColor.a) / 2;
 
-	float4 changeColor = texColor;
-	changeColor += addColor - subColor;
-	changeColor *= mulColor;
+	float3 changeColor = texColor.rgb;
+	changeColor += addColor.rgb - subColor.rgb;
+	changeColor *= mulColor.rgb;
 
-	float4 sumColor = float4(shaderColor.rgb * changeColor.rgb, alphaSum);
+	float changeAlpha = alphaSum;
+	changeAlpha += addColor.a - subColor.a;
+	changeAlpha *= mulColor.a;
+
+	float4 sumColor = float4(shaderColor * changeColor, changeAlpha);
 	
 
 	/*float4 sumColor = float4(shaderColor.rgb * texColor.rgb, alphaSum);
