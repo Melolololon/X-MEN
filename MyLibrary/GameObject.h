@@ -171,8 +171,22 @@ namespace MelLib
 		// 判定表示するかどうか
 		bool drawCollisionModel = true;
 
+		protected:
+			void SetAllCollisionFlag(const bool flag) 
+			{
 
+				collisionFlag.sphere = flag;
+				collisionFlag.box = flag;
+				collisionFlag.obb = flag;
+				collisionFlag.ray = flag;
+				collisionFlag.segment = flag;
+				collisionFlag.plane = flag;
+				collisionFlag.board = flag;
+				collisionFlag.capsule = flag;
+				collisionFlag.triangle = flag;
+			}
 
+			float collisionCheckDistance = 5.0f;
 	private:
 		/// <summary>
 		/// 当たり判定数に応じてモデルの生成、削除を行う関数
@@ -569,6 +583,8 @@ namespace MelLib
 		/// </summary>
 		/// <returns>重ならないように押し出した座標(GetLerpPosition() - GetLerpMovePosition())</returns>
 		Vector3 GetLerpExtrudePosition()const { return lerpPosition - lerpMovePosition; }
+
+		float GetCollisionCheckDistance()const { return collisionCheckDistance; }
 
 		// 開発者用
 #ifdef _DEBUG

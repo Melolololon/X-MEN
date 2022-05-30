@@ -342,6 +342,9 @@
     <ClCompile Include="Capture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="DrawManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SpritePixelShader.hlsl" />
@@ -624,6 +627,9 @@
       <Filter>ヘッダー ファイル\Support</Filter>
     </ClInclude>
     <ClInclude Include="Capture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

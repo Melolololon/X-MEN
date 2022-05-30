@@ -16,6 +16,8 @@
 #include"TextWrite.h"
 #include"Material.h"
 
+#include"DrawManager.h"
+
 
 using namespace MelLib;
 
@@ -446,7 +448,7 @@ void DirectX12::LoopEndProcess()
 	//(VSYNC,’è”)
 	swapchain->Present(1, 0);
 #pragma endregion
-
+	DrawManager::GetInstance()->Reset();
 }
 
 void DirectX12::Finalize()

@@ -39,6 +39,11 @@ void* Scene::GetPtr()
 	return this;
 }
 
+void MelLib::Scene::Edit()
+{
+
+}
+
 void MelLib::Scene::ResourceBatchDeletion()
 {
 	ModelData::BatchDeletion();

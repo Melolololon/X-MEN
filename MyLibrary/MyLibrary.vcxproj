@@ -188,6 +188,7 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionDetectionData.cpp" />
     <ClCompile Include="Counter.cpp" />
+    <ClCompile Include="DrawManager.cpp" />
     <ClCompile Include="Emitter3D.cpp" />
     <ClCompile Include="ErrorProcess.cpp" />
     <ClCompile Include="GameObject2D.cpp" />
@@ -481,6 +482,7 @@
     <ClInclude Include="ClothSimulator.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Counter.h" />
+    <ClInclude Include="DrawManager.h" />
     <ClInclude Include="Emitter3D.h" />
     <ClInclude Include="ErrorProcess.h" />
     <ClInclude Include="GameObject2D.h" />
