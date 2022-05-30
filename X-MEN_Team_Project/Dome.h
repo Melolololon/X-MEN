@@ -17,9 +17,12 @@ private:
 	float liveTime;
 	int level;
 	float alpha;
+	float easingValue;
+	bool isUse;
 private:
 	void FadeIn(const float FRAME_TIME);
 	void FadeOut(const float FRAME_TIME);
+	float EaseOutQuint(float s, float e, float t);
 public:
 	Dome();
 	~Dome();
@@ -27,8 +30,14 @@ public:
 	void Update();
 	void Draw();
 
+	// ゲームオブジェクトマネージャーから削除するキューに追加
+	void EraseFunc();
+
+#pragma region Getter
+	bool IsUse();
+#pragma endregion
+
 #pragma region Setter
 	void SetLevel(const int value);
 #pragma endregion
-
 };

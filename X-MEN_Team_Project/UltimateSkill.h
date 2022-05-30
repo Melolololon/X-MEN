@@ -5,7 +5,7 @@
 namespace UltimateSkillInfo
 {
 	// ゲージ初期値
-	const float INITIALIZE_VALUE = 0.0f;
+	const float INITIALIZE_VALUE = 25.0f;
 
 	// ゲージの最大値
 	const float MAX_VALUE = 100.0f;
@@ -71,7 +71,7 @@ public:
 	void Draw();
 
 	// 今のところ値を使用したあとにレベルを再計算
-	void Use();
+	void Use(const MelLib::Vector3& pos);
 
 	// ゲージの値を増やす
 	void AddValue(int addValue);

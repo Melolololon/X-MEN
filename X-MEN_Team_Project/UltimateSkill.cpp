@@ -58,6 +58,15 @@ UltimateSkill::~UltimateSkill()
 
 void UltimateSkill::Update()
 {
+	if (dome)
+	{
+		if (!dome.get()->IsUse())
+		{
+			dome.get()->EraseFunc();
+			isUsingSkill = false;
+		}
+	}
+
 	MelLib::Vector2 windowSize = MelLib::Vector2((float)MelLib::Library::GetWindowWidth(), (float)MelLib::Library::GetWindowHeight());
 
 	CalcSize(windowSize);
@@ -80,13 +89,16 @@ void UltimateSkill::Draw()
 	frontGauge.Draw();
 }
 
-void UltimateSkill::Use()
+void UltimateSkill::Use(const MelLib::Vector3& pos)
 {
-	// value -= ****
+	CalcLevel();
+	if (level <= 0)return;
+
 	dome = std::make_shared<Dome>();
 	MelLib::GameObjectManager::GetInstance()->AddObject(dome);
 
-	CalcLevel();
+	dome.get()->SetPosition(pos);
+	dome.get()->SetLevel(level);
 
 	isUsingSkill = true;
 }

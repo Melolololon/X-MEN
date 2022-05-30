@@ -118,7 +118,7 @@ void Player::UseUltimateSkill(bool key)
 	if (ultimateSkill.GetIsUsingSkill())return;
 
 	// スキル使用
-	ultimateSkill.Use();
+	ultimateSkill.Use(GetPosition());
 }
 
 void Player::TrackingBall()
