@@ -21,7 +21,7 @@ void Ball::Move()
 	SetPosition(GetPosition() + velocity * speed);
 
 	//ÉXÉsÅ[Éhè≠Çµå∏ÇÁÇ∑
-	speed -= 0.0025f;
+	speed -= BALL_FRICTION;
 	if (speed < 0) { speed = 0; }
 }
 
@@ -70,13 +70,13 @@ Ball::Ball()
 	// ìñÇΩÇËîªíËÇÃçÏê¨(ãÖ)
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(scale * 0.5);
+	sphereDatas["main"][0].SetRadius(scale / 2);
 
 	sphereFrameHitCheckNum = 4;
 
-	SetPosition({ 0,0,-10 });
+	//collisionCheckDistance = MAX_SCALE;
 
-	collisionCheckDistance = MAX_SCALE;
+	SetPosition({ 20,0,0 });
 }
 
 Ball::~Ball()
@@ -251,8 +251,6 @@ void Ball::AddScale()
 		return;
 	}
 
-	//â¡éZ
-	const float INIT_SCALE = MAX_SCALE / 4;
 	//Ç–Ç∆Ç‹Ç∏5âÒìGì|Ç∑Ç∆ç≈ëÂílÇ…Ç»ÇÈÇÊÇ§Ç…
 	scale += (MAX_SCALE - INIT_SCALE) / 5;
 

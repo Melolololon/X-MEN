@@ -33,8 +33,10 @@ private:
 	//ボールの初期スピード
 	const float INIT_THROW_SPEED = 0.5f;
 	const float MAX_SPEED = 3.0f;
+	const float INIT_SCALE = 4.0f;
 	const float MAX_SCALE = 10.0f;
 	const float BALL_ACCEL = 0.25F;
+	const float BALL_FRICTION = 0.0025f;
 
 private:
 	//移動方向
@@ -42,7 +44,7 @@ private:
 	//ボールの速さ
 	float speed = 0;
 	//ボールの大きさ
-	float scale = 4.0f;
+	float scale = INIT_SCALE;
 	//投げられた後か
 	bool isThrowed = true;
 
