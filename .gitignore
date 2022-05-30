@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# dont delete resources folder
+!Resources/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -363,3 +366,7 @@ MigrationBackup/
 FodyWeavers.xsd
 /MyLibrary/imgui
 /MyLibrary/lib/fbx_sdk
+
+# dont delete resource folder modelData
+!X-MEN_Team_Project/Resources/Model/*/*.obj
+!X-MEN_Team_Project/Resources/Model/*/*.mtl
