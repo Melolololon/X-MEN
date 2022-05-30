@@ -56,6 +56,9 @@ void GamePlay::Initialize()
 	GameManager::GetInstance()->Initialize();
 
 	nextScene = NextScene::PLAY;
+
+
+	MelLib::ModelData::Load("Resources/Model/Dome/dome.obj", true, "domeObj");
 }
 
 void GamePlay::Update()

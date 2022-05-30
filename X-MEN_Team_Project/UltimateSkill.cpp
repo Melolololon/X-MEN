@@ -1,5 +1,6 @@
 #include "UltimateSkill.h"
 #include "Library.h"
+#include <GameObjectManager.h>
 
 void UltimateSkill::CalcLevel()
 {
@@ -82,6 +83,8 @@ void UltimateSkill::Draw()
 void UltimateSkill::Use()
 {
 	// value -= ****
+	dome = std::make_shared<Dome>();
+	MelLib::GameObjectManager::GetInstance()->AddObject(dome);
 
 	CalcLevel();
 

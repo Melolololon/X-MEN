@@ -1,4 +1,5 @@
 #pragma once
+#include "Dome.h"
 #include <Sprite2D.h>
 
 namespace UltimateSkillInfo
@@ -49,6 +50,8 @@ private:
 
 	MelLib::Vector2 drawPosition;
 	MelLib::Color drawColor;
+
+	std::shared_ptr<Dome> dome;
 private:
 	// 現ゲージ量からレベルを計算
 	void CalcLevel();
