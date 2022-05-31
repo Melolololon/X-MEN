@@ -25,10 +25,9 @@ class BallTrajectory
 
 private:
 	MelLib::Color color;
-
+	bool isDisp = true;
 public:
-	// 更新
-	void Update()override;
+
 	//描画
 	void Draw()override;
 
@@ -40,6 +39,13 @@ public:
 
 	//色ゲット
 	const MelLib::Color& GetColor() { return color; }
+
+	//描画するかのフラグセット
+	void SetIsDisp(bool isDisp) { this->isDisp = isDisp; }
+
+	//描画するかのフラグゲット
+	bool GetIsDisp() { return isDisp; }
+
 };
 
 //ボール本体
@@ -73,7 +79,7 @@ private:
 	BallState throwingState;
 
 	//軌跡表示用オブジェクト
-	std::shared_ptr<BallTrajectory> pBallTrajectories[5];
+	std::shared_ptr<BallTrajectory> pBallTrajectories[40];
 
 private:
 

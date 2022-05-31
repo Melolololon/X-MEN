@@ -116,8 +116,8 @@ Ball::Ball()
 		v->SetScale(GetScale());
 		//色セット
 		v->SetMulColor(GetColorFromBallState(throwingState));
-		//追加
-		MelLib::GameObjectManager::GetInstance()->AddObject(v);
+		//全て非表示
+		v->SetIsDisp(false);
 	}
 }
 
@@ -144,12 +144,7 @@ void Ball::Update()
 	}
 
 	//軌跡更新
-	static int a = 0;
-	a++;
-	if (a == 5) {
-		UpdateTrajectories();
-		a = 0;
-	}
+	UpdateTrajectories();
 
 	//投げられている状態から色セット
 	SetColor(GetColorFromBallState(throwingState));
@@ -277,6 +272,8 @@ void Ball::ThrowBall(const Vector3& initVel)
 		v->SetScale(GetScale());
 		//色セット
 		v->SetMulColor(GetColorFromBallState(throwingState));
+		//全て表示
+		v->SetIsDisp(true);
 	}
 }
 
@@ -300,29 +297,32 @@ void Ball::UpdateTrajectories()
 			pBallTrajectories[i]->SetPosition(pBallTrajectories[i - 1]->GetPosition());	//座標
 			pBallTrajectories[i]->SetScale(pBallTrajectories[i - 1]->GetScale());		//スケール
 			MelLib::Color color = pBallTrajectories[i - 1]->GetColor();
-			color.a = 64;
-			pBallTrajectories[i]->SetColor(color);		//色
+			color.a = 128;
+			pBallTrajectories[i]->SetColor(color);										//色
+			pBallTrajectories[i]->SetIsDisp(pBallTrajectories[i - 1]->GetIsDisp());		//表示するか
 		}
 		else {
 			//一番本体に近いオブジェクトは本体の情報コピー
 			pBallTrajectories[i]->SetPosition(GetPosition());							//座標
 			pBallTrajectories[i]->SetScale(GetScale());									//スケール
 			MelLib::Color color = GetColorFromBallState(throwingState);
-			color.a = 64;
+			color.a = 128;
 			pBallTrajectories[i]->SetColor(color);		//色
+			pBallTrajectories[i]->SetIsDisp(isThrowed);		//表示するか
 		}
 	}
 }
 
 void Ball::DrawTrajectories()
 {
-	for (auto& v : pBallTrajectories) {
-		v->Draw();
+	for (int i = 0; i < _countof(pBallTrajectories); i++) {
+		if (i % 8 == 0 &&											//8個に1個描画
+			pBallTrajectories[i]->GetIsDisp() &&				//表示フラグチェック
+			MelLib::LibMath::CalcDistance3D(pBallTrajectories[i]->GetPosition(), GetPosition()) >= 1)//近すぎなかったら
+		{
+			pBallTrajectories[i]->Draw();
+		}
 	}
-}
-
-void BallTrajectory::Update()
-{
 }
 
 void BallTrajectory::Draw()
