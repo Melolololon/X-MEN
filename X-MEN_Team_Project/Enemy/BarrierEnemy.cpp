@@ -4,6 +4,7 @@
 #include<array>
 #include"../MyLibrary/GameObjectManager.h"
 #include "../FieldObjectWall.h"
+#include "../GameManager.h"
 #include <Random.h>
 
 void BarrierEnemy::RefBallObject()
@@ -117,9 +118,9 @@ void BarrierEnemy::Move()
 
 		// ‰ÁŽZ
 		// AddPositionASetPosition‚Í“–‚½‚è”»’è‚àˆê‚É“®‚­
-		AddPosition(moveVector);
+		AddPosition(moveVector * GameManager::GetInstance()->GetGameTime());
 
-		pastVelocity = moveVector;
+		pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
 	}
 	else
 	{

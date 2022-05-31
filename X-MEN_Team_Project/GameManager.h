@@ -60,6 +60,9 @@ public:
 	// ゲッター
 	bool GetCanGameClear() const;
 	bool GetCanGameOver() const;
+
+	// ゲーム内時間を取得、この値を移動ベクトルにかけることでゲーム内時間が変わっても（たとえばスローになっても）
+	// その時間にあった移動量になる
 	float GetGameTime() const;
 private:
 
@@ -71,6 +74,5 @@ private:
 	GameManager(const GameManager& obj) = delete;
 
 	void ChangeGameTime();
-
 };
 
