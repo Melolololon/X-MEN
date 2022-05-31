@@ -84,5 +84,6 @@ public:
 #pragma region Setter
 	// スキルを使用しているフラグを書き換える
 	void SetIsUsingSkill(bool flag);
+	void SetDome(std::shared_ptr<Dome> setDome);
 #pragma endregion
 };

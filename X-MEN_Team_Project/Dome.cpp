@@ -1,4 +1,6 @@
 #include "Dome.h"
+#include "FieldObjectWall.h"
+#include "UltimateSkill.h"
 
 void Dome::FadeIn(const float FRAME_TIME)
 {
@@ -26,12 +28,22 @@ float Dome::EaseOutQuint(float s, float e, float t)
 	return 1.0f - std::powf(1.0f - t, 5);
 }
 
+void Dome::CalcSize()
+{
+	// (フィールドの半径 - フィールドの1/10) * レベルの0 ~ 1化
+	const float levelPower = ((FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 2) 
+							- (FieldObjectWallInfo::TOP_BOTTOM_SIZE.x / 10))
+							* (level / UltimateSkillInfo::MAX_LEVEL);
+	SetScale(levelPower);
+}
+
 Dome::Dome()
 	: liveTime(0)
 	, level(1)
 	, alpha(0)
 	, easingValue(0)
-	, isUse(true)
+	, isUse(false)
+	, oldIsUse(false)
 {
 	// 読み込んだモデルデータを使用
 	const float SCALE = 2;
@@ -46,8 +58,22 @@ Dome::~Dome()
 {
 }
 
+void Dome::Initialize()
+{
+	liveTime = 0;
+	level = 1;
+	alpha = 0;
+	easingValue = 0;
+	isUse = true;
+	oldIsUse = false;
+}
+
 void Dome::Update()
 {
+	oldIsUse = isUse;
+
+	if (!isUse)return;
+
 	const float FRAME = 1.0f / 60.0f;
 	const float LEVEL_MAX_TIME = DomeInfo::MAX_TIME * level;
 
@@ -68,12 +94,8 @@ void Dome::Update()
 
 void Dome::Draw()
 {
+	if (!isUse)return;
 	AllDraw();
-}
-
-void Dome::EraseFunc()
-{
-	eraseManager = true;
 }
 
 bool Dome::IsUse()
@@ -86,4 +108,6 @@ void Dome::SetLevel(const int value)
 	if (level <= 0)level = 1;
 
 	level = value;
+
+	CalcSize();
 }

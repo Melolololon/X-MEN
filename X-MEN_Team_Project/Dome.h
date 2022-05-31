@@ -19,19 +19,21 @@ private:
 	float alpha;
 	float easingValue;
 	bool isUse;
+	bool oldIsUse;
 private:
 	void FadeIn(const float FRAME_TIME);
 	void FadeOut(const float FRAME_TIME);
 	float EaseOutQuint(float s, float e, float t);
+
+	// レベルをセットしたらこの関数でレベルごとのサイズを計算する
+	void CalcSize();
 public:
 	Dome();
 	~Dome();
 
+	void Initialize();
 	void Update();
 	void Draw();
-
-	// ゲームオブジェクトマネージャーから削除するキューに追加
-	void EraseFunc();
 
 #pragma region Getter
 	bool IsUse();

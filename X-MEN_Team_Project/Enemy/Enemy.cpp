@@ -27,6 +27,12 @@ void Enemy::PushPosition()
 void Enemy::Damage(float damage)
 {
 	hp -= damage;
+
+	// hp‚ª‚È‚­‚È‚Á‚½‚Æ‚«‚ÉŠÇ—ƒNƒ‰ƒX‚©‚çíœ
+	if (hp <= 0)
+	{
+		eraseManager = true;
+	}
 }
 
 void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)

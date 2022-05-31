@@ -13,6 +13,7 @@
 
 void GamePlay::Initialize()
 {
+	MelLib::ModelData::Load("Resources/Model/Dome/dome.obj", true, "domeObj");
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
 	fieldObjectManager = FieldObjectManager::GetInstance();
@@ -52,13 +53,16 @@ void GamePlay::Initialize()
 
 	fieldObjectManager->Initialize();
 
+	std::shared_ptr<UltimateSkill> ultimateSkill = std::make_shared<UltimateSkill>();
+	std::shared_ptr<Dome> dome = std::make_shared<Dome>();
+	MelLib::GameObjectManager::GetInstance()->AddObject(dome);
+	ultimateSkill.get()->SetDome(dome);
+	pPlayer.get()->SetUltimateSkill(ultimateSkill);
+
 	// GameManagerのテスト
 	GameManager::GetInstance()->Initialize();
 
 	nextScene = NextScene::PLAY;
-
-
-	MelLib::ModelData::Load("Resources/Model/Dome/dome.obj", true, "domeObj");
 }
 
 void GamePlay::Update()

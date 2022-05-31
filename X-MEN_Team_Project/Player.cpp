@@ -115,10 +115,10 @@ void Player::UseUltimateSkill(bool key)
 	if (!key)return;
 
 	// スキル使用中なら即終了
-	if (ultimateSkill.GetIsUsingSkill())return;
+	if (ultimateSkill.get()->GetIsUsingSkill())return;
 
 	// スキル使用
-	ultimateSkill.Use(GetPosition());
+	ultimateSkill.get()->Use(GetPosition());
 }
 
 void Player::TrackingBall()
@@ -185,7 +185,7 @@ Player::Player()
 	, ultimateSkillValue(0)
 	, isThrowingBall(false)
 	, throwingElapsedTime(0)
-	, ultimateSkill(UltimateSkill())
+	, ultimateSkill(nullptr)
 	, dirVector(MelLib::Vector3())
 	, pBall(nullptr)
 	, barrier(nullptr)
@@ -215,6 +215,10 @@ Player::Player()
 
 Player::~Player()
 {
+	ultimateSkill = nullptr;
+	pBall = nullptr;
+	barrier = nullptr;
+
 	// 管理クラスから削除
 	eraseManager = true;
 }
@@ -228,7 +232,7 @@ void Player::Update()
 	TrackingBall();
 	UpdateBarrierDirection();
 
-	ultimateSkill.Update();
+	ultimateSkill.get()->Update();
 
 	// 各技処理を行う関数に対応したキーのトリガーを送って関数内で実行するか判断させる
 	UseAbility(isInputAbilityKey);
@@ -247,7 +251,7 @@ void Player::Draw()
 	// ModelObjectsに追加されているModelObjectをすべて描画
 	AllDraw();
 	// 必殺技ゲージの描画
-	ultimateSkill.Draw();
+	ultimateSkill.get()->Draw();
 
 	hpGauge.Draw();
 }
@@ -344,7 +348,7 @@ bool Player::GetIsThrowingBall() const
 
 bool Player::GetIsUltimateSkill() const
 {
-	return ultimateSkill.GetIsUsingSkill();
+	return ultimateSkill.get()->GetIsUsingSkill();
 }
 
 const MelLib::Vector3& Player::GetDirection() const
@@ -376,4 +380,9 @@ void Player::SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier)
 void Player::SetBall(std::shared_ptr<Ball> setBall)
 {
 	pBall = setBall;
+}
+
+void Player::SetUltimateSkill(std::shared_ptr<UltimateSkill> setSkill)
+{
+	ultimateSkill = setSkill;
 }
