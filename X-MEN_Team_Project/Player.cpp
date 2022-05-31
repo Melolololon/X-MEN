@@ -57,11 +57,11 @@ MelLib::Vector3 Player::GetInputVector()
 void Player::Move(const MelLib::Vector3& vec)
 {
 	static const float MOVE_SPEED = 0.5f;
-	MelLib::Vector3 addVector = vec * MOVE_SPEED * GameManager::GetInstance()->GetGameTime();
+	velocity += vec * MOVE_SPEED * GameManager::GetInstance()->GetGameTime();
 
-	GameObject::AddPosition(addVector);
+	GameObject::AddPosition(velocity);
 
-	oldVelocity = addVector;
+	oldVelocity = velocity;
 
 	CalclateDirection();
 }
@@ -165,7 +165,10 @@ void Player::Knockback(const MelLib::Vector3& vector)
 {
 	const int POWER = 3;
 
-	SetPosition(GetPosition() + vector * POWER);
+	//SetPosition(GetPosition() + vector * POWER);
+
+	knockbackPower = POWER;
+	knockbackVelocity = vector * POWER;
 }
 
 void Player::UpdateIsThrowing(const float PER_FRAME)
@@ -179,6 +182,27 @@ void Player::UpdateIsThrowing(const float PER_FRAME)
 	}
 
 	throwingElapsedTime += PER_FRAME;
+}
+
+void Player::UpdateKnockback()
+{
+	if (!isKnockback)return;
+	// ノックバックの速度ベクトルを毎フレームどれだけ減衰させるか
+	const float DECAY_VALUE = 2;
+
+	MelLib::Vector3 backupDecayKnockbackVelocity = knockbackVelocity - knockbackVelocity / DECAY_VALUE;
+	if (backupDecayKnockbackVelocity.Length() > knockbackVelocity.Length())
+	{
+		isKnockback = false;
+		backupDecayKnockbackVelocity = MelLib::Vector3();
+		return;
+	}
+
+
+	//AddPosition(knockbackVelocity);
+
+	velocity += backupDecayKnockbackVelocity;
+	knockbackVelocity -= backupDecayKnockbackVelocity;
 }
 
 Player::Player()
@@ -227,7 +251,9 @@ Player::~Player()
 void Player::Update()
 {
 	bool isInputAbilityKey = MelLib::Input::KeyTrigger(DIK_SPACE) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::A);
+	velocity = MelLib::Vector3();
 
+	UpdateKnockback();
 	Move(GetInputVector());
 
 	TrackingBall();
