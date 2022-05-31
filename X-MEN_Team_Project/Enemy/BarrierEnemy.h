@@ -5,6 +5,7 @@
 namespace BarrierEnemyStatus
 {
 	const float MAX_HP = 4;
+	const float FOLLOW_SPEED = 0.05f;
 	const float DISTANCE_TO_PLAYER = 30;
 	const int CHANGE_POSE_FRAME = 120;
 	// 移動用のディレイ

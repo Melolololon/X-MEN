@@ -179,7 +179,10 @@ void BarrierEnemy::Update()
 
 	if (!refBallObject)return;
 
-	Move();
+
+	if (pBarrier.get()->GetIsOpen()) { Move(); }
+	else { FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); }
+
 	PushPosition();
 
 	SetBallDir(refBallObject.get()->GetPosition());

@@ -35,6 +35,7 @@ protected:
 	// “G“¯m‚Åƒqƒbƒg‚µ‚½“¯m‚Ì‰Ÿ‚µo‚µ‚ğ”½‰f‚·‚é
 	void PushPosition();
 
+	void virtual FollowToPlayer(const float& moveSpeed);
 public:
 	Enemy() 
 		:hp(1), 

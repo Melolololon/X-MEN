@@ -42,14 +42,12 @@ void FollowEnemy::Move()
 
 	// ‰ÁZ
 	//0512ˆê’Uˆê’è‹——£ˆÈã‹ß‚Ã‚¯‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
-	const float PLAYER_SIZE = 1.2f;
 	AddPosition(moveVector);
-
 }
 
 void FollowEnemy::Update()
 {
-	Move();
+	FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
 	PushPosition();
 
 	static const float ZERO = 0.0f;

@@ -2,6 +2,7 @@
 #include "FollowEnemy.h"
 #include "BarrierEnemy.h"
 #include"../Ball.h"
+#include "../GameManager.h"
 
 
 void Enemy::PushPosition()
@@ -22,6 +23,13 @@ void Enemy::PushPosition()
 	AddPosition(pushVector / DIVIDE_VECTOR);
 
 	pushTime += PER_FRAME * EnemyStatus::MAX_PUSH_TIME;
+}
+
+void Enemy::FollowToPlayer(const float& moveSpeed)
+{
+	MelLib::Vector3 moveVector;
+	moveVector = playerDir * moveSpeed;
+	AddPosition(moveVector * GameManager::GetInstance()->GetGameTime());
 }
 
 void Enemy::Damage(float damage)

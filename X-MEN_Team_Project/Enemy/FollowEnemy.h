@@ -4,6 +4,7 @@
 namespace FollowEnemyStatus
 {
 	const float MAX_HP = 4;
+	const float FOLLOW_SPEED = 0.05f;
 }
 
 class FollowEnemy : public Enemy
