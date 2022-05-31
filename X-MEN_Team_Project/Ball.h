@@ -16,6 +16,33 @@ enum class BallState
 };
 
 class Player;
+
+//ボールの軌跡表示用
+class BallTrajectory
+	: public MelLib::GameObject
+{
+	using Vector3 = MelLib::Vector3;
+
+private:
+	MelLib::Color color;
+
+public:
+	// 更新
+	void Update()override;
+	//描画
+	void Draw()override;
+
+	//モデル生成
+	void CreateModel(MelLib::ModelData* pModelData);
+
+	//色セット
+	void SetColor(const MelLib::Color& color);
+
+	//色ゲット
+	const MelLib::Color& GetColor() { return color; }
+};
+
+//ボール本体
 class Ball
 	: public MelLib::GameObject
 {
@@ -28,7 +55,7 @@ public:
 	static const MelLib::Color BALL_COLOR_BLUE;		//青
 	static const MelLib::Color BALL_COLOR_BLUE2;	//青2
 	static const MelLib::Color BALL_COLOR_YELLOW;	//黄
-	
+
 private:
 	//ボールの初期スピード
 	const float INIT_THROW_SPEED = 0.5f;
@@ -44,6 +71,9 @@ private:
 	bool isThrowed = true;
 
 	BallState throwingState;
+
+	//軌跡表示用オブジェクト
+	std::shared_ptr<BallTrajectory> pBallTrajectories[5];
 
 private:
 
@@ -64,6 +94,12 @@ private:
 	/// <param name="otherNormal">衝突したポリゴン面の法線ベクトル</param>
 	/// <param name="isAddSpeed">加速させるか</param>
 	void Reflection(const Vector3& otherNormal, bool isAddSpeed);
+
+	/// <summary>
+	/// BallStateから状態に合わせた色取得
+	/// </summary>
+	/// <param name="ballState">BallState</param>
+	const MelLib::Color GetColorFromBallState(const BallState& ballState);
 
 public:
 	Ball();
@@ -104,6 +140,16 @@ public:
 	/// <param name="initPos">ボールの初期位置</param>
 	/// <param name="initColor">ボールの初期位置 プレイヤーなら青、敵なら赤</param>
 	void PickUp(const Vector3& ballPos, const MelLib::Color& initColor);
+
+	/// <summary>
+	/// 軌跡更新
+	/// </summary>
+	void UpdateTrajectories();
+
+	/// <summary>
+	/// 軌跡描画
+	/// </summary>
+	void DrawTrajectories();
 
 #pragma region Getter
 	/// <summary>

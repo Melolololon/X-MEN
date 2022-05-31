@@ -7,6 +7,7 @@
 #include "EnemyBarrier.h"
 #include <Random.h>
 #include <LibMath.h>
+#include <GameObjectManager.h>
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
@@ -55,6 +56,34 @@ void Ball::Reflection(const Vector3& otherNormal, bool isAddSpeed)
 	}
 }
 
+const MelLib::Color Ball::GetColorFromBallState(const BallState& ballState)
+{
+	MelLib::Color result;
+	switch (throwingState)
+	{
+	case BallState::NONE:
+		result = BALL_COLOR_BLUE2;
+		break;
+	case BallState::HOLD_PLAYER:
+		result = BALL_COLOR_BLUE2;
+		break;
+	case BallState::HOLD_ENEMY:
+		result = BALL_COLOR_RED;
+		break;
+	case BallState::THROWING_PLAYER:
+		result = BALL_COLOR_BLUE2;
+		break;
+	case BallState::THROWING_ENEMY:
+		result = BALL_COLOR_RED;
+		break;
+	default:
+		result = BALL_COLOR_BLUE2;
+		break;
+	}
+
+	return result;
+}
+
 Ball::Ball()
 {
 	// MelLib;;ModelObjectの配列
@@ -62,10 +91,10 @@ Ball::Ball()
 	const float SCALE = 2;
 	const float MODEL_SIZE = 2 * SCALE;
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-	modelObjects["main"].SetScale(MODEL_SIZE);
-	//青色セット
-	SetColor(BALL_COLOR_YELLOW);
+	SetScale(MODEL_SIZE);
+
 	throwingState = BallState::NONE;
+	SetColor(GetColorFromBallState(throwingState));
 
 	// 当たり判定の作成(球)
 	sphereDatas["main"].resize(1);
@@ -75,6 +104,21 @@ Ball::Ball()
 	sphereFrameHitCheckNum = 4;
 
 	SetPosition({ 0,0,-10 });
+
+	//軌跡オブジェクト生成
+	for (auto& v : pBallTrajectories) {
+		v = std::make_shared<BallTrajectory>();
+		//自分に紐づいているモデルを引っ張ってくる
+		v->CreateModel(modelObjects["main"].GetPModelData());
+		//初期位置＝自分の位置
+		v->SetPosition(GetPosition());
+		//スケールセット
+		v->SetScale(GetScale());
+		//色セット
+		v->SetMulColor(GetColorFromBallState(throwingState));
+		//追加
+		MelLib::GameObjectManager::GetInstance()->AddObject(v);
+	}
 }
 
 Ball::~Ball()
@@ -99,30 +143,23 @@ void Ball::Update()
 		//eraseManager = isPicked;
 	}
 
-	switch (throwingState)
-	{
-	case BallState::NONE:
-		SetColor(BALL_COLOR_BLUE2);
-		break;
-	case BallState::HOLD_PLAYER:
-		SetColor(BALL_COLOR_BLUE2);
-		break;
-	case BallState::HOLD_ENEMY:
-		SetColor(BALL_COLOR_RED);
-		break;
-	case BallState::THROWING_PLAYER:
-		SetColor(BALL_COLOR_BLUE2);
-		break;
-	case BallState::THROWING_ENEMY:
-		SetColor(BALL_COLOR_RED);
-		break;
-	default:
-		break;
+	//軌跡更新
+	static int a = 0;
+	a++;
+	if (a == 5) {
+		UpdateTrajectories();
+		a = 0;
 	}
+
+	//投げられている状態から色セット
+	SetColor(GetColorFromBallState(throwingState));
 }
 
 void Ball::Draw()
 {
+	//まず軌跡描画
+	DrawTrajectories();
+	//ボール本体描画
 	AllDraw();
 }
 
@@ -231,6 +268,16 @@ void Ball::ThrowBall(const Vector3& initVel)
 
 	//射出フラグを有効に
 	isThrowed = true;
+
+	//軌跡オブジェクトの情報を全て今のボールの情報に
+	for (auto& v : pBallTrajectories) {
+		//自分の位置
+		v->SetPosition(GetPosition());
+		//スケールセット
+		v->SetScale(GetScale());
+		//色セット
+		v->SetMulColor(GetColorFromBallState(throwingState));
+	}
 }
 
 void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
@@ -243,4 +290,53 @@ void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
 
 	//投げたフラグオフ
 	isThrowed = false;
+}
+
+void Ball::UpdateTrajectories()
+{
+	//一番後ろのオブジェクトから本体に向かって情報をコピーしていく
+	for (int i = _countof(pBallTrajectories) - 1; i >= 0; i--) {
+		if (i > 0) {
+			pBallTrajectories[i]->SetPosition(pBallTrajectories[i - 1]->GetPosition());	//座標
+			pBallTrajectories[i]->SetScale(pBallTrajectories[i - 1]->GetScale());		//スケール
+			MelLib::Color color = pBallTrajectories[i - 1]->GetColor();
+			color.a = 64;
+			pBallTrajectories[i]->SetColor(color);		//色
+		}
+		else {
+			//一番本体に近いオブジェクトは本体の情報コピー
+			pBallTrajectories[i]->SetPosition(GetPosition());							//座標
+			pBallTrajectories[i]->SetScale(GetScale());									//スケール
+			MelLib::Color color = GetColorFromBallState(throwingState);
+			color.a = 64;
+			pBallTrajectories[i]->SetColor(color);		//色
+		}
+	}
+}
+
+void Ball::DrawTrajectories()
+{
+	for (auto& v : pBallTrajectories) {
+		v->Draw();
+	}
+}
+
+void BallTrajectory::Update()
+{
+}
+
+void BallTrajectory::Draw()
+{
+	AllDraw();
+}
+
+void BallTrajectory::CreateModel(MelLib::ModelData* pModelData)
+{
+	modelObjects["main"].Create(pModelData);
+}
+
+void BallTrajectory::SetColor(const MelLib::Color& color)
+{
+	this->color = color;
+	modelObjects["main"].SetMulColor(color);
 }
