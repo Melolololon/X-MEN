@@ -1,7 +1,7 @@
 #include"FollowEnemy.h"
 
 #include"../Player.h"
-
+#include "../GameManager.h"
 
 FollowEnemy::FollowEnemy()
 {
@@ -38,7 +38,7 @@ void FollowEnemy::Move()
 	// ˆÚ“®‘¬“x
 	static const float MOVE_SPEED = 0.05f;
 
-	moveVector = playerDir * MOVE_SPEED;
+	moveVector = playerDir * MOVE_SPEED * GameManager::GetInstance()->GetGameTime();
 
 	// ‰ÁŽZ
 	//0512ˆê’Uˆê’è‹——£ˆÈã‹ß‚Ã‚¯‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é

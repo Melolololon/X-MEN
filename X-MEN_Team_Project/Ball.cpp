@@ -5,6 +5,7 @@
 #include "Enemy/BarrierEnemy.h"
 #include "NormalBarrier.h"
 #include "EnemyBarrier.h"
+#include "GameManager.h"
 #include <Random.h>
 #include <LibMath.h>
 
@@ -16,7 +17,7 @@ const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 void Ball::Move()
 {
 	//位置更新
-	SetPosition(GetPosition() + velocity * speed);
+	SetPosition(GetPosition() + velocity * speed * GameManager::GetInstance()->GetGameTime());
 
 	//スピード少し減らす
 	speed -= 0.0025f;

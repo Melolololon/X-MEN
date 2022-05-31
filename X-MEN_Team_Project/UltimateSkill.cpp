@@ -1,5 +1,7 @@
 #include "UltimateSkill.h"
 #include "Library.h"
+#include <Input.h>
+#include <GameObjectManager.h>
 
 void UltimateSkill::CalcLevel()
 {
@@ -57,7 +59,19 @@ UltimateSkill::~UltimateSkill()
 
 void UltimateSkill::Update()
 {
+	if (dome)
+	{
+		if (!dome.get()->IsUse())
+		{
+			isUsingSkill = false;
+		}
+	}
+
 	MelLib::Vector2 windowSize = MelLib::Vector2((float)MelLib::Library::GetWindowWidth(), (float)MelLib::Library::GetWindowHeight());
+	if (MelLib::Input::KeyTrigger(DIK_UP))
+	{
+		AddValue(UltimateSkillInfo::LEVEL_UP_VALUE);
+	}
 
 	CalcSize(windowSize);
 	//CalcPosition(windowSize);
@@ -79,11 +93,16 @@ void UltimateSkill::Draw()
 	frontGauge.Draw();
 }
 
-void UltimateSkill::Use()
+void UltimateSkill::Use(const MelLib::Vector3& pos)
 {
-	// value -= ****
-
 	CalcLevel();
+	if (level <= 0)return;
+
+	if (!dome)return;
+
+	dome.get()->Initialize();
+	dome.get()->SetPosition(pos);
+	dome.get()->SetLevel(level);
 
 	isUsingSkill = true;
 }
@@ -106,4 +125,9 @@ bool UltimateSkill::GetIsUsingSkill()const
 void UltimateSkill::SetIsUsingSkill(bool flag)
 {
 	isUsingSkill = flag;
+}
+
+void UltimateSkill::SetDome(std::shared_ptr<Dome> setDome)
+{
+	dome = setDome;
 }

@@ -13,6 +13,7 @@
 
 void GamePlay::Initialize()
 {
+	MelLib::ModelData::Load("Resources/Model/Dome/dome.obj", true, "domeObj");
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
 	fieldObjectManager = FieldObjectManager::GetInstance();
@@ -52,6 +53,12 @@ void GamePlay::Initialize()
 
 	fieldObjectManager->Initialize();
 
+	std::shared_ptr<UltimateSkill> ultimateSkill = std::make_shared<UltimateSkill>();
+	dome = std::make_shared<Dome>();
+	MelLib::GameObjectManager::GetInstance()->AddObject(dome);
+	ultimateSkill.get()->SetDome(dome);
+	pPlayer.get()->SetUltimateSkill(ultimateSkill);
+
 	// GameManagerのテスト
 	GameManager::GetInstance()->Initialize();
 
@@ -66,6 +73,10 @@ void GamePlay::Update()
 		// マネージャーの更新
 		// オブジェクトの更新処理、判定処理、削除処理が行われる
 		MelLib::GameObjectManager::GetInstance()->Update();
+
+		// 必殺技を使ったあとにゲーム内時間をゆっくりにする
+		if (dome.get()->IsEndTrigger())GameManager::GetInstance()->SetGameTime(0.1f);
+		if (dome.get()->IsPostProcessEndTrigger())GameManager::GetInstance()->SetDefaultGameTime();
 
 		// 敵のテスト
 		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
@@ -91,6 +102,8 @@ void GamePlay::Update()
 		
 		// ゲームオーバー条件
 		if (pPlayer.get()->GetHp() <= 0)GameManager::GetInstance()->SetCanGameOver(true);
+
+		GameManager::GetInstance()->UpdateChangeGameTime();
 	}
 	else
 	{

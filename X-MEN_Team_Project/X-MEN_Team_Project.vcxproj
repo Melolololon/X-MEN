@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Clear.cpp" />
+    <ClCompile Include="Dome.cpp" />
     <ClCompile Include="EnemyBarrier.cpp" />
     <ClCompile Include="Enemy\BarrierEnemy.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
@@ -183,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Clear.h" />
+    <ClInclude Include="Dome.h" />
     <ClInclude Include="EnemyBarrier.h" />
     <ClInclude Include="Enemy\BarrierEnemy.h" />
     <ClInclude Include="Enemy\Enemy.h" />

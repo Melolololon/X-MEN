@@ -41,7 +41,7 @@ private:
 	bool isThrowingBall;
 	float throwingElapsedTime;
 
-	UltimateSkill ultimateSkill;
+	std::shared_ptr<UltimateSkill> ultimateSkill;
 
 	MelLib::Vector3 dirVector;
 
@@ -142,6 +142,8 @@ public:
 	void SetNormalBarrier(std::shared_ptr<NormalBarrier> setBarrier);
 	// ボールのポインタを取得
 	void SetBall(std::shared_ptr<Ball> setBall);
+	// 
+	void SetUltimateSkill(std::shared_ptr<UltimateSkill> setSkill);
 #pragma endregion
 };
 

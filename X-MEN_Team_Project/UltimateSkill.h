@@ -1,10 +1,11 @@
 #pragma once
+#include "Dome.h"
 #include <Sprite2D.h>
 
 namespace UltimateSkillInfo
 {
 	// ゲージ初期値
-	const float INITIALIZE_VALUE = 0.0f;
+	const float INITIALIZE_VALUE = 25.0f;
 
 	// ゲージの最大値
 	const float MAX_VALUE = 100.0f;
@@ -49,6 +50,8 @@ private:
 
 	MelLib::Vector2 drawPosition;
 	MelLib::Color drawColor;
+
+	std::shared_ptr<Dome> dome;
 private:
 	// 現ゲージ量からレベルを計算
 	void CalcLevel();
@@ -68,7 +71,7 @@ public:
 	void Draw();
 
 	// 今のところ値を使用したあとにレベルを再計算
-	void Use();
+	void Use(const MelLib::Vector3& pos);
 
 	// ゲージの値を増やす
 	void AddValue(int addValue);
@@ -81,5 +84,6 @@ public:
 #pragma region Setter
 	// スキルを使用しているフラグを書き換える
 	void SetIsUsingSkill(bool flag);
+	void SetDome(std::shared_ptr<Dome> setDome);
 #pragma endregion
 };
