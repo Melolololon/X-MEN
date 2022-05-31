@@ -54,7 +54,7 @@ void GamePlay::Initialize()
 	fieldObjectManager->Initialize();
 
 	std::shared_ptr<UltimateSkill> ultimateSkill = std::make_shared<UltimateSkill>();
-	std::shared_ptr<Dome> dome = std::make_shared<Dome>();
+	dome = std::make_shared<Dome>();
 	MelLib::GameObjectManager::GetInstance()->AddObject(dome);
 	ultimateSkill.get()->SetDome(dome);
 	pPlayer.get()->SetUltimateSkill(ultimateSkill);
@@ -73,6 +73,11 @@ void GamePlay::Update()
 		// マネージャーの更新
 		// オブジェクトの更新処理、判定処理、削除処理が行われる
 		MelLib::GameObjectManager::GetInstance()->Update();
+
+		// 必殺技を使ったあとにゲーム内時間をゆっくりにする
+		if (dome.get()->IsEndTrigger())
+		{
+		}
 
 		// 敵のテスト
 		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());

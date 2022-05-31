@@ -103,6 +103,11 @@ bool Dome::IsUse()
 	return isUse;
 }
 
+bool Dome::IsEndTrigger()
+{
+	return !isUse && oldIsUse;
+}
+
 void Dome::SetLevel(const int value)
 {
 	if (level <= 0)level = 1;

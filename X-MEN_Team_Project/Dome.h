@@ -37,6 +37,7 @@ public:
 
 #pragma region Getter
 	bool IsUse();
+	bool IsEndTrigger();
 #pragma endregion
 
 #pragma region Setter

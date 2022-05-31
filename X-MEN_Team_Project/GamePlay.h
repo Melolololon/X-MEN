@@ -7,6 +7,7 @@
 #include "Ball.h"
 #include"Enemy/FollowEnemy.h"
 #include"Enemy/BarrierEnemy.h"
+#include "Dome.h"
 
 class GamePlay : public MelLib::Scene
 {
@@ -23,6 +24,7 @@ private:
 	std::shared_ptr<Player>pPlayer;
 	std::shared_ptr<Ball>pBall;
 	std::shared_ptr<NormalBarrier>barrier;
+	std::shared_ptr<Dome>dome;
 	FieldObjectManager* fieldObjectManager;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
 		
