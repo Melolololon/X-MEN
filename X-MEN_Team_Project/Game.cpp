@@ -13,6 +13,7 @@
 #include"GamePlay.h"
 #include"Clear.h"
 #include "InputDeviceManager.h"
+#include"Title.h"
 
 Game::Game() {}
 
@@ -66,7 +67,7 @@ void Game::Initialize()
 	// メモリ先行確保
 	MelLib::GameObjectManager::GetInstance()->ReserveObjectArray(100);
 	// 初期シーンセット
-	MelLib::SceneManager::GetInstance()->SetStartScene(new GamePlay());
+	MelLib::SceneManager::GetInstance()->SetStartScene(new Title());
 
 	// 箱作成
 	// デフォルトだと1,1,1の白で生成される

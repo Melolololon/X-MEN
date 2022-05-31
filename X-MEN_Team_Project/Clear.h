@@ -6,11 +6,20 @@
 
 class Clear : public MelLib::Scene
 {
+	enum class NextScene
+	{
+		CLEAR,
+		TITLE,
+		PLAY,
+	};
+
 private:
 
 	std::shared_ptr<Player>pPlayer;
 	//ƒNƒŠƒA‚Ì‰æ‘œ•\Ž¦
 	MelLib::Sprite2D clearFont;
+
+	NextScene nextScene = NextScene::CLEAR;
 
 public:
 	Clear() {}

@@ -179,6 +179,7 @@
     <ClCompile Include="NormalBarrier.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TestObject.cpp" />
+    <ClCompile Include="Title.cpp" />
     <ClCompile Include="UltimateSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +203,7 @@
     <ClInclude Include="NormalBarrier.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TestObject.h" />
+    <ClInclude Include="Title.h" />
     <ClInclude Include="UltimateSkill.h" />
   </ItemGroup>
   <ItemGroup>

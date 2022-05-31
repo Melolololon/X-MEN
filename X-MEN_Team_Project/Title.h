@@ -1,23 +1,14 @@
 #pragma once
 #include<Scene.h>
 
-#include"Player.h"
 
-class GameOver : public MelLib::Scene
+class Title:public MelLib::Scene
 {
-	enum class NextScene
-	{
-		GAMEOVER,
-		TITLE,
-		PLAY,
-	};
 
-private:
 
-	NextScene nextScene = NextScene::GAMEOVER;
 public:
-	GameOver() {}
-	~GameOver() {}
+	Title() {}
+	~Title(){}
 
 	void Initialize()override;
 	void Update()override;
