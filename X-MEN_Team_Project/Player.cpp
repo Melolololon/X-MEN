@@ -8,6 +8,7 @@
 #include <ImguiManager.h>
 #include "Enemy/BarrierEnemy.h"
 #include "Enemy/FollowEnemy.h"
+#include "GameManager.h"
 
 MelLib::Vector3 Player::GetInputVector()
 {
@@ -56,7 +57,7 @@ MelLib::Vector3 Player::GetInputVector()
 void Player::Move(const MelLib::Vector3& vec)
 {
 	static const float MOVE_SPEED = 0.5f;
-	MelLib::Vector3 addVector = vec * MOVE_SPEED;
+	MelLib::Vector3 addVector = vec * MOVE_SPEED * GameManager::GetInstance()->GetGameTime();
 
 	GameObject::AddPosition(addVector);
 

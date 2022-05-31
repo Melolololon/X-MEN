@@ -75,9 +75,8 @@ void GamePlay::Update()
 		MelLib::GameObjectManager::GetInstance()->Update();
 
 		// 必殺技を使ったあとにゲーム内時間をゆっくりにする
-		if (dome.get()->IsEndTrigger())
-		{
-		}
+		if (dome.get()->IsEndTrigger())GameManager::GetInstance()->SetGameTime(0.1f);
+		if (dome.get()->IsPostProcessEndTrigger())GameManager::GetInstance()->SetDefaultGameTime();
 
 		// 敵のテスト
 		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
@@ -103,6 +102,8 @@ void GamePlay::Update()
 		
 		// ゲームオーバー条件
 		if (pPlayer.get()->GetHp() <= 0)GameManager::GetInstance()->SetCanGameOver(true);
+
+		GameManager::GetInstance()->UpdateChangeGameTime();
 	}
 	else
 	{
