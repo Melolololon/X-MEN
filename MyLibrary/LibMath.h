@@ -83,6 +83,7 @@ namespace MelLib
 		/// <returns></returns>
 		static bool Difference(const float num1, const float num2, const float difference);
 
+
 		/// <summary>
 		/// angle1とangle2の値の差を求め、差が基準の値より小さかったらtrueを返します。
 		/// </summary>

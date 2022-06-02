@@ -373,12 +373,15 @@ void MelLib::TriangleData::CalcNormal()
 
 }
 
+
 void MelLib::TriangleData::SetPosition(const Value3<Vector3>& pos)
 {
 	if (position == pos)return;
 
 	position = pos;
 	CalcNormal();
+
+	translationPos = rotPos + translationVec;
 }
 
 void MelLib::TriangleData::SetAngle(const Vector3& angle)
@@ -387,6 +390,8 @@ void MelLib::TriangleData::SetAngle(const Vector3& angle)
 
 	this->angle = angle;
 	CalcNormal();
+
+	translationPos = rotPos + translationVec;
 }
 
 void MelLib::TriangleData::SetTranslationPosition(const Vector3& vec)

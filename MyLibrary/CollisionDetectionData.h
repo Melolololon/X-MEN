@@ -409,15 +409,21 @@ namespace MelLib
 		void CalcNormal();
 
 	public:
+
 		Value3<Vector3> GetPosition()const { return position; }
 		
 		/// <summary>
-		/// 開店後に平行移動する移動量を取得します。
+		/// 回転後に平行移動する移動量を取得します。
 		/// </summary>
 		/// <returns></returns>
 		Value3<Vector3> GetTranslationPosition()const { return translationPos; }
 		Vector3 GetAngle()const { return angle; }
-		Vector3 GetTransFormVector()const { return translationVec; }
+		Vector3 GetTranslationVector()const { return translationVec; }
+		
+		/// <summary>
+		/// 法線を取得します。法線には、回転が適応されたものが返ってきます。
+		/// </summary>
+		/// <returns></returns>
 		Vector3 GetNormal()const { return normal; }
 
 		/// <summary>

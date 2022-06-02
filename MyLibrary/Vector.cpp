@@ -1,6 +1,7 @@
 #include"Vector.h"
 #include<algorithm>
 #include<tuple>
+#include"ErrorProcess.h"
 
 using namespace MelLib;
 
@@ -427,6 +428,15 @@ bool Vector3::operator!=(const Vector3& vector)const
 		z == vector.z)
 		return false;
 	return true;
+}
+
+float& MelLib::Vector3::operator[](const unsigned int num) 
+{
+	if (num == 0)return x;
+	else if (num == 1)return y;
+	else if (num == 2)return z;
+
+	MelLib::ErrorProcess::GetInstance()->StartErroeProcess(L"Vector3‚Ì”ÍˆÍ‚ğ’´‚¦‚Ä‚¢‚Ü‚·B[]“à‚Ì”’l‚ğ2ˆÈ‰º‚É‚µ‚Ä‚­‚¾‚³‚¢B", true);
 }
 
 
