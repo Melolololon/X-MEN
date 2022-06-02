@@ -47,11 +47,17 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 	Vector3 p1ToP2 = triPos.v2 - triPos.v1;
 	Vector3 p1ToP3 = triPos.v3 - triPos.v1;
 
+	// 1
 	float p1P2DotP1Sphere = Vector3::Dot(p1ToP2, p1ToSphere);
+	// 2
 	float p1P3DotP1Sphere = Vector3::Dot(p1ToP3, p1ToSphere);
+	// 3
 	float p1P2DotP2Sphere = Vector3::Dot(p1ToP2, p2ToSphere);
+	// 4
 	float p1P3DotP2Sphere = Vector3::Dot(p1ToP3, p2ToSphere);
+	// 5
 	float p1P2DotP3Sphere = Vector3::Dot(p1ToP2, p3ToSphere);
+	// 6
 	float p1P3DotP3Sphere = Vector3::Dot(p1ToP3, p3ToSphere);
 
 
@@ -73,7 +79,7 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 	// 4
 	Vector3 p3ToP1 = triPos.v1 - triPos.v3;
 	Vector3 p3ToP2 = triPos.v2 - triPos.v3;
-	if (p1P2DotP3Sphere >= 0 && p1P3DotP3Sphere < p1P2DotP3Sphere)
+	if (p1P3DotP3Sphere >= 0 && p1P2DotP3Sphere < p1P3DotP3Sphere)
 	{
 		nearPos = triPos.v3;
 		return nearPos;
@@ -91,10 +97,10 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 		if (check3 <= 0.0f)
 		{
 			nearPos =
-				triPos.v1;
-			+p1P2DotP1Sphere
+				triPos.v1
+				+ p1P2DotP1Sphere
 				/ (p1P2DotP1Sphere
-					- p1P2DotP2Sphere)
+				- p1P2DotP2Sphere)
 				* p1ToP2;
 
 			return nearPos;
@@ -131,11 +137,12 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 	{
 		if (check6 <= 0.0f)
 		{
+			float w = (p1P3DotP2Sphere - p1P2DotP2Sphere) / ((p1P3DotP2Sphere - p1P2DotP2Sphere) + (p1P2DotP3Sphere - p1P3DotP3Sphere));
+
 			nearPos =
 				triPos.v2
-				+ (p1P3DotP2Sphere - p1P2DotP2Sphere)
-				/ ((p1P3DotP2Sphere - p1P2DotP2Sphere)
-					- (p1P2DotP3Sphere - p1P3DotP3Sphere));
+				+ w
+				*( triPos.v3 - triPos.v2);
 			return nearPos;
 		}
 	}
@@ -143,7 +150,7 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 	// 7
 	float denom = 1.0f / (check3 + check5 + check6);
 	float v = check5 * denom;
-	float w = check6 * denom;
+	float w = check3 * denom;
 	nearPos = triPos.v1 + p1ToP2 * v + p1ToP3 * w;
 	return nearPos;
 }
