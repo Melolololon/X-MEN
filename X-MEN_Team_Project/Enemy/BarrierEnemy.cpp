@@ -5,6 +5,7 @@
 #include"../MyLibrary/GameObjectManager.h"
 #include "../GameManager.h"
 #include <Random.h>
+#include<ImguiManager.h>
 
 void BarrierEnemy::RefBallObject()
 {
@@ -77,7 +78,9 @@ BarrierEnemy::BarrierEnemy()
 		(std::rand() % 10 - 5) / 10.0f
 	};
 	defeatCount = 0;
-
+	//死亡フラグ
+	isDead = false;
+	//パーティクル初期化
 	particle = std::make_shared<ParticleManager>();
 	particle.get()->Initialize();
 
@@ -190,6 +193,7 @@ void BarrierEnemy::Defeat()
 	static int time = 60;
 	if (defeatCount < time)
 	{
+
 		//吹っ飛んで落ちる
 		defeatVelocity.y -= 0.1f;
 		AddPosition(defeatVelocity);
@@ -201,14 +205,15 @@ void BarrierEnemy::Defeat()
 	}
 	else
 	{
-		//消す
-		eraseManager = true;
+		isDead = true;
 	}
+
 	defeatCount++;
 }
 
 void BarrierEnemy::Update()
 {
+
 	RefBallObject();
 
 	if (!refBallObject)return;
@@ -231,11 +236,18 @@ void BarrierEnemy::Update()
 	SetBallDir(refBallObject.get()->GetPosition());
 
 	// hpがなくなったときに管理クラスから削除
-	if (hp <= 0)
+	if (hp <= 0.0f)
 	{
-		//Defeat();
-		eraseManager = true;
+		Defeat();
+		//isDead = true;
 	}
+	else
+	{
+		SetPosition({ GetPosition().x,0,GetPosition().z });
+	}
+
+	//消す
+	if (isDead)eraseManager = true;
 	particle.get()->Update(GetPosition());
 
 

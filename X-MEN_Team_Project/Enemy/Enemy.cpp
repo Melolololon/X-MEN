@@ -90,6 +90,11 @@ float Enemy::GetHP() const
 	return hp;
 }
 
+bool Enemy::GetIsDead() const
+{
+	return isDead;
+}
+
 
 void Enemy::SetHP(const float& hp)
 {

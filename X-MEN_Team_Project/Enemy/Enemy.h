@@ -38,6 +38,8 @@ protected:
 	float pushTime;
 	// 押出フラグ　オンならPushPosition関数が実行される
 	bool isPush;
+	//死亡フラグ
+	bool isDead;
 
 	bool moveCancel = false;
 	MelLib::Vector3 movedVector;
@@ -77,6 +79,8 @@ public:
 #pragma region Getter
 
 	float GetHP() const;
+
+	bool GetIsDead() const;
 	// 使う用途が思いつかないので作るだけ作ってコメントアウト
 	//MelLib::Vector3 GetPlayerDir() { return playerDir};
 

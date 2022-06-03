@@ -180,9 +180,9 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	else if (typeid(object) == typeid(FollowEnemy) ||
 		typeid(object) == typeid(BarrierEnemy))
 	{
-		const Enemy* other = static_cast<const Enemy*>(&object);
-		if (other->GetHP() > 0.0f)
-		{
+		//const Enemy* other = static_cast<const Enemy*>(&object);
+		//if (other->GetHP() > 0.0f)
+		//{
 			// プレイヤーが投げたり反射させたボールなら
 			if (throwingState == BallState::THROWING_PLAYER ||
 				throwingState == BallState::THROWING_ENEMY)
@@ -192,9 +192,12 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 				otherNormal = otherNormal.Normalize();
 				Reflection(otherNormal, true);
 
+				velocity.y = 0;
+				SetPosition({ GetPosition().x, 0, GetPosition().z });
+
 				throwingState = BallState::THROWING_ENEMY;
 			}
-		}
+		//}
 	}
 	//プレイヤーとの衝突
 	else if (typeid(object) == typeid(Player))

@@ -164,9 +164,6 @@
     <ClInclude Include="Enemy\FollowEnemy.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy\EnemyManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -193,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="Particle\ParticleManager.h">
       <Filter>ヘッダー ファイル\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\EnemyManager.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

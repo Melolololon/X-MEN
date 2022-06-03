@@ -37,7 +37,9 @@ FollowEnemy::FollowEnemy()
 	};
 	//吹っ飛びの長さ（時間）
 	defeatCount = 0;
-
+	//死亡フラグ
+	isDead = false;
+	//パーティクル初期化
 	particle = std::make_shared<ParticleManager>();
 	particle.get()->Initialize();
 }
@@ -76,9 +78,9 @@ void FollowEnemy::Defeat()
 	}
 	else
 	{
-		//消す
-		eraseManager = true;
+		isDead = true;
 	}
+
 	defeatCount++;
 }
 void FollowEnemy::Update()
@@ -90,9 +92,16 @@ void FollowEnemy::Update()
 	// hpがなくなったときに管理クラスから削除
 	if (hp <= ZERO)
 	{
-		//Defeat();
-		eraseManager = true;
+			Defeat();
+			//isDead = true;
 	}
+	else	
+	{
+		SetPosition({ GetPosition().x,0,GetPosition().z });
+	}
+	//消す
+	if (isDead)eraseManager = true;
+
 	particle.get()->Update(GetPosition());
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));

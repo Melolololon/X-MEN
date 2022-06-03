@@ -108,7 +108,7 @@ inline void EnemyManager::CheckEnemyDead(T& temp,bool isBarrier)
 	for (auto x : temp)
 	{
 		// hp‚ª0‚È‚çÁ‚·
-		if (x.get()->GetHP() <= 0)
+		if (x.get()->GetIsDead())//GetHP() <= 0)
 		{
 			x.reset();
 			enemyDead = true;
