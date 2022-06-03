@@ -5,6 +5,7 @@
 #include "Enemy/BarrierEnemy.h"
 #include "NormalBarrier.h"
 #include "EnemyBarrier.h"
+#include "Dome.h"
 #include "GameManager.h"
 #include <Random.h>
 #include <LibMath.h>
@@ -252,6 +253,18 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal, true);
 		throwingState = BallState::THROWING_ENEMY;
+	}
+	//ƒh[ƒ€‚Æ‚Ì“–‚½‚è”»’è
+	else if (typeid(object) == typeid(Dome)) {
+		TriangleData triData = GetHitTriangleData();
+
+		//1‰ñ–Ú‚Ívelocity‚ÌY‚ª0‚É‚È‚Á‚Ä‚¢‚é
+		if (velocity.y == 0) {
+
+		}
+		else {
+
+		}
 	}
 }
 

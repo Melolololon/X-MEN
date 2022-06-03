@@ -70,6 +70,8 @@ Dome::Dome()
 	modelObjects["main"].Create(MelLib::ModelData::Get("domeObj"));
 	modelObjects["main"].SetScale(MODEL_SIZE);
 
+	triangleDatas["main"] = modelObjects["main"].GetModelTriangleData()[0];
+
 	SetScale(MODEL_SIZE);
 }
 
