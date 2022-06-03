@@ -14,6 +14,8 @@ const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
+const MelLib::Vector3 BallTrajectory::TRAJECTORY_SCALE = { 1.25,1.25,1.25 };
+
 void Ball::Move()
 {
 	//位置更新
@@ -113,7 +115,7 @@ Ball::Ball()
 		//初期位置＝自分の位置
 		v->SetPosition(GetPosition());
 		//スケールセット
-		v->SetScale(GetScale());
+		v->SetScale(BallTrajectory::TRAJECTORY_SCALE);
 		//色セット
 		v->SetMulColor(GetColorFromBallState(throwingState));
 		//全て非表示
@@ -152,10 +154,10 @@ void Ball::Update()
 
 void Ball::Draw()
 {
-	//まず軌跡描画
-	DrawTrajectories();
 	//ボール本体描画
 	AllDraw();
+	////まず軌跡描画
+	//DrawTrajectories();
 }
 
 void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
@@ -177,7 +179,8 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		typeid(object) == typeid(BarrierEnemy))
 	{
 		// プレイヤーが投げたり反射させたボールなら
-		if (throwingState == BallState::THROWING_PLAYER)
+		if (throwingState == BallState::THROWING_PLAYER ||
+			throwingState == BallState::THROWING_ENEMY)
 		{
 			//反射共通処理
 			Vector3 otherNormal = GetPosition() - object.GetPosition();
@@ -269,7 +272,7 @@ void Ball::ThrowBall(const Vector3& initVel)
 		//自分の位置
 		v->SetPosition(GetPosition());
 		//スケールセット
-		v->SetScale(GetScale());
+		v->SetScale(BallTrajectory::TRAJECTORY_SCALE);
 		//色セット
 		v->SetMulColor(GetColorFromBallState(throwingState));
 		//全て表示
@@ -295,16 +298,17 @@ void Ball::UpdateTrajectories()
 	for (int i = _countof(pBallTrajectories) - 1; i >= 0; i--) {
 		if (i > 0) {
 			pBallTrajectories[i]->SetPosition(pBallTrajectories[i - 1]->GetPosition());	//座標
-			pBallTrajectories[i]->SetScale(pBallTrajectories[i - 1]->GetScale());		//スケール
+			//pBallTrajectories[i]->SetScale(pBallTrajectories[i - 1]->GetScale());		//スケール
 			MelLib::Color color = pBallTrajectories[i - 1]->GetColor();
-			color.a = 128;
+			color.a = 128 - (128 * ((float)i / _countof(pBallTrajectories)));
+			color.a *= speed >= 1 ? 1 : speed;
 			pBallTrajectories[i]->SetColor(color);										//色
 			pBallTrajectories[i]->SetIsDisp(pBallTrajectories[i - 1]->GetIsDisp());		//表示するか
 		}
 		else {
 			//一番本体に近いオブジェクトは本体の情報コピー
 			pBallTrajectories[i]->SetPosition(GetPosition());							//座標
-			pBallTrajectories[i]->SetScale(GetScale());									//スケール
+			//pBallTrajectories[i]->SetScale(BallTrajectory::TRAJECTORY_SCALE);						//スケール
 			MelLib::Color color = GetColorFromBallState(throwingState);
 			color.a = 128;
 			pBallTrajectories[i]->SetColor(color);		//色
@@ -316,7 +320,7 @@ void Ball::UpdateTrajectories()
 void Ball::DrawTrajectories()
 {
 	for (int i = 0; i < _countof(pBallTrajectories); i++) {
-		if (i % 8 == 0 &&											//8個に1個描画
+		if (/*i % 8 == 0 &&*/											//8個に1個描画
 			pBallTrajectories[i]->GetIsDisp() &&				//表示フラグチェック
 			MelLib::LibMath::CalcDistance3D(pBallTrajectories[i]->GetPosition(), GetPosition()) >= 1)//近すぎなかったら
 		{

@@ -44,7 +44,14 @@ void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, c
 	{
 		// ボールのスピード分ダメージを与える
 		const Ball* BALL = static_cast<const Ball*>(&object);
-		if (BALL->GetThrowingState() != BallState::HOLD_PLAYER) Damage(BALL->GetSpeed());
+		if (BALL->GetThrowingState() != BallState::HOLD_PLAYER){
+			if (BALL->GetThrowingState() == BallState::THROWING_PLAYER) {
+				Damage(BALL->GetSpeed());
+			}
+			else if (BALL->GetThrowingState() == BallState::THROWING_ENEMY) {
+				Damage(BALL->GetSpeed());
+			}
+		}
 		//Damage(20);
 	}
 }

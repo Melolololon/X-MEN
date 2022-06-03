@@ -23,6 +23,9 @@ class BallTrajectory
 {
 	using Vector3 = MelLib::Vector3;
 
+public:
+	static const Vector3 TRAJECTORY_SCALE;
+
 private:
 	MelLib::Color color;
 	bool isDisp = true;
@@ -79,7 +82,7 @@ private:
 	BallState throwingState;
 
 	//軌跡表示用オブジェクト
-	std::shared_ptr<BallTrajectory> pBallTrajectories[40];
+	std::shared_ptr<BallTrajectory> pBallTrajectories[60];
 
 private:
 
