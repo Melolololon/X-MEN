@@ -9,10 +9,14 @@
 #include <Random.h>
 #include <LibMath.h>
 #include <GameObjectManager.h>
+#include "Enemy/EnemyManager.h"
+#include <Random.h>
+#include <LibMath.h>
+#include <ModelData.cpp>
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
-const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,128 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 const MelLib::Vector3 BallTrajectory::TRAJECTORY_SCALE = { 1.25,1.25,1.25 };
@@ -23,7 +27,7 @@ void Ball::Move()
 	SetPosition(GetPosition() + velocity * speed * GameManager::GetInstance()->GetGameTime());
 
 	//スピード少し減らす
-	speed -= 0.0025f;
+	speed -= BALL_FRICTION;
 	if (speed < 0) { speed = 0; }
 }
 
@@ -90,22 +94,18 @@ const MelLib::Color Ball::GetColorFromBallState(const BallState& ballState)
 Ball::Ball()
 {
 	// MelLib;;ModelObjectの配列
-	// 四角形をセット
-	const float SCALE = 2;
-	const float MODEL_SIZE = 2 * SCALE;
-	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
-	SetScale(MODEL_SIZE);
-
+	MelLib::ModelData::Load("Resources/Model/Ball/Ball.obj", true, "objBall");
+	modelObjects["main"].Create(MelLib::ModelData::Get("objBall"));
+	modelObjects["main"].SetScale(scale);
 	throwingState = BallState::NONE;
 	SetColor(GetColorFromBallState(throwingState));
 
 	// 当たり判定の作成(球)
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
+	sphereDatas["main"][0].SetRadius(scale / 2);
 
 	sphereFrameHitCheckNum = 4;
-
 	SetPosition({ 0,0,-10 });
 
 	//軌跡オブジェクト生成
@@ -122,6 +122,7 @@ Ball::Ball()
 		//全て非表示
 		v->SetIsDisp(false);
 	}
+	SetPosition({ 20,0,0 });
 }
 
 Ball::~Ball()
@@ -261,9 +262,6 @@ void Ball::ThrowBall(const Vector3& initVel)
 
 	//方向セット
 	velocity = initVel;
-
-	//位置を移動方向へオブジェクトの大きさだけずらす (投げた瞬間衝突するのを防ぐ)
-	SetPosition(GetPosition() + velocity * GetScale());
 
 	//射出フラグを有効に
 	isThrowed = true;
