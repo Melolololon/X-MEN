@@ -45,12 +45,17 @@ private:
 
 	MelLib::Vector3 dirVector;
 
+	MelLib::Vector3 velocity;
 	MelLib::Vector3 oldVelocity;
 
 	std::shared_ptr<Ball> pBall;
 	std::shared_ptr<NormalBarrier> barrier;
 
 	GaugeUI hpGauge;
+
+	bool isKnockback;
+	float knockbackPower;
+	MelLib::Vector3 knockbackVelocity;
 
 private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
@@ -85,6 +90,8 @@ private:
 
 	// ボールを投げたフラグを経過時間で管理する関数
 	void UpdateIsThrowing(const float PER_FRAME);
+
+	void UpdateKnockback();
 
 public:
 	Player();
