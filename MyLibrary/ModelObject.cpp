@@ -2076,7 +2076,8 @@ std::vector<std::vector<TriangleData>> MelLib::ModelObject::GetModelTriangleData
 	for (int i = 0; i < objectNames.size(); i++)
 	{
 		std::string objectName = objectNames[i];
-		result[i].resize(vertPos[i].size() / 3);
+		//result[i].resize(vertPos[i].size() / 3);
+		result[i].resize(vertIndex[i].size() / 3);
 
 		for (int j = 0, loopCount = 0; j < vertIndex[i].size(); j += 3, loopCount++)
 		{

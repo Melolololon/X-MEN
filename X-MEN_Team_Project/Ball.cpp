@@ -17,7 +17,7 @@
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
-const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,128 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 const MelLib::Vector3 BallTrajectory::TRAJECTORY_SCALE = { 1.25,1.25,1.25 };
@@ -109,6 +109,8 @@ Ball::Ball()
 	sphereFrameHitCheckNum = 4;
 	SetPosition({ 0,0,-10 });
 
+	collisionCheckDistance = 10.0f;
+
 	//軌跡オブジェクト生成
 	for (auto& v : pBallTrajectories) {
 		v = std::make_shared<BallTrajectory>();
@@ -123,7 +125,6 @@ Ball::Ball()
 		//全て非表示
 		v->SetIsDisp(false);
 	}
-	SetPosition({ 20,0,0 });
 }
 
 Ball::~Ball()
@@ -258,12 +259,13 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	else if (typeid(object) == typeid(Dome)) {
 		TriangleData triData = GetHitTriangleData();
 
+		//反射共通処理
+		Vector3 otherNormal = triData.GetNormal();
+		Reflection(otherNormal, true);
+
 		//1回目はvelocityのYが0になっている
 		if (velocity.y == 0) {
-
-		}
-		else {
-
+			velocity.y = MelLib::Random::GetRandomFloatNumber(0.25f, 4);
 		}
 	}
 }

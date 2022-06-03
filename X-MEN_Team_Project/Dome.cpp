@@ -90,6 +90,10 @@ void Dome::Initialize()
 	endElapsedTime = 0;
 	isEnd = false;
 	oldIsEnd = false;
+
+	for (auto& v : triangleDatas["main"]) {
+		v.SetTranslationPosition(modelObjects["main"].GetPosition());
+	}
 }
 
 void Dome::Update()

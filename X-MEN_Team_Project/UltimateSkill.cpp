@@ -100,8 +100,8 @@ void UltimateSkill::Use(const MelLib::Vector3& pos)
 
 	if (!dome)return;
 
-	dome.get()->Initialize();
 	dome.get()->SetPosition(pos);
+	dome.get()->Initialize();
 	dome.get()->SetLevel(level);
 
 	isUsingSkill = true;
