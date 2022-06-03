@@ -31,6 +31,12 @@
     <Filter Include="ヘッダー ファイル\Object\Enemy">
       <UniqueIdentifier>{539ac4c5-15c9-4e4a-aaeb-166fce9d7c61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Particle">
+      <UniqueIdentifier>{f8a03b05-1b46-4f62-be3f-fc0b7256f079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Particle">
+      <UniqueIdentifier>{fa738572-ef22-4099-a126-f0b97cc19b7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -102,6 +108,15 @@
     <ClCompile Include="Title.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Particle\Particle.cpp">
+      <Filter>ソース ファイル\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\ParticleManager.cpp">
+      <Filter>ソース ファイル\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\PopUpParticle.cpp">
+      <Filter>ソース ファイル\Object\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -169,6 +184,15 @@
     </ClInclude>
     <ClInclude Include="Title.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\Particle.h">
+      <Filter>ヘッダー ファイル\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\PopUpParticle.h">
+      <Filter>ヘッダー ファイル\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\ParticleManager.h">
+      <Filter>ヘッダー ファイル\Object\Particle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

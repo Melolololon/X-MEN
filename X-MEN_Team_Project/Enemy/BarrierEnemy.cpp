@@ -233,8 +233,8 @@ void BarrierEnemy::Update()
 	// hp‚ª‚È‚­‚È‚Á‚½‚Æ‚«‚ÉŠÇ—ƒNƒ‰ƒX‚©‚çíœ
 	if (hp <= 0)
 	{
-		Defeat();
-		//eraseManager = true;
+		//Defeat();
+		eraseManager = true;
 	}
 	particle.get()->Update(GetPosition());
 
