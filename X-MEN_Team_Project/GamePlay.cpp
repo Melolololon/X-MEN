@@ -131,6 +131,8 @@ void GamePlay::Draw()
 {
 	// •`‰æ
 	MelLib::GameObjectManager::GetInstance()->Draw();
+	// ”¼“§–¾‚È‚Ì‚Å•`‰æ
+	pBall->DrawTrajectories();
 }
 
 void GamePlay::Finalize()
