@@ -300,6 +300,7 @@ void FbxLoader::ParseMaterial(ModelData* fbxModel, FbxNode* fbxNode, const std::
 
 	fbxModel->pTexture[name] = std::make_unique<Texture>();
 
+	
 	ADSAMaterialData mtl;
 
 	//テスト用
@@ -404,21 +405,20 @@ void FbxLoader::ParseMaterial(ModelData* fbxModel, FbxNode* fbxNode, const std::
 			{
 				const FbxFileTexture* texture =
 					diffuseProperty.GetSrcObject<FbxFileTexture>();
-
 				if(texture)
 				{
 					const char* filePath = texture->GetFileName();
 
 					std::string path_str(filePath);
-					std::string name;
-					ExtractFileName(path_str,nullptr, &name);
+					std::string texName;
+					ExtractFileName(path_str,nullptr, &texName);
 
 					//読み込み処理またはModelDataクラスにパスを渡す処理をここに
 					//ファイル名のみ記述されてた
-					
+
 					//fbxModel->material[0].SetLoadTexture(modelDirectryPath + name);
-					fbxModel->pTexture[name]->LoadModelTexture(modelDirectryPath + name);
-					fbxModel->material[name]->SetTexture(fbxModel->pTexture[0].get());
+					fbxModel->pTexture[name]->LoadModelTexture(modelDirectryPath + texName);
+					fbxModel->material[name]->SetTexture(fbxModel->pTexture[name].get());
 
 
 					textureLoader = true;

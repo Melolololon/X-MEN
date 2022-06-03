@@ -35,6 +35,127 @@ Vector3 MelLib::Collision::CalcHitBoxSurfaceNormal(BoxHitDirection dir)
 	return normal;
 }
 
+Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3<Vector3>& triPos)
+{
+	Vector3 nearPos;
+
+	Vector3 p1ToSphere = spherePos - triPos.v1;
+	Vector3 p2ToSphere = spherePos - triPos.v2;
+	Vector3 p3ToSphere = spherePos - triPos.v3;
+
+	// 1
+	Vector3 p1ToP2 = triPos.v2 - triPos.v1;
+	Vector3 p1ToP3 = triPos.v3 - triPos.v1;
+
+	// 1
+	float p1P2DotP1Sphere = Vector3::Dot(p1ToP2, p1ToSphere);
+	// 2
+	float p1P3DotP1Sphere = Vector3::Dot(p1ToP3, p1ToSphere);
+	// 3
+	float p1P2DotP2Sphere = Vector3::Dot(p1ToP2, p2ToSphere);
+	// 4
+	float p1P3DotP2Sphere = Vector3::Dot(p1ToP3, p2ToSphere);
+	// 5
+	float p1P2DotP3Sphere = Vector3::Dot(p1ToP2, p3ToSphere);
+	// 6
+	float p1P3DotP3Sphere = Vector3::Dot(p1ToP3, p3ToSphere);
+
+
+	if (p1P2DotP1Sphere < 0 && p1P3DotP1Sphere < 0)
+	{
+		nearPos = triPos.v1;
+		return nearPos;
+	}
+
+	// 2
+	Vector3 p2ToP1 = triPos.v1 - triPos.v2;
+	Vector3 p2ToP3 = triPos.v3 - triPos.v2;
+	if (p1P2DotP2Sphere >= 0 && p1P3DotP2Sphere < p1P2DotP2Sphere)
+	{
+		nearPos = triPos.v2;
+		return nearPos;
+	}
+
+	// 4
+	Vector3 p3ToP1 = triPos.v1 - triPos.v3;
+	Vector3 p3ToP2 = triPos.v2 - triPos.v3;
+	if (p1P3DotP3Sphere >= 0 && p1P2DotP3Sphere < p1P3DotP3Sphere)
+	{
+		nearPos = triPos.v3;
+		return nearPos;
+	}
+
+	// 3
+	float check3 =
+		p1P2DotP1Sphere
+		* p1P3DotP2Sphere
+		- p1P2DotP2Sphere
+		* p1P3DotP1Sphere;
+
+	if (p1P2DotP1Sphere >= 0 && p1P2DotP2Sphere < 0)
+	{
+		if (check3 <= 0.0f)
+		{
+			nearPos =
+				triPos.v1
+				+ p1P2DotP1Sphere
+				/ (p1P2DotP1Sphere
+				- p1P2DotP2Sphere)
+				* p1ToP2;
+
+			return nearPos;
+		}
+	}
+
+	// 5
+	float check5 =
+		p1P2DotP3Sphere
+		* p1P3DotP1Sphere
+		- p1P2DotP1Sphere
+		* p1P3DotP3Sphere;
+	if (p1P3DotP1Sphere >= 0 && p1P3DotP3Sphere < 0)
+	{
+		if (check5 <= 0.0f)
+		{
+			nearPos =
+				triPos.v1
+				+ p1P3DotP1Sphere
+				/ (p1P3DotP1Sphere
+					- p1P3DotP3Sphere)
+				* p1ToP3;
+			return nearPos;
+		}
+	}
+
+	// 6
+	float check6 =
+		p1P2DotP2Sphere
+		* p1P3DotP3Sphere
+		- p1P2DotP3Sphere
+		* p1P3DotP2Sphere;
+	if (p1P3DotP2Sphere - p1P2DotP2Sphere >= 0 && p1P2DotP3Sphere - p1P3DotP3Sphere >= 0)
+	{
+		if (check6 <= 0.0f)
+		{
+			float w = (p1P3DotP2Sphere - p1P2DotP2Sphere) / ((p1P3DotP2Sphere - p1P2DotP2Sphere) + (p1P2DotP3Sphere - p1P3DotP3Sphere));
+
+			nearPos =
+				triPos.v2
+				+ w
+				*( triPos.v3 - triPos.v2);
+			return nearPos;
+		}
+	}
+
+	// 7
+	float denom = 1.0f / (check3 + check5 + check6);
+	float v = check5 * denom;
+	float w = check3 * denom;
+	nearPos = triPos.v1 + p1ToP2 * v + p1ToP3 * w;
+	return nearPos;
+}
+
+
 #pragma region 2D
 
 
@@ -698,6 +819,34 @@ bool MelLib::Collision::SphereAndOBB(const SphereData& sphere, SphereCalcResult*
 	return result;
 }
 
+bool MelLib::Collision::SphereAndRay(const SphereData& sphere, SphereCalcResult* sphereCalcResult, const RayData& ray, RayCalcResult* rayResult)
+{
+	Vector3 spherePos = sphere.GetPosition();
+	float sphereR = sphere.GetRadius();
+
+	Vector3 rayPos = ray.GetPosition();
+	Vector3 rayDir = ray.GetDirection();
+
+	Vector3 sphereToRay = rayPos - spherePos;
+	
+	float b = Vector3::Dot(sphereToRay, rayDir);
+	float c = Vector3::Dot(sphereToRay, sphereToRay) - (sphereR * sphereR);
+
+	float d = (b * b) - c;
+
+	if (d < 0)return false;
+
+	float t = -b - sqrt((b * b) - c);
+	if (t < 0)return false;
+	
+	if (d > 0) 
+	{
+		if (rayResult)rayResult->hitPosition = rayPos + t * rayDir;
+	}
+
+	return true;
+}
+
 bool Collision::SphereAndCapsule(const SphereData& sphere, const CapsuleData& capsule)
 {
 	Value2<Vector3>capsuleLineSegmentPos = capsule.GetSegment3DData().GetRotatePosition();
@@ -732,6 +881,17 @@ bool Collision::SphereAndCapsule(const SphereData& sphere, const CapsuleData& ca
 	}
 
 	return sphereAndCupsuleDis < sphere.GetRadius();
+}
+
+bool MelLib::Collision::SphereAndTriangle(const SphereData& sphere, const TriangleData& triangle)
+{
+	Vector3 nearPos;
+	nearPos = CalcSphereArea(sphere.GetPosition(), triangle.GetTranslationPosition());
+
+	float dis = LibMath::CalcDistance3D(nearPos, sphere.GetPosition());
+	dis *= dis;
+	float radius = sphere.GetRadius() * sphere.GetRadius();
+	return dis <= radius;
 }
 
 bool MelLib::Collision::PlaneAndSegment3D(const PlaneData& plane, const Segment3DData& segment, Segment3DCalcResult* segmentResult)
@@ -1040,180 +1200,66 @@ bool MelLib::Collision::BoxAndRay(const BoxData& box, const RayData& ray, RayCal
 	// https://el-ement.com/blog/2017/08/16/primitives-ray-intersection/
 
 	// http://marupeke296.com/COL_3D_No18_LineAndAABB.html
-
-	//Vector3 boxMax = Vector3(box.GetPosition() + box.GetSize() / 2);
-	//Vector3 boxMin = Vector3(box.GetPosition() - box.GetSize() / 2);
-
-	//if()
-
-
-	// p 始点座標
-	// d 方向ベクトル
-	// hw hh hd boxSizeHの x y z
-
-	//各面が軸に平行な直方体に関する衝突判定では、直方体を各軸方向に分解して考える方法が度々有用となります。レイとの交差判定でも、X, Y, Z軸それぞれについてレイが直方体と交差する tt の範囲を求め、それらの共通部分を取ることで最終的な tt を求めます。
-	//直方体のX, Y, Z軸方向の長さの半分をそれぞれ hw, hh, hd とおきます。
-
-	// 交差条件
-	// -h <= (p + td) <= h
-	//  (p + td) = 衝突点
-
-	Vector3 boxSize = box.GetSize();
-	// 
-	// ボックスのサイズの半分
-	Vector3 boxSizeH = box.GetSize() / 2;
-	// レイの点と衝突点の距離
-	Vector3 minTVec3 = FLT_MAX;
 	
-	// この二ついらないかも
-	Vector3 maxTVec3 = -FLT_MAX;
-	Vector3 hitLength = -1;
-
-	Vector3 boxMin = box.GetPosition() - boxSizeH;
-	Vector3 boxMax = box.GetPosition() + boxSizeH;
-
-	bool hitX = false;
-	bool hitY = false;
-	bool hitZ = false;
-
-	// boxを原点にある場合でしか求められない方法なので、rayを動かして四角形が原点にあるときと同じ状況にする
-
-	Vector3 rayMovePos = ray.GetPosition() - box.GetPosition();
+	// いいサイト
+	// https://tavianator.com/2011/ray_box.html
 
 
+	Vector3 rayPos = ray.GetPosition();
+	Vector3 rayDir = ray.GetDirection();
 
-	// 法線ベクトルが0の場合、レイの点が四角形に入っているかを確認する
-	if (ray.GetDirection().x == 0)
+	MelLib::Vector3 minPos, maxPos;
+	minPos = box.GetPosition() - box.GetSize() / 2;
+	maxPos = box.GetPosition() + box.GetSize() / 2;
+
+	float t = -FLT_MAX;
+
+	// floatで表現できる値の最小値と最大値を取得
+	// x軸の判定をする際(一番はじめの軸との判定時に使う)
+	// それ以降は一つ前の軸との距離と判定して各軸のスラブ内で交差しているか判定
+	float minT = -FLT_MAX;
+	float maxT = FLT_MAX;
+
+	for (int i = 0; i < 3; i++) 
 	{
+		if (LibMath::Difference(rayDir[i], 0.0f, 0.0001f))
+		{
+			// 明らかに出てたら当たってない判定
+			if (rayPos[i] < minPos[i] || rayPos[i] > maxPos[i])return false;
+			
+			// 上のfalseに引っかからなかったら当たってるため、次へ
+			continue;
+		}
 
-		if (-boxSizeH.x <= rayMovePos.x && rayMovePos.x <= boxSizeH.x)
-		{
-			//minTVec3.x = 0;
-			hitX = true;
-		}
-		else
-		{
-			minTVec3.x = FLT_MAX;
-		}
+		// 掛け算のほうが早いため、逆数(invNum)を求めて掛け算で計算する
+		// 逆数
+		float invNum = 1.0f / rayDir[i];
+
+		// スラブとの距離を算出
+		// nearTが近スラブ、farTが遠スラブとの距離
+		float nearT = (minPos[i] - rayPos[i]) * invNum;
+		float farT = (maxPos[i] - rayPos[i]) * invNum;
+
+		float tMin = min(nearT, farT);
+		float tMax = max(nearT, farT);
+		nearT = tMin;
+		farT = tMax;
+
+		if (nearT > minT) minT = nearT;
+		if (farT < maxT) maxT = farT;
+
+		// スラブ交差チェック
+		if (minT >= maxT)return false;
 	}
-	else
-	{
-		float num1 = (boxSizeH.x - rayMovePos.x) / ray.GetDirection().x;
-		float num2 = (-boxSizeH.x - rayMovePos.x) / ray.GetDirection().x;
-		if (num1 > num2)
-		{
-			minTVec3.x = num2;
-			maxTVec3.x = num1;
-		}
-		else
-		{
-			minTVec3.x = num1;
-			maxTVec3.x = num2;
-		}
-
-		hitLength.x = maxTVec3.x - minTVec3.x;
-	}
-
-	if (ray.GetDirection().y == 0)
-	{
-		if (-boxSizeH.y <= rayMovePos.y && rayMovePos.y <= boxSizeH.y)
-		{
-			//minTVec3.y = 0;
-			hitY = true;
-		}
-		else
-		{
-			minTVec3.y = FLT_MAX;
-		}
-	}
-	else
-	{
-		float num1 = (boxSizeH.y - rayMovePos.y) / ray.GetDirection().y;
-		float num2 = (-boxSizeH.y - rayMovePos.y) / ray.GetDirection().y;
-		if (num1 > num2)
-		{
-			minTVec3.y = num2 ;
-			maxTVec3.y = num1 ;
-		}
-		else
-		{
-			minTVec3.y = num1 ;
-			maxTVec3.y = num2 ;
-		}
-
-		hitLength.y = maxTVec3.y - minTVec3.y;
-	}
-
-	if (ray.GetDirection().z == 0)
-	{
-		if (-boxSizeH.z <= rayMovePos.z && rayMovePos.z <= boxSizeH.z)
-		{
-			//minTVec3.z = 0;
-			hitZ = true;
-		}
-		else
-		{
-			minTVec3.z = FLT_MAX;
-		}
-	}
-	else
-	{
-		float num1 = (boxSizeH.z - rayMovePos.z) / ray.GetDirection().z;
-		float num2 = (-boxSizeH.z - rayMovePos.z) / ray.GetDirection().z;
-		if (num1 > num2)
-		{
-			minTVec3.z = num2;
-			maxTVec3.z = num1;
-		}
-		else
-		{
-			minTVec3.z = num1;
-			maxTVec3.z = num2;
-		}
-
-		hitLength.z = maxTVec3.z - minTVec3.z;
-	}
-
-
-
-	// 新
-	Vector3 n = (boxMin - rayMovePos) / ray.GetDirection();
-	Vector3 f = (boxMax - rayMovePos) / ray.GetDirection();
-	Vector3 slab = rayMovePos + minTVec3;
-
-
-
-	//// Vector3のtのXYZの中の最小値が求めるべきtかもしれない
-	//// 最小のT
-	//float minT = FLT_MAX;
-	//if (0 <= hitLength.x)minT = hitLength.x;
-	//if (0 <= hitLength.y && minT > hitLength.y)minT = hitLength.y;
-	//if (0 <= hitLength.z && minT > hitLength.z)minT = hitLength.z;
-
-
-	//if (minT == FLT_MAX)return false;
-
-	//// -h <= (p + td) <= h
-	////  (p + td) = 衝突点
-	//
-
-	// ボックスとレイの始点のはみ出た分の差を求める
-
-	/*Vector3 boxToRay = rayMovePos - box.GetPosition();
-	Vector3 sa = boxToRay * boxSizeH;
-
-	Vector3 ptd = rayMovePos + minT * ray.GetDirection();
-	if (!hitX) hitX = -boxSizeH.x <= ptd.x && ptd.x <= boxSizeH.x || LibMath::Difference(-boxSizeH.x, ptd.x, 0.0001f) || LibMath::Difference(boxSizeH.x, ptd.x, 0.0001f);
-	if (!hitY) hitY = -boxSizeH.y <= ptd.y && ptd.y <= boxSizeH.y || LibMath::Difference(-boxSizeH.y, ptd.y, 0.0001f) || LibMath::Difference(boxSizeH.y, ptd.y, 0.0001f);
-	if (!hitZ) hitZ = -boxSizeH.z <= ptd.z && ptd.z <= boxSizeH.z || LibMath::Difference(-boxSizeH.z, ptd.z, 0.0001f) || LibMath::Difference(boxSizeH.z, ptd.z, 0.0001f);*/
 	
-	//if (!hitX) hitX = 
-
-	//if (rayResult)rayResult->hitPosition = ptd + box.GetPosition();
-	
-	if (hitX && hitY && hitZ)return true;
+	// 間違えてここで0以上か判断しちゃってるけど問題なさそう?
+	// ベクトルの逆にOBBがあるとき、絶対Tが逆になるからこれで問題なさそう
+	if (minT >= 0 && maxT >= 0) 
+	{
+		if (rayResult)rayResult->hitPosition = rayPos + minT * rayDir;
+		return true;
+	}
 	return false;
-
 }
 
 bool MelLib::Collision::BoxAndSegment3D(const BoxData& box, const Segment3DData& segment)
@@ -1332,6 +1378,7 @@ bool MelLib::Collision::TriangleAndSegment3D(const TriangleData& triangle, Trian
 
 bool MelLib::Collision::OBBAndRay(const OBBData& obb, const RayData& ray, RayCalcResult* rayResult)
 {
+
 	// BoxとRayの判定があるので、
 	// OBBの角度 * -1の角度分レイを回転させてあげればいい?
 	// そんなことないわやっぱ

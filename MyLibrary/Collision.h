@@ -13,6 +13,9 @@ namespace MelLib
 	private:
 
 		static Vector3 CalcHitBoxSurfaceNormal(BoxHitDirection dir);
+		
+		static Vector3 CalcSphereArea(const Vector3& spherePos, const Value3<Vector3>& triPos);
+
 
 	public:
 
@@ -124,9 +127,13 @@ namespace MelLib
 
 		static bool SphereAndOBB(const SphereData& sphere, SphereCalcResult* sphereCalcResult, const OBBData& obb);
 
+		static bool SphereAndRay(const SphereData& sphere, SphereCalcResult* sphereCalcResult, const RayData& ray , RayCalcResult* rayResult);
+
 		static bool SphereAndSegmrnt3D(const SphereData& sphere, const Segment3DData& lineSegment);
 
 		static bool SphereAndCapsule(const SphereData& sphere, const CapsuleData& capsule);
+
+		static bool SphereAndTriangle(const SphereData& sphere, const TriangleData& triangle);
 
 		static bool PlaneAndSegment3D(const PlaneData& plane, const Segment3DData& segment,Segment3DCalcResult* segmentResult);
 

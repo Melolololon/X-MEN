@@ -134,6 +134,7 @@ namespace MelLib
 		bool operator==(const Vector3& vector) const;
 		bool operator!=(const Vector3& vector)const;
 
+		float& operator[](const unsigned int num);
 
 		void operator++();
 		void operator--();

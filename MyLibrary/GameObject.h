@@ -82,7 +82,7 @@ namespace MelLib
 		SphereData hitSphereData;
 		BoxData hitBoxData;
 		Segment3DData hitSegment3DData;
-		RayData hitLayData;
+		RayData hitRayData;
 		PlaneData hitPlaneData;
 		BoardData hitBoardData;
 		CapsuleData hitCapsuleData;
@@ -96,7 +96,6 @@ namespace MelLib
 		RayCalcResult rayCalcResult;
 		BoardCalcResult boardCalcResult;
 		TriangleCalcResult triangleCalcResult;
-		
 
 		// 各当たり判定の前フレームの座標
 		// 当たり判定複数回確認するときに使用(補完用)
@@ -496,6 +495,7 @@ namespace MelLib
 		std::unordered_map<std::string, std::vector<BoardData>> GetBoardDatas()const { return boardDatas; }
 		std::unordered_map<std::string, std::vector<CapsuleData>>GetCapsuleDatas() const { return capsuleDatas; }
 		std::unordered_map<std::string, std::vector<TriangleData>>GetTriangleDatas() const { return triangleDatas; }
+		std::unordered_map<std::string, std::vector<RayData>>GetRayDatas() const { return rayDatas; }
 
 
 
@@ -524,6 +524,7 @@ namespace MelLib
 		{
 			triangleCalcResult = result;
 		}
+		void SetRayCalcResult(const RayCalcResult& result) { rayCalcResult = result; }
 
 		SphereCalcResult GetSphereCalcResult()const { return sphereCalcResult; }
 		BoxCalcResult GetBoxCalcResult()const { return boxCalcResult; }
@@ -531,7 +532,7 @@ namespace MelLib
 		BoardCalcResult GetBoardCalcResult()const { return boardCalcResult; }
 		Segment3DCalcResult GetCapsuleCalcResult()const { return capsuleCalcResult; }
 		TriangleCalcResult GetTriangleCalcResult()const { return triangleCalcResult; }
-
+		RayCalcResult GetRayCalcResult()const { return rayCalcResult; }
 
 		//Vector3& GetLineSegmentHitPosition(const int num);
 		//Vector3& GetBoardHitPosition(const int num);
@@ -549,6 +550,7 @@ namespace MelLib
 		void SetHitSegment3DData(const Segment3DData& segment) { hitSegment3DData = segment; }
 		void SetHitCapsuleData(const CapsuleData& capsule) { hitCapsuleData = capsule; }
 		void SetHitTriangleData(const TriangleData& tri) { hitTriangleData = tri; }
+		void SetHitRayData(const RayData& ray) { hitRayData = ray; }
 
 		unsigned int GetFrameHitCheckNumber(ShapeType3D type)const;
 
