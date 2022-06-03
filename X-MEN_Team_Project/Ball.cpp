@@ -141,19 +141,24 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal, false);
 	}
-	//敵との衝突
-	else if (typeid(object) == typeid(FollowEnemy) ||
-		typeid(object) == typeid(BarrierEnemy))
-	{
-		// プレイヤーが投げたり反射させたボールなら
-		if (throwingState == BallState::THROWING_PLAYER)
-		{
-			//反射共通処理
-			Vector3 otherNormal = GetPosition() - object.GetPosition();
-			otherNormal = otherNormal.Normalize();
-			Reflection(otherNormal, true);
+	
 
-			throwingState = BallState::THROWING_ENEMY;
+	//敵との衝突
+	else if (typeid(object) == typeid(Enemy))// ||typeid(object) == typeid(BarrierEnemy))
+	{
+		const Enemy* other = static_cast<const Enemy*>(&object);
+		if (other->GetHP()>0)
+		{
+			// プレイヤーが投げたり反射させたボールなら
+			if (throwingState == BallState::THROWING_PLAYER)
+			{
+				//反射共通処理
+				Vector3 otherNormal = GetPosition() - object.GetPosition();
+				otherNormal = otherNormal.Normalize();
+				Reflection(otherNormal, true);
+
+				throwingState = BallState::THROWING_ENEMY;
+			}
 		}
 	}
 	//プレイヤーとの衝突
