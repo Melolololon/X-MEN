@@ -68,6 +68,7 @@ float Enemy::GetHP() const
 	return hp;
 }
 
+
 void Enemy::SetHP(const float& hp)
 {
 	this->hp = hp;
@@ -87,4 +88,9 @@ void Enemy::SetPlayerPos(const MelLib::Vector3& pos)
 	// プレイヤーの位置を保管
 	playerPos = pos;
 
+}
+
+void Enemy::SetMoveCancel(const bool& flg)
+{
+	moveCancel = flg;
 }

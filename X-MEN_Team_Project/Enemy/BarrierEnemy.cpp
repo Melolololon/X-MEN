@@ -77,7 +77,7 @@ void BarrierEnemy::Move()
 	// 移動ベクトル
 	MelLib::Vector3 moveVector;
 	// 移動速度
-	static const float MOVE_SPEED = 0.3f;
+	static const float MOVE_SPEED = 0.1f;
 
 	if (delayStartFlg)
 	{
@@ -179,9 +179,18 @@ void BarrierEnemy::Update()
 
 	if (!refBallObject)return;
 
-
-	if (pBarrier.get()->GetIsOpen()) { Move(); }
-	else { FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); }
+	if (!moveCancel)
+	{
+		// バリアがはがれているかどうか
+		if (pBarrier.get()->GetIsOpen()) 
+		{ 
+			Move(); 
+		}
+		else 
+		{
+			FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); 
+		}
+	}
 
 	PushPosition();
 
@@ -194,7 +203,6 @@ void BarrierEnemy::Update()
 	}
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
-
 }
 
 void BarrierEnemy::Draw()

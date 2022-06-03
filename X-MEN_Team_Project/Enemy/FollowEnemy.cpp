@@ -47,7 +47,7 @@ void FollowEnemy::Move()
 
 void FollowEnemy::Update()
 {
-	FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
+	if(!moveCancel)FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
 	PushPosition();
 
 	static const float ZERO = 0.0f;

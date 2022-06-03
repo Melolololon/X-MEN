@@ -28,6 +28,9 @@ protected:
 	// 押出フラグ　オンならPushPosition関数が実行される
 	bool isPush;
 
+	bool moveCancel = false;
+	MelLib::Vector3 movedVector;
+
 protected:
 
 	void virtual Move() {}
@@ -74,6 +77,7 @@ public:
 	// プレイヤーの位置を変数で持っておくため実装　後で消す可能性大
 	virtual void SetPlayerPos(const MelLib::Vector3& pos);
 
+	void SetMoveCancel(const bool& flg);
 #pragma endregion
 
 
