@@ -90,7 +90,6 @@ void Ball::Update()
 	//投げられていたら動かす
 	if (isThrowed) {
 		Move(); 
-		AddScale();
 		//停止
 		if (speed <= 0) {
 			////色セット
@@ -243,23 +242,4 @@ void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
 
 	//投げたフラグオフ
 	isThrowed = false;
-}
-
-void Ball::AddScale()
-{
-	if (EnemyManager::GetInstance()->GetIsDeadFlame() == false) {
-		return;
-	}
-
-	//ひとまず5回敵倒すと最大値になるように
-	scale += (MAX_SCALE - INIT_SCALE) / 5;
-
-	if (scale > MAX_SCALE) {
-		scale = MAX_SCALE;
-	}
-
-	//オブジェクトに反映
-	SetScale({ scale,scale,scale });
-
-	EnemyManager::GetInstance()->SetIsDeadFlame(false);
 }

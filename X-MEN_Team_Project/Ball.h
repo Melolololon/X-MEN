@@ -129,11 +129,6 @@ public:
 	/// <returns>ó‘Ô</returns>
 	BallState GetThrowingState()const { return throwingState; }
 
-	/// <summary>
-	/// ƒ{[ƒ‹‚ğ’è—Ê‘å‚«‚­‚·‚é
-	/// </summary>
-	void AddScale();
-
 #pragma endregion
 
 #pragma region Setter
