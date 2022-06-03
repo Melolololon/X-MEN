@@ -177,6 +177,9 @@
     <ClCompile Include="InputDeviceManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NormalBarrier.cpp" />
+    <ClCompile Include="Particle\Particle.cpp" />
+    <ClCompile Include="Particle\ParticleManager.cpp" />
+    <ClCompile Include="Particle\PopUpParticle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="UltimateSkill.cpp" />
@@ -200,6 +203,9 @@
     <ClInclude Include="GaugeUI.h" />
     <ClInclude Include="InputDeviceManager.h" />
     <ClInclude Include="NormalBarrier.h" />
+    <ClInclude Include="Particle\Particle.h" />
+    <ClInclude Include="Particle\ParticleManager.h" />
+    <ClInclude Include="Particle\PopUpParticle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="UltimateSkill.h" />

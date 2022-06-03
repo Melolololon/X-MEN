@@ -1,6 +1,7 @@
 #pragma once
 #include"GameObject.h"
 #include<string>
+#include "../Particle/ParticleManager.h"
 
 namespace EnemyStatus
 {
@@ -16,6 +17,13 @@ class Enemy : public MelLib::GameObject
 protected:
 
 	float hp = 10;
+	//吹っ飛ぶ移動量
+	MelLib::Vector3 defeatVelocity;
+	//
+	int defeatCount;
+	//Particle
+	std::shared_ptr<ParticleManager> particle;
+
 
 	// プレイヤーの方向を保管しておく 追従に使用予定
 	MelLib::Vector3 playerDir;
@@ -23,6 +31,9 @@ protected:
 	MelLib::Vector3 playerPos;
 	// 押出ベクトル
 	MelLib::Vector3 pushVector;
+	//壁のめり込んだ時に押し戻す移動量
+	MelLib::Vector3 pastVelocity;
+
 	// 押し出している時間
 	float pushTime;
 	// 押出フラグ　オンならPushPosition関数が実行される
@@ -34,6 +45,8 @@ protected:
 protected:
 
 	void virtual Move() {}
+
+	void virtual Defeat(){}
 
 	// 敵同士でヒットした同士の押し出しを反映する
 	void PushPosition();
