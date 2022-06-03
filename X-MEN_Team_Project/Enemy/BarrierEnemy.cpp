@@ -3,7 +3,6 @@
 #include"../Player.h"
 #include<array>
 #include"../MyLibrary/GameObjectManager.h"
-#include "../FieldObjectWall.h"
 #include "../GameManager.h"
 #include <Random.h>
 
@@ -70,6 +69,18 @@ BarrierEnemy::BarrierEnemy()
 	delayStartFlg = false;
 
 	SetRandomPosition();
+
+	//撃破時の移動量
+	defeatVelocity = {
+		(std::rand() % 10 - 5) / 10.0f,
+		2.0f,
+		(std::rand() % 10 - 5) / 10.0f
+	};
+	defeatCount = 0;
+
+	particle = std::make_shared<ParticleManager>();
+	particle.get()->Initialize();
+
 }
 
 void BarrierEnemy::Move()
@@ -77,7 +88,7 @@ void BarrierEnemy::Move()
 	// 移動ベクトル
 	MelLib::Vector3 moveVector;
 	// 移動速度
-	static const float MOVE_SPEED = 0.3f;
+	static const float MOVE_SPEED = 0.1f;
 
 	if (delayStartFlg)
 	{
@@ -173,15 +184,47 @@ void BarrierEnemy::ChangePose()
 	
 }
 
+void BarrierEnemy::Defeat()
+{
+	//消えるまで長さ
+	static int time = 60;
+	if (defeatCount < time)
+	{
+		//吹っ飛んで落ちる
+		defeatVelocity.y -= 0.1f;
+		AddPosition(defeatVelocity);
+
+		//回転速度
+		static const MelLib::Vector3 rota = { 10,10,0 };
+		modelObjects["main"].SetAngle(modelObjects["main"].GetAngle() + rota);
+		particle.get()->SetFireFlag(true);
+	}
+	else
+	{
+		//消す
+		eraseManager = true;
+	}
+	defeatCount++;
+}
+
 void BarrierEnemy::Update()
 {
 	RefBallObject();
 
 	if (!refBallObject)return;
 
-
-	if (pBarrier.get()->GetIsOpen()) { Move(); }
-	else { FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); }
+	if (!moveCancel)
+	{
+		// バリアがはがれているかどうか
+		if (pBarrier.get()->GetIsOpen()) 
+		{ 
+			Move(); 
+		}
+		else 
+		{
+			FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); 
+		}
+	}
 
 	PushPosition();
 
@@ -190,17 +233,21 @@ void BarrierEnemy::Update()
 	// hpがなくなったときに管理クラスから削除
 	if (hp <= 0)
 	{
-		eraseManager = true;
+		Defeat();
+		//eraseManager = true;
 	}
+	particle.get()->Update(GetPosition());
+
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
-
 }
 
 void BarrierEnemy::Draw()
 {
 	// ModelObjectsに追加されているModelObjectをすべて描画
 	AllDraw();
+
+	particle.get()->Draw();
 }
 
 void BarrierEnemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
@@ -210,21 +257,6 @@ void BarrierEnemy::Hit(const GameObject& object, const MelLib::ShapeType3D shape
 	if (typeid(object) == typeid(Player))
 	{
 		modelObjects["main"].SetMulColor(MelLib::Color(100, 100, 100, 255));
-	}
-
-	// 壁との衝突判定
-	if (typeid(object) == typeid(FieldObjectWall))
-	{
-		// ヒットした障害物のヒットした法線方向に押し出す
-		MelLib::Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
-		MelLib::Vector3 pos = GetPosition() + -pastVelocity;
-		SetPosition(pos);
-
-		// 壁ずりベクトルを計算
-		MelLib::Vector3 moveVector = pastVelocity - MelLib::Vector3Dot(pastVelocity, otherNormal) * otherNormal;
-		moveVector *= pastVelocity.Length();
-
-		AddPosition(moveVector);
 	}
 }
 

@@ -13,6 +13,9 @@ private:
 
 	// ˆÚ“®
 	void Move() override;
+	// Œ‚”j‰‰o
+	void Defeat() override;
+
 
 public:
 	FollowEnemy();

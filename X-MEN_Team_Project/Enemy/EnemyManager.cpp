@@ -36,6 +36,9 @@ void EnemyManager::Update()
 	// ŠÔ‚Å‚Ì“G‚ÌoŒ»
 	PopEnemyTime();
 
+	// “G‚ª‚Ô‚Â‚©‚ç‚È‚¢ˆÚ“®‚ğ‚·‚é
+	EnemyMoveCancel();
+
 	CheckEnemyDead(followEnemies,false);
 	CheckEnemyDead(barrierEnemies,true);
 }
@@ -154,4 +157,135 @@ void EnemyManager::PopEnemyTime()
 	}
 
 	
+}
+
+void EnemyManager::EnemyMoveCancel()
+{
+	// ’Ç]‚·‚é“G‚ÌŒvZ
+	CalcFollowEnemyMove();
+
+	// ƒoƒŠƒA‚¿‚ÌŒvZ
+	CalcBarrierEnemyMove();
+
+	// ƒoƒŠƒA‚Æ’Ç]‚·‚é“G‚ÌŒvZ
+	CalcFollowToBarrierEnemyMove();
+}
+
+void EnemyManager::CalcFollowEnemyMove()
+{
+	for (int i = 0; i < followEnemies.size(); i++)
+	{
+		for (int j = 0; j < followEnemies.size(); j++)
+		{
+			// “¯‚¶“G“¯m‚Í–³‹
+			if (i != j)
+			{
+				// pos‚ğ‚Æ‚Á‚Ä‚«‚Ä‹——£‚ğŒvZ
+				MelLib::Vector3 iEnemyPosition = followEnemies[i].get()->GetPosition();
+				MelLib::Vector3 jEnemyPosition = followEnemies[j].get()->GetPosition();
+
+				// ‹——£‚ğŒvZ
+				float calcDistanceX = iEnemyPosition.x - jEnemyPosition.x;
+				float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
+				float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+				if (distance <= EnemyManage::NOT_MOVE_DISTANCE)
+				{
+					// ‚Ô‚Â‚©‚é“G‚Æ‚Ì‹tƒxƒNƒgƒ‹‚ğAddPosition‚·‚é
+					MelLib::Vector3 moveVector = -1 * (jEnemyPosition - iEnemyPosition);
+					moveVector = moveVector.Normalize();
+
+					const float SPEED = 0.3f;
+					followEnemies[i].get()->AddPosition(moveVector * SPEED);
+					followEnemies[i].get()->SetMoveCancel(true);
+				}
+				else
+				{
+					followEnemies[i].get()->SetMoveCancel(false);
+				}
+
+			}
+		}
+	}
+
+}
+
+void EnemyManager::CalcBarrierEnemyMove()
+{
+	for (int i = 0; i < barrierEnemies.size(); i++)
+	{
+		for (int j = 0; j < barrierEnemies.size(); j++)
+		{
+			if (i != j)
+			{				
+				// pos‚ğ‚Æ‚Á‚Ä‚«‚Ä‹——£‚ğŒvZ
+				MelLib::Vector3 iEnemyPosition = barrierEnemies[i].get()->GetPosition();
+				MelLib::Vector3 jEnemyPosition = barrierEnemies[j].get()->GetPosition();
+
+				// ‹——£‚ğŒvZ
+				float calcDistanceX = iEnemyPosition.x - jEnemyPosition.x;
+				float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
+				float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+				if (distance <= EnemyManage::NOT_MOVE_DISTANCE)
+				{
+					// ‚Ô‚Â‚©‚é“G‚Æ‚Ì‹tƒxƒNƒgƒ‹‚ğAddPosition‚·‚é
+					MelLib::Vector3 moveVector = -1 * (jEnemyPosition - iEnemyPosition);
+					moveVector = moveVector.Normalize();
+
+					const float SPEED = 0.2f;
+					barrierEnemies[i].get()->AddPosition(moveVector * SPEED);
+
+					barrierEnemies[i].get()->SetMoveCancel(true);
+
+				}
+				else
+				{
+					barrierEnemies[i].get()->SetMoveCancel(false);
+				}
+			}
+		}
+	}
+}
+
+void EnemyManager::CalcFollowToBarrierEnemyMove()
+{
+	for (int i = 0; i < barrierEnemies.size(); i++)
+	{
+		for (int j = 0; j < followEnemies.size(); j++)
+		{
+			// pos‚ğ‚Æ‚Á‚Ä‚«‚Ä‹——£‚ğŒvZ
+			MelLib::Vector3 iEnemyPosition = barrierEnemies[i].get()->GetPosition();
+			MelLib::Vector3 jEnemyPosition = followEnemies[j].get()->GetPosition();
+
+			// ‹——£‚ğŒvZ
+			float calcDistanceX = iEnemyPosition.x - jEnemyPosition.x;
+			float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
+			float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+			if (distance <= EnemyManage::NOT_MOVE_DISTANCE)
+			{
+				// ‚Ô‚Â‚©‚é“G‚Æ‚Ì‹tƒxƒNƒgƒ‹‚ğAddPosition‚·‚é
+				MelLib::Vector3 moveVectorBarrier = -1 * (jEnemyPosition - iEnemyPosition);
+				moveVectorBarrier = moveVectorBarrier.Normalize();
+
+				MelLib::Vector3 moveVectorFollow = -1 * (iEnemyPosition - jEnemyPosition);
+			 	moveVectorFollow = moveVectorFollow.Normalize();
+
+				const float SPEED_FOLLOW = 0.3f;
+				const float SPEED_BARRIER = 0.1f;
+
+				barrierEnemies[i].get()->AddPosition(moveVectorBarrier * SPEED_BARRIER);
+				followEnemies[j].get()->AddPosition(moveVectorFollow * SPEED_FOLLOW);
+				barrierEnemies[i].get()->SetMoveCancel(true);
+				followEnemies[j].get()->SetMoveCancel(true);
+			}
+			else
+			{
+				barrierEnemies[i].get()->SetMoveCancel(false);
+				followEnemies[j].get()->SetMoveCancel(false);
+			}
+		}
+	}
+
 }

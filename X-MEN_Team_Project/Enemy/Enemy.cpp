@@ -3,6 +3,7 @@
 #include "BarrierEnemy.h"
 #include"../Ball.h"
 #include "../GameManager.h"
+#include "../FieldObjectWall.h"
 
 
 void Enemy::PushPosition()
@@ -37,10 +38,10 @@ void Enemy::Damage(float damage)
 	hp -= damage;
 
 	// hpがなくなったときに管理クラスから削除
-	if (hp <= 0)
+	/*if (hp <= 0)
 	{
 		eraseManager = true;
-	}
+	}*/
 }
 
 void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
@@ -67,12 +68,28 @@ void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, c
 			}
 		}
 	}
+
+	// 壁との衝突判定
+	if (typeid(object) == typeid(FieldObjectWall))
+	{
+		// ヒットした障害物のヒットした法線方向に押し出す
+		MelLib::Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
+		MelLib::Vector3 pos = GetPosition() + -pastVelocity;
+		SetPosition(pos);
+
+		// 壁ずりベクトルを計算
+		MelLib::Vector3 moveVector = pastVelocity - MelLib::Vector3Dot(pastVelocity, otherNormal) * otherNormal;
+		moveVector *= pastVelocity.Length();
+
+		AddPosition(moveVector);
+	}
 }
 
 float Enemy::GetHP() const
 {
 	return hp;
 }
+
 
 void Enemy::SetHP(const float& hp)
 {
@@ -93,4 +110,9 @@ void Enemy::SetPlayerPos(const MelLib::Vector3& pos)
 	// プレイヤーの位置を保管
 	playerPos = pos;
 
+}
+
+void Enemy::SetMoveCancel(const bool& flg)
+{
+	moveCancel = flg;
 }

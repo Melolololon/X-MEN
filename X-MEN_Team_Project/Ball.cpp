@@ -135,7 +135,7 @@ void Ball::Update()
 {
 	//投げられていたら動かす
 	if (isThrowed) {
-		Move(); 
+		Move();
 		//停止
 		if (speed <= 0) {
 			////色セット
@@ -221,9 +221,9 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
-		
+
 		//プレイヤーのバリアに当たったらバリアの方向にそのまま返す
-		velocity = MelLib::Quaternion(1,0,0,1).GetZXYRotateQuaternion({ 0,0,1 }, other->GetAngle()).ToVector3();
+		velocity = MelLib::Quaternion(1, 0, 0, 1).GetZXYRotateQuaternion({ 0,0,1 }, other->GetAngle()).ToVector3();
 		//位置更新 (めりこみ防止用)
 		SetPosition(GetPosition() + velocity * speed);
 

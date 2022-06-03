@@ -23,12 +23,23 @@ FollowEnemy::FollowEnemy()
 	// Playerの座標を取得し、それをセット
 	sphereDatas["main"].resize(1);
 	sphereDatas["main"][0].SetPosition(GetPosition());
-	sphereDatas["main"][0].SetRadius(MODEL_SIZE*0.5f);
+	sphereDatas["main"][0].SetRadius(MODEL_SIZE * 0.5f);
 
 	// 変数の初期化
 	hp = FollowEnemyStatus::MAX_HP;
 	playerDir = EnemyStatus::initPlayerDir;
 	playerPos = EnemyStatus::initPlayerPos;
+	//撃破時の移動量
+	defeatVelocity = {
+		(std::rand() % 10 - 5) / 10.0f,
+		2.0f,
+		(std::rand() % 10 - 5) / 10.0f
+	};
+	//吹っ飛びの長さ（時間）
+	defeatCount = 0;
+
+	particle = std::make_shared<ParticleManager>();
+	particle.get()->Initialize();
 }
 
 void FollowEnemy::Move()
@@ -43,19 +54,46 @@ void FollowEnemy::Move()
 	// 加算
 	//0512一旦一定距離以上近づけさせないようにする
 	AddPosition(moveVector);
+
+	pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
+
 }
 
+void FollowEnemy::Defeat()
+{
+	//消えるまで長さ
+	static int time = 60;
+	if (defeatCount < time)
+	{
+		//吹っ飛んで落ちる
+		defeatVelocity.y -= 0.1f;
+		AddPosition(defeatVelocity);
+
+		//回転速度
+		static const MelLib::Vector3 rota = { 10,10,0 };
+		modelObjects["main"].SetAngle(modelObjects["main"].GetAngle() + rota);
+		particle.get()->SetFireFlag(true);
+	}
+	else
+	{
+		//消す
+		eraseManager = true;
+	}
+	defeatCount++;
+}
 void FollowEnemy::Update()
 {
-	FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
+	if(!moveCancel)FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
 	PushPosition();
 
 	static const float ZERO = 0.0f;
 	// hpがなくなったときに管理クラスから削除
 	if (hp <= ZERO)
 	{
-		eraseManager = true;
+		Defeat();
+		//eraseManager = true;
 	}
+	particle.get()->Update(GetPosition());
 
 	modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 255, 255));
 
@@ -65,6 +103,8 @@ void FollowEnemy::Draw()
 {
 	// ModelObjectsに追加されているModelObjectをすべて描画
 	AllDraw();
+	//パーティクル
+	particle.get()->Draw();
 }
 
 void FollowEnemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)

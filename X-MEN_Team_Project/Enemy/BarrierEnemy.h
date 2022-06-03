@@ -40,10 +40,12 @@ private:
 
 	// ボール参照用変数
 	std::shared_ptr<GameObject> refBallObject;
-	MelLib::Vector3 pastVelocity;
 private:
 
 	void Move() override;
+	// 撃破演出
+	void Defeat() override;
+
 
 	void ChangePose();
 
