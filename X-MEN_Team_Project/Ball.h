@@ -67,12 +67,12 @@ public:
 
 private:
 	//ボールの初期スピード
-	const float INIT_THROW_SPEED = 0.5f;
+	const float INIT_THROW_SPEED = 1.0f;
 	const float MAX_SPEED = 3.0f;
 	const float INIT_SCALE = 4.0f;
 	const float MAX_SCALE = 10.0f;
 	const float BALL_ACCEL = 0.25F;
-	const float BALL_FRICTION = 0.0025f;
+	const float BALL_FRICTION = 0.0040f;
 
 private:
 	//移動方向
@@ -88,6 +88,9 @@ private:
 
 	//軌跡表示用オブジェクト
 	std::shared_ptr<BallTrajectory> pBallTrajectories[60];
+
+	//予測線表示オブジェクト
+	std::shared_ptr<BallTrajectory> pBallPredictions[6];
 
 private:
 
@@ -161,9 +164,19 @@ public:
 	void UpdateTrajectories();
 
 	/// <summary>
+	/// 予測線更新
+	/// </summary>
+	void UpdatePredictions();
+
+	/// <summary>
 	/// 軌跡描画
 	/// </summary>
 	void DrawTrajectories();
+
+	/// <summary>
+	/// 予測線描画
+	/// </summary>
+	void DrawPredictions();
 
 #pragma region Getter
 	/// <summary>
@@ -192,5 +205,11 @@ public:
 	/// </summary>
 	/// <param name="setState">変更後の状態</param>
 	void SetThrowingState(BallState setState) { throwingState = setState; }
+
+	/// <summary>
+	/// 移動量セット
+	/// </summary>
+	/// <param name="velocity">移動量</param>
+	void SetVelocity(const Vector3& velocity) { this->velocity = velocity; }
 #pragma endregion
 };

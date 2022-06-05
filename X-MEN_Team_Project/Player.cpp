@@ -48,8 +48,16 @@ MelLib::Vector3 Player::GetInputVector()
 		}
 	}
 
-	// 移動キーを入力しているなら方向ベクトルを更新
-	if (isInput)dirVector = moveVector.Normalize();
+	// 移動キーを入力しているなら
+	if (isInput) {
+		//方向ベクトルを更新
+		dirVector = moveVector.Normalize();
+
+		//ボール持ってたら移動量セット(予測線用)
+		if (pBall != nullptr && pBall->GetIsThrowed() == false) {
+			pBall->SetVelocity(dirVector);
+		}
+	}
 
 	return moveVector.Normalize();
 }

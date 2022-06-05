@@ -16,7 +16,7 @@
 
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
-const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,128 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 const MelLib::Vector3 BallTrajectory::TRAJECTORY_SCALE = { 1.25,1.25,1.25 };
@@ -105,6 +105,10 @@ Ball::Ball()
 	sphereDatas["main"][0].SetPosition(GetPosition());
 	sphereDatas["main"][0].SetRadius(scale / 2);
 
+	rayDatas["main"].resize(1);
+	rayDatas["main"][0].SetPosition(GetPosition());
+	rayDatas["main"][0].SetDirection(velocity);
+
 	sphereFrameHitCheckNum = 4;
 	SetPosition({ 0,0,-10 });
 
@@ -122,7 +126,21 @@ Ball::Ball()
 		//全て非表示
 		v->SetIsDisp(false);
 	}
-	SetPosition({ 20,0,0 });
+
+	//予測線オブジェクト生成
+	for (auto& v : pBallPredictions) {
+		v = std::make_shared<BallTrajectory>();
+		//自分に紐づいているモデルを引っ張ってくる
+		v->CreateModel(modelObjects["main"].GetPModelData());
+		//初期位置＝自分の位置
+		v->SetPosition(GetPosition());
+		//スケールセット
+		v->SetScale(BallTrajectory::TRAJECTORY_SCALE);
+		//色セット
+		v->SetMulColor(GetColorFromBallState(throwingState));
+		//全て非表示
+		v->SetIsDisp(true);
+	}
 }
 
 Ball::~Ball()
@@ -150,6 +168,9 @@ void Ball::Update()
 	//軌跡更新
 	UpdateTrajectories();
 
+	//予測線更新
+	UpdatePredictions();
+
 	//投げられている状態から色セット
 	SetColor(GetColorFromBallState(throwingState));
 }
@@ -158,8 +179,10 @@ void Ball::Draw()
 {
 	//ボール本体描画
 	AllDraw();
-	////まず軌跡描画
-	//DrawTrajectories();
+	//軌跡描画
+	DrawTrajectories();
+	//予測線描画
+	DrawPredictions();
 }
 
 void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
@@ -277,6 +300,12 @@ void Ball::ThrowBall(const Vector3& initVel)
 		//全て表示
 		v->SetIsDisp(true);
 	}
+
+	//予測線オブジェクト生成
+	for (auto& v : pBallPredictions) {
+		//全て非表示
+		v->SetIsDisp(false);
+	}
 }
 
 void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
@@ -289,6 +318,16 @@ void Ball::PickUp(const Vector3& ballPos, const MelLib::Color& initColor)
 
 	//投げたフラグオフ
 	isThrowed = false;
+
+	//予測線オブジェクト生成
+	for (auto& v : pBallPredictions) {
+		//スケールセット
+		v->SetScale(BallTrajectory::TRAJECTORY_SCALE);
+		//色セット
+		v->SetMulColor(GetColorFromBallState(throwingState));
+		//全て表示
+		v->SetIsDisp(true);
+	}
 }
 
 void Ball::UpdateTrajectories()
@@ -316,14 +355,73 @@ void Ball::UpdateTrajectories()
 	}
 }
 
+void Ball::UpdatePredictions()
+{
+	rayDatas["main"][0].SetPosition(GetPosition());
+	rayDatas["main"][0].SetDirection(velocity);
+
+	//プレイヤーがボールを持っていなかったら予測線表示なし
+	if (throwingState != BallState::HOLD_PLAYER) {
+		//非表示に
+		for (int i = 0; i < _countof(pBallPredictions); i++) {
+			pBallPredictions[i]->SetIsDisp(false);
+		}
+
+		return;
+	}
+
+	//表示する球オブジェクトの距離感覚
+	const float OBJ_DISTANCE = 3;
+	//計算用球位置
+	Vector3 calcPos = GetPosition();
+
+	for (int i = 0; i < _countof(pBallPredictions); i++) {
+		//次に描画する予測線オブジェクトがなんらかの障害物に当たるかチェック
+		Vector3 hitPos = GetRayCalcResult().hitPosition;
+		float dist = MelLib::LibMath::CalcDistance3D(calcPos, hitPos);
+
+		//当たるなら
+		if (dist < OBJ_DISTANCE) {
+			//非表示に
+			for (int j = i; j < _countof(pBallPredictions); j++) {
+				pBallPredictions[j]->SetIsDisp(false);
+			}
+			//一旦break
+			break;
+		}
+		//当たらないならレイの延長線上にOBJ_DISTANCE分距離とって描画
+		else {
+			//描画する位置
+			Vector3 drawPos = calcPos + velocity * OBJ_DISTANCE;
+
+			//オブジェクトに座標登録
+			pBallPredictions[i]->SetIsDisp(true);
+			pBallPredictions[i]->SetPosition(drawPos);
+
+			//次の計算用に描画した球の位置保存
+			calcPos = drawPos;
+		}
+
+
+	}
+}
+
 void Ball::DrawTrajectories()
 {
 	for (int i = 0; i < _countof(pBallTrajectories); i++) {
-		if (/*i % 8 == 0 &&*/											//8個に1個描画
-			pBallTrajectories[i]->GetIsDisp() &&				//表示フラグチェック
+		if (pBallTrajectories[i]->GetIsDisp() &&				//表示フラグチェック
 			MelLib::LibMath::CalcDistance3D(pBallTrajectories[i]->GetPosition(), GetPosition()) >= 1)//近すぎなかったら
 		{
 			pBallTrajectories[i]->Draw();
+		}
+	}
+}
+
+void Ball::DrawPredictions()
+{
+	for (int i = 0; i < _countof(pBallPredictions); i++) {
+		if (pBallPredictions[i]->GetIsDisp() ) {				//表示フラグチェック
+			pBallPredictions[i]->Draw();
 		}
 	}
 }
