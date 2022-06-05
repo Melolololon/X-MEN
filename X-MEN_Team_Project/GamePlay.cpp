@@ -49,6 +49,10 @@ void GamePlay::Initialize()
 	//MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
 	//MelLib::GameObjectManager::GetInstance()->AddObject(pEnemyBarrier);
 
+	//ポップアップパーティクル
+	pPrticle = std::make_shared<PopUpParticle>();
+	pPrticle.get()->Initialize();
+
 	EnemyManager::GetInstance()->Initialize();
 
 	fieldObjectManager->Initialize();
@@ -93,6 +97,15 @@ void GamePlay::Update()
 		//	}
 		//}
 
+		//ポップパーティクル
+		pPrticle.get()->Update();
+		if (MelLib::Input::KeyTrigger(DIK_6))
+		{
+			pPrticle.get()->SetTarget(MelLib::Vector3());
+			pPrticle.get()->SetFire(true);
+
+		}
+
 		// 確認用
 		if (MelLib::Input::KeyTrigger(DIK_0)) GameManager::GetInstance()->SetHitStop(true);
 
@@ -131,8 +144,12 @@ void GamePlay::Draw()
 {
 	// 描画
 	MelLib::GameObjectManager::GetInstance()->Draw();
+	//ポップアップパーティクル
+	pPrticle.get()->Draw();
+	
 	// 半透明なので描画
 	pBall->DrawTrajectories();
+
 }
 
 void GamePlay::Finalize()

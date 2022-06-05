@@ -7,6 +7,7 @@
 #include "Ball.h"
 #include"Enemy/FollowEnemy.h"
 #include"Enemy/BarrierEnemy.h"
+#include"Particle/PopUpParticle.h"
 #include "Dome.h"
 
 class GamePlay : public MelLib::Scene
@@ -27,6 +28,8 @@ private:
 	std::shared_ptr<Dome>dome;
 	FieldObjectManager* fieldObjectManager;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
+	
+	std::shared_ptr<PopUpParticle> pPrticle;
 		
 public:
 	GamePlay(){}
