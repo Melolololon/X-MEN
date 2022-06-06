@@ -1,6 +1,7 @@
 #pragma once
 #include <GameObject.h>
 #include "Player.h"
+#include "Dome.h"
 
 enum class BallState
 {
@@ -68,10 +69,12 @@ public:
 private:
 	//ボールの初期スピード
 	const float INIT_THROW_SPEED = 0.5f;
-	const float MAX_SPEED = 3.0f;
 	const float INIT_SCALE = 4.0f;
 	const float MAX_SCALE = 10.0f;
-	const float BALL_ACCEL = 0.25F;
+	const float BALL_ACCEL = 1.5F;
+	const float BALL_ACCEL_DOME = 1.0F;
+	const float BALL_MAX_SPEED_NORMAL = 3.0f;
+	const float BALL_MAX_SPEED_DOME = 8.0f;
 	const float BALL_FRICTION = 0.0025f;
 
 private:
@@ -79,6 +82,8 @@ private:
 	Vector3 velocity = { 0,0,0 };
 	//ボールの速さ
 	float speed = 0;
+	//最大スピード
+	float maxSpeed = 3.0f;
 	//ボールの大きさ
 	float scale = INIT_SCALE;
 	//投げられた後か
@@ -88,6 +93,9 @@ private:
 
 	//軌跡表示用オブジェクト
 	std::shared_ptr<BallTrajectory> pBallTrajectories[60];
+
+	//ドームのポインタ
+	Dome* pDome;
 
 private:
 
@@ -165,6 +173,12 @@ public:
 	/// </summary>
 	void DrawTrajectories();
 
+	/// <summary>
+	/// ドームとの当たり判定
+	/// </summary>
+	/// <returns>反射したフレームはtrue、それ以外はfalse</returns>
+	bool UpdateBallToDome();
+
 #pragma region Getter
 	/// <summary>
 	/// ボールが投げられているかを返す
@@ -192,5 +206,7 @@ public:
 	/// </summary>
 	/// <param name="setState">変更後の状態</param>
 	void SetThrowingState(BallState setState) { throwingState = setState; }
+
+	void SetPDome(Dome* pDome) { this->pDome = pDome; }
 #pragma endregion
 };

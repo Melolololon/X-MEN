@@ -70,7 +70,7 @@ Dome::Dome()
 	modelObjects["main"].Create(MelLib::ModelData::Get("domeObj"));
 	modelObjects["main"].SetScale(MODEL_SIZE);
 
-	triangleDatas["main"] = modelObjects["main"].GetModelTriangleData()[0];
+	//triangleDatas["main"] = modelObjects["main"].GetModelTriangleData()[0];
 
 	SetScale(MODEL_SIZE);
 }
@@ -142,6 +142,21 @@ bool Dome::IsEndTrigger()
 bool Dome::IsPostProcessEndTrigger()
 {
 	return !isEnd && oldIsEnd;
+}
+
+float Dome::GetRadius()
+{
+	MelLib::Vector3 scale = GetScale();
+	float result = scale.x;
+
+	if (result > scale.y) {
+		result = scale.y;
+	}
+	if (result > scale.z) {
+		result = scale.z;
+	}
+
+	return result;
 }
 
 void Dome::SetLevel(const int value)

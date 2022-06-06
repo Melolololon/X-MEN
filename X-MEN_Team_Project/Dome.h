@@ -58,6 +58,8 @@ public:
 
 	// ƒh[ƒ€‚ªÁ‚¦‚½Œãˆ—‚ªI—¹‚µ‚½‚©‚ğæ“¾‚Å‚«‚éŠÖ”
 	bool IsPostProcessEndTrigger();
+
+	float GetRadius();
 #pragma endregion
 
 #pragma region Setter

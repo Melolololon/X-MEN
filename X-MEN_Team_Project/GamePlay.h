@@ -23,9 +23,9 @@ private:
 
 	std::shared_ptr<Player>pPlayer;
 	std::shared_ptr<Ball>pBall;
-	std::shared_ptr<NormalBarrier>barrier;
-	std::shared_ptr<Dome>dome;
-	FieldObjectManager* fieldObjectManager;
+	std::shared_ptr<NormalBarrier>pBarrier;
+	std::shared_ptr<Dome>pDome;
+	FieldObjectManager* pFieldObjectManager;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
 		
 public:
