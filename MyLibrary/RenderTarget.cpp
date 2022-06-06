@@ -373,7 +373,7 @@ bool RenderTarget::Initialize(ID3D12Device* dev, ID3D12GraphicsCommandList* list
 
 
 
-	DrawData data = PipelineState::GetDefaultDrawData( PipelineStateType::SPRITE);
+	DrawOption data = PipelineState::GetDefaultDrawData( PipelineStateType::SPRITE);
 
 	ShaderDataSet set =
 	{

@@ -1,6 +1,7 @@
 #include "Material.h"
 #include"CreateBuffer.h"
 #include<d3dx12.h>
+#include"ErrorProcess.h"
 
 ID3D12Device* MelLib::Material::device;
 ComPtr<ID3D12Resource>MelLib::Material::textureNoneTextureBuffer;
@@ -21,7 +22,7 @@ void MelLib::Material::SetOrLoadTextureProcess()
 
 }
 
-void MelLib::Material::CreateInitialize(const size_t& mtlByte)
+void MelLib::Material::CreateInitialize(const size_t& mtlByte, const unsigned int textureNum)
 {
 
 	//定数バッファ作成
@@ -45,7 +46,7 @@ void MelLib::Material::CreateInitialize(const size_t& mtlByte)
 	//ディスクリプタヒープ作成
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc{};
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.NumDescriptors = 2;
+	descHeapDesc.NumDescriptors = 1 + textureNum;
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	descHeapDesc.NodeMask = 0;
 
@@ -62,6 +63,9 @@ void MelLib::Material::CreateInitialize(const size_t& mtlByte)
 		),
 		textureNoneTextureBuffer.Get()
 	);
+
+	this->textureNumMax = textureNum;
+
 }
 
 void MelLib::Material::MapMaterialData(void** pData)
@@ -106,20 +110,36 @@ void MelLib::Material::SetColor(const Color& color)
 	MapColorBuffer(color);
 }
 
-void MelLib::Material::SetTexture(Texture* pTex)
+bool MelLib::Material::SetTexture(Texture* pTex, const std::string& name)
 { 
-	pTexture = pTex; 
-	if (pTexture)
+	//pTexture = pTex; 
+
+
+	//pTextures.emplace(pTex->GetTextureName(),pTex);
+
+	bool useTexture = pTextures.find(name) != pTextures.end();
+	if (!useTexture && pTextures.size() == textureNumMax) 
 	{
+		ErrorProcess::GetInstance()->StartErroeProcess
+		(L"マテリアルにテクスチャをセットできません。テクスチャ数の上限を超えています。",false);
+		return false;
+	}
+
+
+	
+
+	if (pTex)
+	{
+		pTextures[name] = pTex;
 		CreateBuffer::GetInstance()->CreateShaderResourceView
 		(
 			CD3DX12_CPU_DESCRIPTOR_HANDLE
 			(
 				textureHeap->GetCPUDescriptorHandleForHeapStart(),
-				TEXTURE_HANDLE_NUM,
+				pTextures.size() - 1,
 				device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 			),
-			pTexture->GetTextureBuffer()
+			pTex->GetTextureBuffer()
 		);
 
 		MapColorBuffer(Color(0, 0, 0, 0));
@@ -131,16 +151,26 @@ void MelLib::Material::SetTexture(Texture* pTex)
 			CD3DX12_CPU_DESCRIPTOR_HANDLE
 			(
 				textureHeap->GetCPUDescriptorHandleForHeapStart(),
-				TEXTURE_HANDLE_NUM,
+				0 ,
 				device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 			),
 			textureNoneTextureBuffer.Get()
 		);
 
 		MapColorBuffer(color);
-
 	}
+
+
+	return true;
 }
+//
+//void MelLib::Material::SetTexture(const std::vector<Texture*>& pTex)
+//{
+//	for (const auto& texture : pTex) 
+//	{
+//		SetTexture(pTex);
+//	}
+//}
 
 void MelLib::Material::SetNormalMapTexture(Texture* pTex)
 {
@@ -190,18 +220,20 @@ void MelLib::Material::SetNormalMapTexture(Texture* pTex)
 
 MelLib::ADSAMaterial::ADSAMaterial(ADSAMaterial& mtl)
 {
-	Create(mtl.drawData);
+	Create(mtl.drawData,mtl.textureNumMax);
+
+	// ここにtextureセット処理書く
 }
 
 MelLib::ADSAMaterial& MelLib::ADSAMaterial::operator=(ADSAMaterial& mtl)
 {
-	Create(mtl.drawData);
+	Create(mtl.drawData, mtl.textureNumMax);
 	return * this;
 }
 
-void MelLib::ADSAMaterial::Create(const DrawData& drawData)
+void MelLib::ADSAMaterial::Create(const DrawOption& drawData, const unsigned int textureNum)
 {
-	CreateInitialize(sizeof(ADSAMaterialData));
+	CreateInitialize(sizeof(ADSAMaterialData), textureNum);
 	Map();
 
 	//パイプライン作成
@@ -256,9 +288,9 @@ void MelLib::PBRMaterial::Map()
 	UnmapMaterialData();
 }
 
-void MelLib::PBRMaterial::Create(const DrawData& drawData)
+void MelLib::PBRMaterial::Create(const DrawOption& drawData, const unsigned int textureNum)
 {
-	CreateInitialize(sizeof(PBRMaterial)); 
+	CreateInitialize(sizeof(PBRMaterial), textureNum);
 	Map();
 
 	//ここPBRのシェーダー作ってセットするようにする
@@ -290,7 +322,7 @@ void MelLib::PBRMaterial::SetMaterialData(const PBRMaterialData& data)
 
 MelLib::PBRMaterial::PBRMaterial(PBRMaterial& mtl)
 {
-	Create(mtl.drawData);
+	Create(mtl.drawData, mtl.textureNumMax);
 }
 
 MelLib::PBRMaterial MelLib::PBRMaterial::operator=(PBRMaterial& mtl)

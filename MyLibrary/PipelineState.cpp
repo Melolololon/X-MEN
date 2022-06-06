@@ -14,7 +14,7 @@ ID3D12RootSignature* PipelineState::renderTargetRootSignature;
 
 void PipelineState::SetPipelineDesc
 (
-	const DrawData& pipelineData,
+	const DrawOption& pipelineData,
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc,
 	const PipelineStateType type,
 	const int renderTargetNum
@@ -168,7 +168,7 @@ void PipelineState::SetPipelineDesc
 
 void PipelineState::Create
 (
-	const DrawData& drawData, 
+	const DrawOption& drawData, 
 	const ShaderDataSet& shaderSet,
 	const PipelineStateType pipelineType,
 	const std::vector<InputLayoutData>* inputLayoutData,
@@ -190,7 +190,7 @@ void PipelineState::Create
 
 bool PipelineState::CreatePipeline
 (
-	const DrawData& drawData,
+	const DrawOption& drawData,
 	const ShaderDataSet& shaderSet,
 	const PipelineStateType pipelineType,
 	const std::vector<InputLayoutData>* inputLayoutData,
@@ -659,9 +659,9 @@ void PipelineState::Delete(const std::string& name)
 	pPipelineState.erase(name);
 }
 
-DrawData PipelineState::GetDefaultDrawData(const PipelineStateType type)
+DrawOption PipelineState::GetDefaultDrawData(const PipelineStateType type)
 {
-	DrawData data;
+	DrawOption data;
 	switch (type)
 	{
 	case PipelineStateType::MODEL:

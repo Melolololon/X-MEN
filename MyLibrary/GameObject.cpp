@@ -536,7 +536,7 @@ unsigned int MelLib::GameObject::GetFrameHitCheckNumber(ShapeType3D type) const
 
 void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 {
-	DrawData pData = PipelineState::GetDefaultDrawData(PipelineStateType::MODEL);
+	DrawOption pData = PipelineState::GetDefaultDrawData(PipelineStateType::MODEL);
 	pData.drawMode = DrawMode::WIREFRAME;
 	pData.cullMode = CullMode::NONE;
 
@@ -558,11 +558,11 @@ void MelLib::GameObject::CreateCollisionCheckModelPipelineState()
 		1
 	);
 
-	DrawData data = PipelineState::GetDefaultDrawData(PipelineStateType::MODEL);
+	DrawOption data = PipelineState::GetDefaultDrawData(PipelineStateType::MODEL);
 	data.cullMode = CullMode::NONE;
 	data.drawMode = DrawMode::WIREFRAME;
 
-	material.Create(data);
+	material.Create(data,1);
 
 }
 

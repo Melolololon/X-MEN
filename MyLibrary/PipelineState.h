@@ -26,7 +26,7 @@ namespace MelLib
 
 		static void SetPipelineDesc
 		(
-			const DrawData& drawData,
+			const DrawOption& drawData,
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc,
 			const PipelineStateType type,
 			const int renderTargetNum
@@ -39,7 +39,7 @@ namespace MelLib
 
 
 		ComPtr<ID3D12PipelineState>pipelineState;
-		DrawData drawData;
+		DrawOption drawData;
 		ShaderDataSet shaderSet;
 		PipelineStateType pipelineType = PipelineStateType::MODEL;
 		std::unique_ptr<std::vector<InputLayoutData>> inputLayoutData = nullptr;
@@ -68,7 +68,7 @@ namespace MelLib
 		/// <returns></returns>
 		static void Create
 		(
-			const DrawData& drawData,
+			const DrawOption& drawData,
 			const ShaderDataSet& shaderSet,
 			const PipelineStateType pipelineType,
 			const std::vector<InputLayoutData>* inputLayoutData,
@@ -90,7 +90,7 @@ namespace MelLib
 		/// <returns></returns>
 		bool CreatePipeline
 		(
-			const DrawData& drawData,
+			const DrawOption& drawData,
 			const ShaderDataSet& shaderSet,
 			const PipelineStateType pipelineType,
 			const std::vector<InputLayoutData>* inputLayoutData,
@@ -111,7 +111,7 @@ namespace MelLib
 		/// </summary>
 		/// <param name="data"></param>
 		/// <param name="type"></param>
-		static DrawData GetDefaultDrawData( const PipelineStateType type);
+		static DrawOption GetDefaultDrawData( const PipelineStateType type);
 
 		static void SetModelRootSignature(ID3D12RootSignature* sig) { modelRootSignature = sig; }
 		static void SetSpriteRootSignature(ID3D12RootSignature* sig) { spriteRootSignature = sig; }

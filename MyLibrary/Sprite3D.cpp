@@ -66,7 +66,7 @@ MelLib::Sprite3D::Sprite3D(const Sprite3D& sprite)
 
 bool Sprite3D::Initialize()
 {
-	DrawData data;
+	DrawOption data;
 	data.alphaWrite = true;
 	data.blendMode = BlendMode::ADD;
 	data.cullMode = CullMode::NONE;

@@ -358,7 +358,7 @@ bool MelLib::ModelData::Create
 
 	pModelData->material.reserve(vertices.size());
 	pModelData->material[name] = std::make_unique<ADSAMaterial>();
-	pModelData->material[name]->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL));
+	pModelData->material[name]->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL),1);
 
 
 	pModelDatas[name]->batchDeletionFlag = batchDeletionFlag;
@@ -400,7 +400,7 @@ bool MelLib::ModelData::Create
 
 	pModelData->material.reserve(vertices.size());
 	pModelData->material[name] = std::make_unique<ADSAMaterial>();
-	pModelData->material[name]->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL));
+	pModelData->material[name]->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL),1);
 
 
 	pModelDatas[name]->batchDeletionFlag = batchDeletionFlag;
@@ -480,7 +480,7 @@ void ModelData::Initialize(ID3D12Device* pDevice)
 {
 	device = pDevice;
 	defaultMaterial = std::make_unique<ADSAMaterial>();
-	defaultMaterial->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL));
+	defaultMaterial->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL),1);
 	CreatePrimitiveModel();
 }
 
@@ -780,7 +780,7 @@ bool ModelData::LoadModel(const std::string& path, const std::string& name)
 				pTexture[objectName] = std::make_unique<Texture>();
 				pTexture[objectName]->LoadModelTexture(texPath[objectName]);
 				material[objectName] = std::make_unique<ADSAMaterial>();
-				material[objectName]->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL));
+				material[objectName]->Create(PipelineState::GetDefaultDrawData(PipelineStateType::MODEL),1);
 				material[objectName]->SetTexture(pTexture[objectName].get());
 				material[objectName]->SetMaterialData(mtlData[objectName]);
 			}

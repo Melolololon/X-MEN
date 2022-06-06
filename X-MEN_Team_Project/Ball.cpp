@@ -208,7 +208,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	{
 		MelLib::Vector3 rayPos = GetRayCalcResult().hitPosition;
 		MelLib::Vector3 pos = GetPosition();
-		
+		//MelLib::Vector3 normal = ;
 	}
 
 	//ìGÇ∆ÇÃè’ìÀ

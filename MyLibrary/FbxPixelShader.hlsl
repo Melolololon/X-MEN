@@ -5,6 +5,7 @@
 //スプライトとバッファの生成関数同じだからスプライト側をどうにかしないといけない
 
 Texture3D<float4> tex:register(t0);
+Texture3D<float4> tex2:register(t1);
 SamplerState smp:register(s0);
 
 
@@ -17,7 +18,7 @@ float4 main(GSOutput input) : SV_TARGET
 	//smoothstepと範囲で、wを求める
 	float w = smoothstep(start, end,input.worldPos.z);
 
-	float4 texColor = tex.Sample(smp, float3(input.uv, w)) + baseColor;
+	float4 texColor = tex2.Sample(smp, float3(input.uv, w)) + baseColor;
 	float4 shaderColor = m_ambient;
 
 	const float shininess = 4.0f;//光沢度

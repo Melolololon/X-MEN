@@ -3,6 +3,7 @@
 #pragma comment(lib,"d3d12.lib")
 #include<wrl.h>
 #include<tuple>
+#include<map>
 
 #include"Color.h"
 #include"Values.h"
@@ -81,6 +82,8 @@ namespace MelLib
 		//テクスチャ
 		static const UINT TEXTURE_HANDLE_NUM = 0;
 		Texture* pTexture = nullptr;
+		// シェーダー側で受け取るときにmapの方が指定しやすそうなので、mapにする
+		std::map<std::string, Texture*>pTextures;
 		
 		static const UINT NORMAL_MAP_HANDLE_NUM = 1;
 		Texture* pNormalMapTexture = nullptr;
@@ -102,6 +105,9 @@ namespace MelLib
 
 		//テクスチャ未セット時にセットするテクスチャバッファ
 		static ComPtr<ID3D12Resource> textureNoneTextureBuffer;
+
+		// テクスチャ枚数の最大値
+		static const unsigned int TEXTURE_MAX = 8;
 	private:
 		void MapColorBuffer(const Color& color);
 
@@ -109,13 +115,20 @@ namespace MelLib
 		void SetOrLoadTextureProcess();
 	protected:
 		std::unique_ptr<PipelineState> pipelineState;
-		DrawData drawData;
+		DrawOption drawData;
+		unsigned int textureNumMax = 0;
+
 	protected:
+		// エンジンとかだとマテリアル作った後にテクスチャ読み込んでセットできる。
+		// それを再現するために、テクスチャを後からセットできるようにする。
+		// しかし、先にヒープの数をセットしないといけないため、数を先に指定するようにする
+		// あとこっちのほうが書き換えヶ所減るから都合いい
+
 		/// <summary>
 		/// マテリアル生成時の初期化処理を行います。
 		/// </summary>
 		/// <param name="mtlByte">構造体のバイト数</param>
-		void CreateInitialize(const size_t& mtlByte);
+		void CreateInitialize(const size_t& mtlByte, const unsigned int textureNum);
 
 	
 		void MapMaterialData(void** pData);
@@ -128,23 +141,34 @@ namespace MelLib
 
 		static void Initialize(ID3D12Device* dev);
 		
-		virtual void Create(const DrawData& drawData){}
+		virtual void Create(const DrawOption& drawData, const unsigned int textureNum){}
 
 		ID3D12DescriptorHeap* GetPTextureHeap() { return textureHeap.Get(); }
 		ID3D12Resource* GetPConstBuffer(const MaterialConstBufferType type)const;
 		Texture* GetPTexture() { return pTexture; }
+		void GetPTextures(std::vector<Texture*>& refTex) {};
 		Texture* GetPNormalTexture() { return pNormalMapTexture; }
 		//Texture3D* GetPTexture3D() { return pTexture3D; }
 		PipelineState* GetPPipelineState() { return pipelineState.get(); }
 	
-
+		const std::map<std::string, Texture*>& GetRefPTextures()const { return pTextures; }
 
 		void SetColor(const Color& color);
-		void SetTexture(Texture* pTex);
+		/// <summary>
+		/// テクスチャの登録、または交換を行います。
+		/// </summary>
+		/// <param name="pTex">テクスチャ名</param>
+		/// <param name="name">登録名</param>
+		/// <returns></returns>
+		bool SetTexture(Texture* pTex,const std::string& name = "Default");
+		//void SetTexture(const std::vector<Texture*>& pTex);
+		//void SetTexture(const std::vector<Texture*>& pTex);
 		void SetNormalMapTexture(Texture* pNormalMapTex);
 		//void SetTexture3D(Texture3D* pTex);
 
 	
+		unsigned int GetTextureNum()const { return textureNumMax; }
+		static unsigned int GetTextureNumMax() { return TEXTURE_MAX; }
 	};
 
 
@@ -180,7 +204,7 @@ namespace MelLib
 		ADSAMaterial(ADSAMaterial& mtl);
 		ADSAMaterial& operator=(ADSAMaterial& mtl);
 
-		void Create(const DrawData& drawData)override;
+		void Create(const DrawOption& drawData, const unsigned int textureNum)override;
 
 #pragma region セット
 		void SetMaterialData(const ADSAMaterialData& data);
@@ -220,7 +244,7 @@ namespace MelLib
 		PBRMaterial(PBRMaterial& mtl);
 		PBRMaterial operator=(PBRMaterial& mtl);
 
-		void Create(const DrawData& drawData)override;
+		void Create(const DrawOption& drawData, const unsigned int textureNum)override;
 
 #pragma region セット
 		void SetMaterialData(const PBRMaterialData& data);

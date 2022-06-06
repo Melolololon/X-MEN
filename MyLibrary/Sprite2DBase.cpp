@@ -28,7 +28,7 @@ bool Sprite2DBase::Initialize(const int winWidth, const int winHeight)
 		1.0f
 	);
 
-	DrawData data;
+	DrawOption data;
 	data.alphaWrite = true;
 	data.blendMode = BlendMode::ADD;
 	data.cullMode = CullMode::NONE;

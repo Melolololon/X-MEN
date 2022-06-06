@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include"CreateBuffer.h"
 #include"Sprite.h"
+#include"StringSupport.h"
 
 using namespace MelLib;
 std::unordered_map<std::string, std::unique_ptr<Texture>>Texture::pTextures;
@@ -49,6 +50,7 @@ bool Texture::LoadTexture(const std::vector<std::string>& path)
 		}
 	}
 
+	textureName = StringSupport::ExtractionFileName(path[0]);
 
 	return true;
 }

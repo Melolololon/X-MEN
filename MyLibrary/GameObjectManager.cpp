@@ -55,6 +55,8 @@ void GameObjectManager::Update()
 		obj->SetPreDataPositions();
 		obj->Update();
 
+		// 仮にここに書いてる
+		obj->SetPreDataPositions();
 	}
 
 	for (auto& obj : object2Ds)
@@ -70,6 +72,9 @@ void GameObjectManager::Update()
 			a.get()->SetPreDataPositions();
 			a.get()->Update();
 			objects.push_back(a);
+
+			// 仮にここに書いてる
+			a->SetPreDataPositions();
 		}
 
 		if (addObjectSort != OBJECT_SORT_NONE)ObjectSort(addObjectSort, addObjectSortOrderType);
@@ -124,10 +129,10 @@ void GameObjectManager::Update()
 			// 応急処置
 			float checkDistance = obj1->GetCollisionCheckDistance();
 			if (checkDistance < obj2->GetCollisionCheckDistance())checkDistance = obj2->GetCollisionCheckDistance();
-			
+
 			float distance = LibMath::CalcDistance3D(obj1->GetPosition(), obj2->GetPosition());
 			if (distance > checkDistance)continue;
-			
+
 #pragma region Sphere & Sphere
 
 
@@ -695,7 +700,7 @@ void GameObjectManager::Update()
 										obj1->SetSphereCalcResult(result1);
 										//obj2->SetBoxCalcResult(result2);
 
-										//obj1->SetHitBoxData(obb);
+										obj1->SetHitOBBData(obb);
 										obj2->SetHitSphereData(sphere1);
 
 										obj1->SetLerpPosition(sphere1.GetPosition());
@@ -797,7 +802,7 @@ void GameObjectManager::Update()
 										//obj1->SetBoxCalcResult(result2);
 
 										obj1->SetHitSphereData(sphere1);
-										//obj2->SetHitBoxData(obb);
+										obj2->SetHitOBBData(obb);
 
 										obj2->SetLerpPosition(sphere1.GetPosition());
 										obj1->SetLerpPosition(obb.GetPosition());
@@ -867,7 +872,7 @@ void GameObjectManager::Update()
 
 
 								// 判定を行う回数を取得
-								checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::BOX);
+								checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::TRIANGLE);
 
 								SphereData sphere1 = sphereDataVec[colI];
 								TriangleData triangle = triangleDataVec[colJ];
@@ -896,7 +901,7 @@ void GameObjectManager::Update()
 								{
 									sphere1.SetPosition(easing1.PreLerp());
 
-									Value3<Vector3> tPos = Value3<Vector3>(easing2.v1.PreLerp(), easing2.v2.PreLerp(),easing2.v3.PreLerp());
+									Value3<Vector3> tPos = Value3<Vector3>(easing2.v1.PreLerp(), easing2.v2.PreLerp(), easing2.v3.PreLerp());
 									triangle.SetPosition(tPos);
 
 
@@ -979,7 +984,7 @@ void GameObjectManager::Update()
 								TriangleCalcResult result2;
 
 								// 判定を行う回数を取得
-								checkNum = getCheckNum(*obj2, ShapeType3D::SPHERE, *obj1, ShapeType3D::BOX);
+								checkNum = getCheckNum(*obj2, ShapeType3D::SPHERE, *obj1, ShapeType3D::TRIANGLE);
 
 								SphereData sphere1 = sphereDataVec[colI];
 								TriangleData triangle = triangleDataVec[colJ];
@@ -1007,7 +1012,7 @@ void GameObjectManager::Update()
 								for (int c = 0; c < checkNum; c++)
 								{
 									sphere1.SetPosition(easing2.PreLerp());
-									
+
 									Value3<Vector3> tPos = Value3<Vector3>(easing1.v1.PreLerp(), easing1.v2.PreLerp(), easing1.v3.PreLerp());
 									triangle.SetPosition(tPos);
 
@@ -1729,7 +1734,7 @@ void GameObjectManager::Update()
 				&& collisionFlags[objJ].ray)
 			{
 
-				std::unordered_map < std::string, std::vector<BoxData>>sphereDatas = obj1->GetBoxDatas();
+				std::unordered_map < std::string, std::vector<BoxData>>boxDatas = obj1->GetBoxDatas();
 				std::unordered_map < std::string, std::vector<RayData>>rayDatas = obj2->GetRayDatas();
 
 				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
@@ -1739,7 +1744,7 @@ void GameObjectManager::Update()
 
 
 				// 名前分ループ
-				for (const auto& sphereData : sphereDatas)
+				for (const auto& sphereData : boxDatas)
 				{
 					for (const auto& rayData : rayDatas)
 					{
@@ -1758,7 +1763,7 @@ void GameObjectManager::Update()
 
 
 								// 判定を行う回数を取得
-								checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::RAY);
+								checkNum = getCheckNum(*obj1, ShapeType3D::BOX, *obj2, ShapeType3D::RAY);
 
 								BoxData box = sphereDataVec[colI];
 								RayData ray = rayDataVec[colJ];
@@ -1834,7 +1839,7 @@ void GameObjectManager::Update()
 			if (collisionFlags[objJ].box
 				&& collisionFlags[objI].ray)
 			{
-				std::unordered_map < std::string, std::vector<BoxData>>sphereDatas = obj2->GetBoxDatas();
+				std::unordered_map < std::string, std::vector<BoxData>>boxDatas = obj2->GetBoxDatas();
 				std::unordered_map < std::string, std::vector<RayData>>rayDatas = obj1->GetRayDatas();
 
 				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
@@ -1844,7 +1849,7 @@ void GameObjectManager::Update()
 
 
 				// 名前分ループ
-				for (const auto& sphereData : sphereDatas)
+				for (const auto& sphereData : boxDatas)
 				{
 					for (const auto& rayData : rayDatas)
 					{
@@ -1862,7 +1867,7 @@ void GameObjectManager::Update()
 								RayCalcResult result2;
 
 								// 判定を行う回数を取得
-								checkNum = getCheckNum(*obj2, ShapeType3D::SPHERE, *obj1, ShapeType3D::RAY);
+								checkNum = getCheckNum(*obj2, ShapeType3D::BOX, *obj1, ShapeType3D::RAY);
 
 								BoxData box = sphereDataVec[colI];
 								RayData ray = rayDataVec[colJ];
@@ -1932,211 +1937,211 @@ void GameObjectManager::Update()
 #pragma endregion
 
 #pragma region OBB & Ray
-				if (collisionFlags[objI].obb
-					&& collisionFlags[objJ].ray)
+			if (collisionFlags[objI].obb
+				&& collisionFlags[objJ].ray)
+			{
+
+				std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj1->GetOBBDatas();
+				std::unordered_map < std::string, std::vector<RayData>>rayDatas = obj2->GetRayDatas();
+
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreOBBPositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreRayPositions(prePositions2);
+
+
+				// 名前分ループ
+				for (const auto& obbData : obbDatas)
 				{
-
-					std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj1->GetOBBDatas();
-					std::unordered_map < std::string, std::vector<RayData>>rayDatas = obj2->GetRayDatas();
-
-					std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
-					obj1->GetPreOBBPositions(prePositions1);
-					std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
-					obj2->GetPreRayPositions(prePositions2);
-
-
-					// 名前分ループ
-					for (const auto& obbData : obbDatas)
+					for (const auto& rayData : rayDatas)
 					{
-						for (const auto& rayData : rayDatas)
+						std::vector<OBBData>obbDataVec = obbData.second;
+						size_t obbDataSize = obbDataVec.size();
+						std::vector<RayData>rayDataVec = rayData.second;
+						size_t rayDataSize = rayDataVec.size();
+
+						for (int colI = 0; colI < obbDataSize; colI++)
 						{
-							std::vector<OBBData>obbDataVec = obbData.second;
-							size_t obbDataSize = obbDataVec.size();
-							std::vector<RayData>rayDataVec = rayData.second;
-							size_t rayDataSize = rayDataVec.size();
-
-							for (int colI = 0; colI < obbDataSize; colI++)
+							for (int colJ = 0; colJ < rayDataSize; colJ++)
 							{
-								for (int colJ = 0; colJ < rayDataSize; colJ++)
+								//OBBCalcResult result1;
+								RayCalcResult result2;
+
+
+
+								// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj1, ShapeType3D::OBB, *obj2, ShapeType3D::RAY);
+
+								OBBData obb1 = obbDataVec[colI];
+								RayData ray = rayDataVec[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = obb1.GetPosition();
+								Vector3 prePos1 = prePositions1[obbData.first][colI];
+								Vector3 pos2 = ray.GetPosition();
+								Vector3 prePos2 = prePositions2[rayData.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+								for (int c = 0; c < checkNum; c++)
 								{
-									//OBBCalcResult result1;
-									RayCalcResult result2;
+									obb1.SetPosition(easing1.PreLerp());
+									ray.SetPosition(easing2.PreLerp());
 
 
-
-									// 判定を行う回数を取得
-									checkNum = getCheckNum(*obj1, ShapeType3D::SPHERE, *obj2, ShapeType3D::RAY);
-
-									OBBData obb1 = obbDataVec[colI];
-									RayData ray = rayDataVec[colJ];
-
-									// 座標を補完
-									Vector3 pos1 = obb1.GetPosition();
-									Vector3 prePos1 = prePositions1[obbData.first][colI];
-									Vector3 pos2 = ray.GetPosition();
-									Vector3 prePos2 = prePositions2[rayData.first][colJ];
-
-									if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
-
-									Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
-									Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
-
-									Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
-									Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
-									for (int c = 0; c < checkNum; c++)
+									if (Collision::OBBAndRay
+									(
+										obb1,
+										//result1,
+										ray,
+										&result2
+									))
 									{
-										obb1.SetPosition(easing1.PreLerp());
-										ray.SetPosition(easing2.PreLerp());
+										//obj1->SetOBBCalcResult(result1);
+										obj2->SetRayCalcResult(result2);
 
+										obj1->SetHitRayData(ray);
+										obj2->SetHitOBBData(obb1);
 
-										if (Collision::OBBAndRay
+										obj1->SetLerpPosition(obb1.GetPosition());
+										obj2->SetLerpPosition(ray.GetPosition());
+
+										obj1->SetLerpMovePosition(easingMovePos1);
+										obj2->SetLerpMovePosition(easingMovePos2);
+
+										//hitを呼び出す
+										obj1->Hit
 										(
-											obb1,
-											//result1,
-											ray,
-											&result2
-										))
-										{
-											//obj1->SetOBBCalcResult(result1);
-											obj2->SetRayCalcResult(result2);
-
-											obj1->SetHitRayData(ray);
-											//obj2->SetHitOBBData(obb1);
-
-											obj1->SetLerpPosition(obb1.GetPosition());
-											obj2->SetLerpPosition(ray.GetPosition());
-
-											obj1->SetLerpMovePosition(easingMovePos1);
-											obj2->SetLerpMovePosition(easingMovePos2);
-
-											//hitを呼び出す
-											obj1->Hit
-											(
-												*obj2,
-												ShapeType3D::OBB,
-												obbData.first,
-												ShapeType3D::RAY,
-												rayData.first
-											);
-											obj2->Hit
-											(
-												*obj1,
-												ShapeType3D::RAY,
-												rayData.first,
-												ShapeType3D::OBB,
-												obbData.first
-											);
-											break;
-										}
-									}
-								}
-
-							}
-						}
-
-
-					}
-				}
-
-
-				if (collisionFlags[objJ].obb
-					&& collisionFlags[objI].ray)
-				{
-					std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj2->GetOBBDatas();
-					std::unordered_map < std::string, std::vector<RayData>>rayDatas = obj1->GetRayDatas();
-
-					std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
-					obj1->GetPreRayPositions(prePositions1);
-					std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
-					obj2->GetPreOBBPositions(prePositions2);
-
-
-					// 名前分ループ
-					for (const auto& obbData : obbDatas)
-					{
-						for (const auto& rayData : rayDatas)
-						{
-
-							std::vector<OBBData>obbDataVec = obbData.second;
-							size_t obbDataSize = obbDataVec.size();
-							std::vector<RayData>rayDataVec = rayData.second;
-							size_t boxDataSize = rayDataVec.size();
-
-							for (int colI = 0; colI < obbDataSize; colI++)
-							{
-								for (int colJ = 0; colJ < boxDataSize; colJ++)
-								{
-									//OBBCalcResult result1;
-									RayCalcResult result2;
-
-									// 判定を行う回数を取得
-									checkNum = getCheckNum(*obj2, ShapeType3D::SPHERE, *obj1, ShapeType3D::RAY);
-
-									OBBData obb = obbDataVec[colI];
-									RayData ray = rayDataVec[colJ];
-
-									// 座標を補完
-									Vector3 pos1 = ray.GetPosition();
-									Vector3 prePos1 = prePositions1[rayData.first][colI];
-									Vector3 pos2 = obb.GetPosition();
-									Vector3 prePos2 = prePositions2[obbData.first][colJ];
-
-									if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
-
-									Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
-									Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
-									Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
-									Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
-									for (int c = 0; c < checkNum; c++)
-									{
-										obb.SetPosition(easing2.PreLerp());
-										ray.SetPosition(easing1.PreLerp());
-
-										if (Collision::OBBAndRay
+											*obj2,
+											ShapeType3D::OBB,
+											obbData.first,
+											ShapeType3D::RAY,
+											rayData.first
+										);
+										obj2->Hit
 										(
-											obb,
-											//result1,
-											ray,
-											&result2
-										))
-										{
-											//obj2->SetOBBCalcResult(result1);
-											obj1->SetRayCalcResult(result2);
-
-										//	obj2->SetHitOBBData(obb);
-											obj1->SetHitRayData(ray);
-
-											obj2->SetLerpPosition(obb.GetPosition());
-											obj1->SetLerpPosition(ray.GetPosition());
-
-											obj2->SetLerpMovePosition(easingMovePos2);
-											obj1->SetLerpMovePosition(easingMovePos1);
-											//hitを呼び出す
-											obj2->Hit
-											(
-												*obj1,
-												ShapeType3D::SPHERE,
-												obbData.first,
-												ShapeType3D::OBB,
-												rayData.first
-											);
-											obj1->Hit
-											(
-												*obj2,
-												ShapeType3D::RAY,
-												rayData.first,
-												ShapeType3D::OBB,
-												obbData.first
-											);
-											break;
-										}
+											*obj1,
+											ShapeType3D::RAY,
+											rayData.first,
+											ShapeType3D::OBB,
+											obbData.first
+										);
+										break;
 									}
 								}
 							}
+
 						}
 					}
 
+
 				}
+			}
+
+
+			if (collisionFlags[objJ].obb
+				&& collisionFlags[objI].ray)
+			{
+				std::unordered_map < std::string, std::vector<OBBData>>obbDatas = obj2->GetOBBDatas();
+				std::unordered_map < std::string, std::vector<RayData>>rayDatas = obj1->GetRayDatas();
+
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions1;
+				obj1->GetPreRayPositions(prePositions1);
+				std::unordered_map<std::string, std::vector<Vector3>>prePositions2;
+				obj2->GetPreOBBPositions(prePositions2);
+
+
+				// 名前分ループ
+				for (const auto& obbData : obbDatas)
+				{
+					for (const auto& rayData : rayDatas)
+					{
+
+						std::vector<OBBData>obbDataVec = obbData.second;
+						size_t obbDataSize = obbDataVec.size();
+						std::vector<RayData>rayDataVec = rayData.second;
+						size_t boxDataSize = rayDataVec.size();
+
+						for (int colI = 0; colI < obbDataSize; colI++)
+						{
+							for (int colJ = 0; colJ < boxDataSize; colJ++)
+							{
+								//OBBCalcResult result1;
+								RayCalcResult result2;
+
+								// 判定を行う回数を取得
+								checkNum = getCheckNum(*obj2, ShapeType3D::OBB, *obj1, ShapeType3D::RAY);
+
+								OBBData obb = obbDataVec[colI];
+								RayData ray = rayDataVec[colJ];
+
+								// 座標を補完
+								Vector3 pos1 = ray.GetPosition();
+								Vector3 prePos1 = prePositions1[rayData.first][colI];
+								Vector3 pos2 = obb.GetPosition();
+								Vector3 prePos2 = prePositions2[obbData.first][colJ];
+
+								if (pos1 == prePos1 && pos2 == prePos2)checkNum = 1;
+
+								Easing<Vector3>easing1(prePos1, pos1, 100.0f / static_cast<float>(checkNum));
+								Easing<Vector3>easing2(prePos2, pos2, 100.0f / static_cast<float>(checkNum));
+								Vector3 easingMovePos1 = easing1.GetFrameLarpValue();
+								Vector3 easingMovePos2 = easing2.GetFrameLarpValue();
+								for (int c = 0; c < checkNum; c++)
+								{
+									obb.SetPosition(easing2.PreLerp());
+									ray.SetPosition(easing1.PreLerp());
+
+									if (Collision::OBBAndRay
+									(
+										obb,
+										//result1,
+										ray,
+										&result2
+									))
+									{
+										//obj2->SetOBBCalcResult(result1);
+										obj1->SetRayCalcResult(result2);
+
+										obj2->SetHitOBBData(obb);
+										obj1->SetHitRayData(ray);
+
+										obj2->SetLerpPosition(obb.GetPosition());
+										obj1->SetLerpPosition(ray.GetPosition());
+
+										obj2->SetLerpMovePosition(easingMovePos2);
+										obj1->SetLerpMovePosition(easingMovePos1);
+										//hitを呼び出す
+										obj2->Hit
+										(
+											*obj1,
+											ShapeType3D::OBB,
+											obbData.first,
+											ShapeType3D::RAY,
+											rayData.first
+										);
+										obj1->Hit
+										(
+											*obj2,
+											ShapeType3D::RAY,
+											rayData.first,
+											ShapeType3D::OBB,
+											obbData.first
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+
+			}
 
 #pragma endregion
 

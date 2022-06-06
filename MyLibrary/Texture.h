@@ -23,14 +23,20 @@ namespace MelLib
 
 		static UINT loadTextureNumber;
 		static std::unordered_map<std::string, std::unique_ptr<Texture>>pTextures;
-		
-		//テクスチャ番号(ヒープの添え字)
-		UINT textureNumber = 0;
-		std::vector< DirectX::ScratchImage> scratchImage;
-
 
 		//空いたヒープを使用するために使用
 		static std::vector<UINT>eraseTextureNumber;
+
+	private:
+		std::string textureName;
+
+		//テクスチャ番号(ヒープの添え字)
+		UINT textureNumber = 0;
+
+		// 
+		std::vector< DirectX::ScratchImage> scratchImage;
+
+
 	private:
 
 		bool LoadSpriteTexture(const std::string& texturePath);
@@ -75,7 +81,7 @@ namespace MelLib
 #pragma region データ取得
 
 		Vector2 GetTextureSize()const { return { static_cast<float>(metadata.width) , static_cast<float>(metadata.height) }; }
-
+		std::string GetTextureName()const { return textureName; }
 #pragma endregion
 
 #pragma region 開発者用関数

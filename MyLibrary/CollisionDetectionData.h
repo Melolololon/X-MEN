@@ -534,6 +534,7 @@ namespace MelLib
 	struct RayCalcResult
 	{
 		Vector3 hitPosition;
+		Vector3 hitObjectNormal;
 	};
 
 	//ê¸
