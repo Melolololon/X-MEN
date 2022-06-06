@@ -135,6 +135,9 @@
     <ClCompile Include="Particle\PopUpParticle.cpp">
       <Filter>ソース ファイル\Object\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="FlagController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="Particle\ParticleManager.h">
       <Filter>ヘッダー ファイル\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="FlagController.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
