@@ -8,6 +8,7 @@
 #include"Enemy/FollowEnemy.h"
 #include"Enemy/BarrierEnemy.h"
 #include "Dome.h"
+#include "UIManager.h"
 
 class GamePlay : public MelLib::Scene
 {
@@ -27,6 +28,9 @@ private:
 	std::shared_ptr<Dome>dome;
 	FieldObjectManager* fieldObjectManager;
 	std::shared_ptr<EnemyBarrier> pEnemyBarrier;
+	std::shared_ptr<UltimateSkill> pUltimateSkill;
+
+	UIManager uiManager;
 		
 public:
 	GamePlay(){}
@@ -37,5 +41,7 @@ public:
 	void Draw()override;
 	void Finalize()override;//終了処理
 	MelLib::Scene* GetNextScene()override;//次のシーンの指定
+private:
+	void LoadUITextures();
 };
 

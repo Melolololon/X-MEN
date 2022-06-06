@@ -79,6 +79,7 @@ public:
 #pragma region Getter
 	// スキルを使用しているか取得
 	bool GetIsUsingSkill() const;
+	const int* GetLevel() const;
 #pragma endregion
 
 #pragma region Setter

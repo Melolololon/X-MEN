@@ -5,16 +5,21 @@ class UI
 {
 protected:
 	MelLib::Sprite2D sprite;
-	std::shared_ptr<MelLib::Texture> pTexture;
+	MelLib::Texture* pTexture;
 	MelLib::Vector2 scale;
 	MelLib::Vector2 angle;
 	MelLib::Vector2 pos;
+protected:
+	// スプライトをWindowのサイズに変更
+	void ResizeWithWindow(const MelLib::Sprite2D& resizeSprite);
+	// 引数のスプライトクラスにメンバ変数のスケール、アングル、ポジションをセットする
+	void SetSpriteInfo(MelLib::Sprite2D& reinfoSprite,const MelLib::Vector2& setScale,float setAngle,const MelLib::Vector2& setPos);
 public:
-	UI();
+	UI(MelLib::Texture* pTexture);
 	virtual ~UI() {}
-	virtual void Initialize() {}
-	virtual void Update() {}
-	virtual void Draw() {}
+	virtual void Initialize();
+	virtual void Update();
+	virtual void Draw();
 
 #pragma region Getter
 	MelLib::Vector2 GetScale() const;
@@ -22,7 +27,6 @@ public:
 #pragma endregion
 
 #pragma region Setter
-	void SetTexture(std::shared_ptr<MelLib::Texture> setTexture);
 	void SetScale(const MelLib::Vector2& setValue);
 	void SetAngle(const MelLib::Vector2& setValue);
 	void SetPosition(const MelLib::Vector2& setValue);

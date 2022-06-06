@@ -4,7 +4,11 @@
 class IButtonUI : public UI
 {
 private:
-public:
+protected:
 	// UIのボタンがクリックや選択中に押された場合に動作させる処理を記述
-	virtual void OnClick() {}
+	virtual void OnClick() = 0;
+public:
+	IButtonUI(MelLib::Texture* pTexture)
+		: UI(pTexture) {}
+	virtual ~IButtonUI() {}
 };

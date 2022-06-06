@@ -122,6 +122,11 @@ bool UltimateSkill::GetIsUsingSkill()const
 	return isUsingSkill;
 }
 
+const int* UltimateSkill::GetLevel() const
+{
+	return &level;
+}
+
 void UltimateSkill::SetIsUsingSkill(bool flag)
 {
 	isUsingSkill = flag;
