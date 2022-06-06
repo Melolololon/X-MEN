@@ -56,7 +56,7 @@ MelLib::Vector3 Player::GetInputVector()
 
 void Player::Move(const MelLib::Vector3& vec)
 {
-	static const float MOVE_SPEED = 0.5f;
+	static const float MOVE_SPEED = 1.0f;
 	velocity += vec * MOVE_SPEED * GameManager::GetInstance()->GetGameTime();
 
 	GameObject::AddPosition(velocity);

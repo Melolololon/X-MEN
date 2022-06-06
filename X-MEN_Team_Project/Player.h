@@ -12,7 +12,7 @@ namespace PlayerInitializeInfo
 	const float MAX_THROWING_TIME = 0.3f;
 
 	// –³“GŽžŠÔ
-	const float INVINCIBLE_TIME = 1;
+	const float INVINCIBLE_TIME = 1.0f;
 }
 
 namespace PlayerHPUIInfo
