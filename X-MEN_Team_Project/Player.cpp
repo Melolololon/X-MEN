@@ -272,8 +272,8 @@ void Player::Update()
 	UseAbility(isInputAbilityKey);
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
-	if (flashingFlag.IsFlag())modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 128, 255));
-	else modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	if (flashingFlag.IsFlag())modelObjects["main"].SetMulColor(MelLib::Color(255, 0, 0, 255));
+	else modelObjects["main"].SetMulColor(MelLib::Color(255,255,255,255));
 
 	hpGauge.Update(hp);
 
@@ -335,11 +335,11 @@ void Player::Hit
 			pBall.get()->SetThrowingState(BallState::HOLD_PLAYER);
 			break;
 		case BallState::THROWING_ENEMY:
-			Damage(pBall.get()->GetSpeed());
 
 			// –³“Gó‘Ô‚¶‚á‚È‚¢‚Æ‚«
 			if (!invincibleFlag.IsFlag())
 			{
+				Damage(pBall.get()->GetSpeed());
 				MelLib::Vector3 knockbackVector = GetPosition() - pBall.get()->GetPosition();
 				Knockback(knockbackVector.Normalize());
 				invincibleFlag.FlagOn();
