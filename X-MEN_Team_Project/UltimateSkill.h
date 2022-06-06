@@ -75,10 +75,12 @@ public:
 
 	// ゲージの値を増やす
 	void AddValue(int addValue);
+	void SubValue(int subValue);
 
 #pragma region Getter
 	// スキルを使用しているか取得
 	bool GetIsUsingSkill() const;
+	const int* GetLevel() const;
 #pragma endregion
 
 #pragma region Setter

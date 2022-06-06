@@ -72,6 +72,10 @@ void UltimateSkill::Update()
 	{
 		AddValue(UltimateSkillInfo::LEVEL_UP_VALUE);
 	}
+	if (MelLib::Input::KeyTrigger(DIK_DOWN))
+	{
+		SubValue(UltimateSkillInfo::LEVEL_UP_VALUE);
+	}
 
 	CalcSize(windowSize);
 	//CalcPosition(windowSize);
@@ -89,8 +93,8 @@ void UltimateSkill::Update()
 
 void UltimateSkill::Draw()
 {
-	backGauge.Draw();
-	frontGauge.Draw();
+	//backGauge.Draw();
+	//frontGauge.Draw();
 }
 
 void UltimateSkill::Use(const MelLib::Vector3& pos)
@@ -117,9 +121,24 @@ void UltimateSkill::AddValue(int addValue)
 	CalcLevel();
 }
 
+void UltimateSkill::SubValue(int subValue)
+{
+	value -= subValue;
+
+	// ゲージの値を最大値以上にならないように抑制
+	if (value <= 0)value = 0;
+
+	CalcLevel();
+}
+
 bool UltimateSkill::GetIsUsingSkill()const
 {
 	return isUsingSkill;
+}
+
+const int* UltimateSkill::GetLevel() const
+{
+	return &level;
 }
 
 void UltimateSkill::SetIsUsingSkill(bool flag)

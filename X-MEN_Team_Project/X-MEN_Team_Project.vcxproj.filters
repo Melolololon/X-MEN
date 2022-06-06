@@ -31,11 +31,17 @@
     <Filter Include="ヘッダー ファイル\Object\Enemy">
       <UniqueIdentifier>{539ac4c5-15c9-4e4a-aaeb-166fce9d7c61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\UI">
+      <UniqueIdentifier>{261892cb-a57a-4492-b53d-8d43eaa85d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UI">
+      <UniqueIdentifier>{d7cbd933-4166-4148-a7f5-eff7f9c3b7c2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ソース ファイル\Object\Particle">
-      <UniqueIdentifier>{f8a03b05-1b46-4f62-be3f-fc0b7256f079}</UniqueIdentifier>
+      <UniqueIdentifier>{0b74046d-d439-433f-98e9-3209318acb3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Object\Particle">
-      <UniqueIdentifier>{fa738572-ef22-4099-a126-f0b97cc19b7f}</UniqueIdentifier>
+      <UniqueIdentifier>{77efe7eb-3ef5-42a6-a745-db78a9543384}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +110,18 @@
     </ClCompile>
     <ClCompile Include="Dome.cpp">
       <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSkillGaugeUI.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerHPGaugeUI.cpp">
+      <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
     <ClCompile Include="Title.cpp">
       <Filter>ソース ファイル</Filter>
@@ -182,13 +200,31 @@
     <ClInclude Include="Dome.h">
       <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="IButtonUI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="IGaugeUI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSkillGaugeUI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerHPGaugeUI.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
     <ClInclude Include="Title.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Particle\Particle.h">
+    <ClInclude Include="Particle\PopUpParticle.h">
       <Filter>ヘッダー ファイル\Object\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Particle\PopUpParticle.h">
+    <ClInclude Include="Particle\Particle.h">
       <Filter>ヘッダー ファイル\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Particle\ParticleManager.h">

@@ -181,8 +181,12 @@
     <ClCompile Include="Particle\ParticleManager.cpp" />
     <ClCompile Include="Particle\PopUpParticle.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerHPGaugeUI.cpp" />
+    <ClCompile Include="PlayerSkillGaugeUI.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="Title.cpp" />
+    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UltimateSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,14 +206,20 @@
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="GaugeUI.h" />
+    <ClInclude Include="IButtonUI.h" />
+    <ClInclude Include="IGaugeUI.h" />
     <ClInclude Include="InputDeviceManager.h" />
     <ClInclude Include="NormalBarrier.h" />
     <ClInclude Include="Particle\Particle.h" />
     <ClInclude Include="Particle\ParticleManager.h" />
     <ClInclude Include="Particle\PopUpParticle.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerHPGaugeUI.h" />
+    <ClInclude Include="PlayerSkillGaugeUI.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="Title.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="UltimateSkill.h" />
   </ItemGroup>
   <ItemGroup>

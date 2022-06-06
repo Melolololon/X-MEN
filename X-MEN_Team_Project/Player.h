@@ -41,7 +41,7 @@ private:
 	bool isThrowingBall;
 	float throwingElapsedTime;
 
-	std::shared_ptr<UltimateSkill> ultimateSkill;
+	std::shared_ptr<UltimateSkill> pUltimateSkill;
 
 	MelLib::Vector3 dirVector;
 
@@ -138,6 +138,8 @@ public:
 	const MelLib::Vector3& GetDirection() const;
 	// プレイヤーのHPを取得
 	float GetHp() const;
+	// HPのconst ポインタを返します
+	const float* GetHPPointer() const;
 #pragma endregion
 
 #pragma region Setter
