@@ -39,8 +39,11 @@ protected:
 	// 押出フラグ　オンならPushPosition関数が実行される
 	bool isPush;
 
-	bool moveCancel = false;
+
+	// 基本移動の移動ベクトル
 	MelLib::Vector3 movedVector;
+	// 敵同士で離れる時のベクトル(計算用)
+	MelLib::Vector3 leaveVector;
 
 protected:
 
@@ -74,12 +77,16 @@ public:
 		const std::string& hitShapeName
 	)override;
 
+	void AddLeaveVector(const MelLib::Vector3& vec) { leaveVector += vec; }
+
+
 #pragma region Getter
 
 	float GetHP() const;
 	// 使う用途が思いつかないので作るだけ作ってコメントアウト
 	//MelLib::Vector3 GetPlayerDir() { return playerDir};
-
+	MelLib::Vector3 GetLeaveVector() const { return leaveVector; }
+	MelLib::Vector3 GetMovedVector()const { return movedVector; }
 
 #pragma endregion
 
@@ -90,7 +97,7 @@ public:
 	// プレイヤーの位置を変数で持っておくため実装　後で消す可能性大
 	virtual void SetPlayerPos(const MelLib::Vector3& pos);
 
-	void SetMoveCancel(const bool& flg);
+	void SetLeaveVector(const MelLib::Vector3& vec) { leaveVector = vec; }
 #pragma endregion
 
 

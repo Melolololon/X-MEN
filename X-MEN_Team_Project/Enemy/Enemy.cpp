@@ -30,7 +30,10 @@ void Enemy::FollowToPlayer(const float& moveSpeed)
 {
 	MelLib::Vector3 moveVector;
 	moveVector = playerDir * moveSpeed;
-	AddPosition(moveVector * GameManager::GetInstance()->GetGameTime());
+	//AddPosition(moveVector * GameManager::GetInstance()->GetGameTime());
+
+	movedVector = moveVector;
+	pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
 }
 
 void Enemy::Damage(float damage)
@@ -112,7 +115,4 @@ void Enemy::SetPlayerPos(const MelLib::Vector3& pos)
 
 }
 
-void Enemy::SetMoveCancel(const bool& flg)
-{
-	moveCancel = flg;
-}
+

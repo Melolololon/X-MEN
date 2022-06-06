@@ -117,11 +117,11 @@ void BarrierEnemy::Move()
 		if (DISTANCE_RESULT <= 0)
 		{
 
-			moveVector = -playerDir * MOVE_SPEED;
+			moveVector = -playerDir;
 		}
 		else if (DISTANCE_RESULT > EPSILON)
 		{
-			moveVector = playerDir * MOVE_SPEED;
+			moveVector = playerDir;
 		}
 
 		else moveVector = { 0,0,0 };
@@ -129,7 +129,8 @@ void BarrierEnemy::Move()
 
 		// 加算
 		// AddPosition、SetPositionは当たり判定も一緒に動く
-		AddPosition(moveVector * GameManager::GetInstance()->GetGameTime());
+		//AddPosition(moveVector * GameManager::GetInstance()->GetGameTime());
+		movedVector = moveVector;
 
 		pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
 	}
@@ -213,18 +214,17 @@ void BarrierEnemy::Update()
 
 	if (!refBallObject)return;
 
-	if (!moveCancel)
-	{
-		// バリアがはがれているかどうか
-		if (pBarrier.get()->GetIsOpen()) 
-		{ 
-			Move(); 
-		}
-		else 
-		{
-			FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); 
-		}
+
+	// バリアがはがれているかどうか
+	if (pBarrier.get()->GetIsOpen()) 
+	{ 
+		Move(); 
 	}
+	else 
+	{
+		FollowToPlayer(BarrierEnemyStatus::FOLLOW_SPEED); 
+	}
+	
 
 	PushPosition();
 

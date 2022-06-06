@@ -10,6 +10,8 @@ namespace BarrierEnemyStatus
 	const int CHANGE_POSE_FRAME = 120;
 	// 移動用のディレイ
 	const int MOVE_DELAY = 20;
+
+	const float MOVE_SPEED = 0.5f;
 }
 
 class BarrierEnemy : public Enemy

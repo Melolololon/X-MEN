@@ -19,7 +19,7 @@ namespace EnemyManage
 	const float SPAWN_TIME = 2000.0f;
 
 	// 敵同士でぶつからない距離
-	const float NOT_MOVE_DISTANCE = 10.0f;
+	const float NOT_MOVE_DISTANCE = 8.0f;
 }
 
 // シングルトンパターン
@@ -93,10 +93,13 @@ private:
 	void CheckEnemyDead(T& temp,bool isBarrier);
 
 	// 敵同士でぶつかる距離まで移動しないように
-	void EnemyMoveCancel();
+	void EnemyBoidsMove();
 	void CalcFollowEnemyMove();
 	void CalcBarrierEnemyMove();
 	void CalcFollowToBarrierEnemyMove();
+
+	void MoveFollowEnemy();
+	void MoveBarrierEnemy();
 };
 
 template<typename T>

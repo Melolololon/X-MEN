@@ -37,7 +37,7 @@ void EnemyManager::Update()
 	PopEnemyTime();
 
 	// “G‚ª‚Ô‚Â‚©‚ç‚È‚¢ˆÚ“®‚ğ‚·‚é
-	EnemyMoveCancel();
+	EnemyBoidsMove();
 
 	CheckEnemyDead(followEnemies,false);
 	CheckEnemyDead(barrierEnemies,true);
@@ -159,7 +159,7 @@ void EnemyManager::PopEnemyTime()
 	
 }
 
-void EnemyManager::EnemyMoveCancel()
+void EnemyManager::EnemyBoidsMove()
 {
 	// ’Ç]‚·‚é“G‚ÌŒvZ
 	CalcFollowEnemyMove();
@@ -169,6 +169,10 @@ void EnemyManager::EnemyMoveCancel()
 
 	// ƒoƒŠƒA‚Æ’Ç]‚·‚é“G‚ÌŒvZ
 	CalcFollowToBarrierEnemyMove();
+
+	// “G‚ÌˆÚ“®
+	MoveFollowEnemy();
+	MoveBarrierEnemy();
 }
 
 void EnemyManager::CalcFollowEnemyMove()
@@ -189,20 +193,21 @@ void EnemyManager::CalcFollowEnemyMove()
 				float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
 				float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
 
-				if (distance <= EnemyManage::NOT_MOVE_DISTANCE)
+
+				MelLib::Vector3 leaveVector = { 0,0,0 };
+				//const float SPEED = 0.05f;
+
+				if (distance <= EnemyManage::NOT_MOVE_DISTANCE && distance > 0)
 				{
 					// ‚Ô‚Â‚©‚é“G‚Æ‚Ì‹tƒxƒNƒgƒ‹‚ğAddPosition‚·‚é
-					MelLib::Vector3 moveVector = -1 * (jEnemyPosition - iEnemyPosition);
-					moveVector = moveVector.Normalize();
+					leaveVector = -1 * (jEnemyPosition - iEnemyPosition);
+					leaveVector = leaveVector.Normalize();
 
-					const float SPEED = 0.3f;
-					followEnemies[i].get()->AddPosition(moveVector * SPEED);
-					followEnemies[i].get()->SetMoveCancel(true);
 				}
-				else
-				{
-					followEnemies[i].get()->SetMoveCancel(false);
-				}
+
+				// —£‚ê‚évector‚ğset
+				followEnemies[i].get()->AddLeaveVector(leaveVector);
+				
 
 			}
 		}
@@ -227,22 +232,20 @@ void EnemyManager::CalcBarrierEnemyMove()
 				float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
 				float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
 
-				if (distance <= EnemyManage::NOT_MOVE_DISTANCE)
+				MelLib::Vector3 leaveVector = { 0,0,0 };
+				//const float SPEED = 0.2f;
+
+				if (distance <= EnemyManage::NOT_MOVE_DISTANCE && distance > 0)
 				{
 					// ‚Ô‚Â‚©‚é“G‚Æ‚Ì‹tƒxƒNƒgƒ‹‚ğAddPosition‚·‚é
-					MelLib::Vector3 moveVector = -1 * (jEnemyPosition - iEnemyPosition);
-					moveVector = moveVector.Normalize();
+					leaveVector = -1 * (jEnemyPosition - iEnemyPosition);
+					leaveVector = leaveVector.Normalize();
 
-					const float SPEED = 0.2f;
-					barrierEnemies[i].get()->AddPosition(moveVector * SPEED);
-
-					barrierEnemies[i].get()->SetMoveCancel(true);
 
 				}
-				else
-				{
-					barrierEnemies[i].get()->SetMoveCancel(false);
-				}
+
+				// —£‚ê‚évector‚ğset
+				barrierEnemies[i].get()->AddLeaveVector(leaveVector);
 			}
 		}
 	}
@@ -263,29 +266,60 @@ void EnemyManager::CalcFollowToBarrierEnemyMove()
 			float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
 			float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
 
-			if (distance <= EnemyManage::NOT_MOVE_DISTANCE)
+			MelLib::Vector3 barrierLeaveVector = { 0,0,0 };
+			MelLib::Vector3 followLeaveVector = { 0,0,0 };
+
+			if (distance <= EnemyManage::NOT_MOVE_DISTANCE && distance > 0)
 			{
 				// ‚Ô‚Â‚©‚é“G‚Æ‚Ì‹tƒxƒNƒgƒ‹‚ğAddPosition‚·‚é
-				MelLib::Vector3 moveVectorBarrier = -1 * (jEnemyPosition - iEnemyPosition);
-				moveVectorBarrier = moveVectorBarrier.Normalize();
+				barrierLeaveVector = -1 * (jEnemyPosition - iEnemyPosition);
+				barrierLeaveVector = barrierLeaveVector.Normalize();
 
-				MelLib::Vector3 moveVectorFollow = -1 * (iEnemyPosition - jEnemyPosition);
-			 	moveVectorFollow = moveVectorFollow.Normalize();
+				followLeaveVector = -1 * (iEnemyPosition - jEnemyPosition);
+				followLeaveVector = followLeaveVector.Normalize();
 
-				const float SPEED_FOLLOW = 0.3f;
-				const float SPEED_BARRIER = 0.1f;
 
-				barrierEnemies[i].get()->AddPosition(moveVectorBarrier * SPEED_BARRIER);
-				followEnemies[j].get()->AddPosition(moveVectorFollow * SPEED_FOLLOW);
-				barrierEnemies[i].get()->SetMoveCancel(true);
-				followEnemies[j].get()->SetMoveCancel(true);
 			}
-			else
-			{
-				barrierEnemies[i].get()->SetMoveCancel(false);
-				followEnemies[j].get()->SetMoveCancel(false);
-			}
+
+			barrierEnemies[i].get()->AddLeaveVector(barrierLeaveVector);
+			followEnemies[j].get()->AddLeaveVector(followLeaveVector);
 		}
 	}
 
+}
+
+void EnemyManager::MoveFollowEnemy()
+{
+	for (auto x : followEnemies)
+	{
+		// ’ÊíˆÚ“®‚Æ“G‚Æ‚Ì”½”­ˆÚ“®‚ÌˆÚ“®—Ê‚ğ‡Œv‚µ‚Ä³‹K‰»‚·‚é
+		MelLib::Vector3 tempLeave = x.get()->GetLeaveVector().Normalize();
+
+		MelLib::Vector3 moveVector = tempLeave + x.get()->GetMovedVector().Normalize();
+
+
+		x.get()->AddPosition(moveVector * FollowEnemyStatus::FOLLOW_SPEED
+			* GameManager::GetInstance()->GetGameTime());
+
+
+		// ˆÚ“®‚µ‚½‚çLeaveVector‚Ì’†g‚ğ‰Šú‰»
+		x.get()->SetLeaveVector({ 0,0,0 });
+
+	}
+}
+
+void EnemyManager::MoveBarrierEnemy()
+{
+	for (auto x : barrierEnemies)
+	{
+		// ’ÊíˆÚ“®‚Æ“G‚Æ‚Ì”½”­ˆÚ“®‚ÌˆÚ“®—Ê‚ğ‡Œv‚µ‚Ä³‹K‰»‚·‚é
+		MelLib::Vector3 moveVector = x.get()->GetLeaveVector().Normalize() + x.get()->GetMovedVector();
+
+		x.get()->AddPosition(moveVector * BarrierEnemyStatus::MOVE_SPEED * GameManager::GetInstance()->GetGameTime());
+
+
+		// ˆÚ“®‚µ‚½‚çLeaveVector‚Ì’†g‚ğ‰Šú‰»
+		x.get()->SetLeaveVector({ 0,0,0 });
+
+	}
 }

@@ -55,7 +55,7 @@ void FollowEnemy::Move()
 	//0512ˆê’Uˆê’è‹——£ˆÈã‹ß‚Ã‚¯‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
 	AddPosition(moveVector);
 
-	pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
+	//pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
 
 }
 
@@ -83,7 +83,7 @@ void FollowEnemy::Defeat()
 }
 void FollowEnemy::Update()
 {
-	if(!moveCancel)FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
+	FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
 	PushPosition();
 
 	static const float ZERO = 0.0f;
