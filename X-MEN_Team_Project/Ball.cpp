@@ -17,6 +17,7 @@
 const MelLib::Color Ball::BALL_COLOR_RED = { 255,64,64,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE = { 64,64,255,255 };
 const MelLib::Color Ball::BALL_COLOR_BLUE2 = { 60,20,195,255 };
+const MelLib::Color Ball::BALL_COLOR_BLUE2_ALPHA = { 60,20,195,128 };
 const MelLib::Color Ball::BALL_COLOR_YELLOW = { 255,255,64,255 };
 
 const MelLib::Vector3 BallTrajectory::TRAJECTORY_SCALE = { 1.25,1.25,1.25 };
@@ -27,8 +28,10 @@ void Ball::Move()
 	SetPosition(GetPosition() + velocity * speed * GameManager::GetInstance()->GetGameTime());
 
 	//スピード少し減らす
-	speed -= BALL_FRICTION;
-	if (speed < 0) { speed = 0; }
+	if (isMovingForce == false) {
+		speed -= BALL_FRICTION;
+		if (speed < 0) { speed = 0; }
+	}
 }
 
 void Ball::SetColor(const MelLib::Color& color)
@@ -110,6 +113,8 @@ Ball::Ball()
 
 	collisionCheckDistance = 10.0f;
 
+	isMovingForce = false;
+
 	//軌跡オブジェクト生成
 	for (auto& v : pBallTrajectories) {
 		v = std::make_shared<BallTrajectory>();
@@ -171,7 +176,7 @@ void Ball::Draw()
 void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
 {
 	//投げられていなければ衝突処理も発生しない
-	if (isThrowed == false) {
+	if (isThrowed == false || isMovingForce == true) {
 		return;
 	}
 
@@ -336,12 +341,14 @@ void Ball::DrawTrajectories()
 
 bool Ball::UpdateBallToDome()
 {
+	//ドーム未使用時処理
 	if (pDome == nullptr || pDome->IsUse() == false) {
 		maxSpeed = BALL_MAX_SPEED_NORMAL;
 		if (speed > maxSpeed)
 		{
 			speed = maxSpeed;
 		}
+		isMovingForce = false;
 		return false;
 	}
 
@@ -361,6 +368,8 @@ bool Ball::UpdateBallToDome()
 
 	//ドームから出るとき
 	if (isHit) {
+		isMovingForce = false;
+
 		//変更前のvelocityですすめる距離
 		progressDis = calcRad - dist;
 
@@ -402,6 +411,15 @@ bool Ball::UpdateBallToDome()
 	}
 
 	return false;
+}
+
+void Ball::ChangeVelocityToDome()
+{
+	Vector3 addRandPos = GetPosition() + Vector3(MelLib::Random::GetRandomFloatNumber(2, 4), 0, MelLib::Random::GetRandomFloatNumber(2, 4));
+	velocity = (pDome->GetPosition() - addRandPos).Normalize();
+
+	isMovingForce = true;
+	speed = 1.5f;
 }
 
 void BallTrajectory::Draw()

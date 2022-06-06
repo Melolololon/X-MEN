@@ -121,6 +121,11 @@ void Player::UseUltimateSkill(bool key)
 
 	// スキル使用
 	ultimateSkill.get()->Use(GetPosition());
+
+	//ボールの方向転換
+	if (pBall) {
+		pBall->ChangeVelocityToDome();
+	}
 }
 
 void Player::TrackingBall()

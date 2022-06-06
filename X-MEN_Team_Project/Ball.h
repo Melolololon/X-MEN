@@ -64,6 +64,7 @@ public:
 	static const MelLib::Color BALL_COLOR_RED;		//赤
 	static const MelLib::Color BALL_COLOR_BLUE;		//青
 	static const MelLib::Color BALL_COLOR_BLUE2;	//青2
+	static const MelLib::Color BALL_COLOR_BLUE2_ALPHA;	//青2
 	static const MelLib::Color BALL_COLOR_YELLOW;	//黄
 
 private:
@@ -71,8 +72,8 @@ private:
 	const float INIT_THROW_SPEED = 0.5f;
 	const float INIT_SCALE = 4.0f;
 	const float MAX_SCALE = 10.0f;
-	const float BALL_ACCEL = 1.5F;
-	const float BALL_ACCEL_DOME = 1.0F;
+	const float BALL_ACCEL = 1.5f;
+	const float BALL_ACCEL_DOME = 1.0f;
 	const float BALL_MAX_SPEED_NORMAL = 3.0f;
 	const float BALL_MAX_SPEED_DOME = 8.0f;
 	const float BALL_FRICTION = 0.0025f;
@@ -88,6 +89,8 @@ private:
 	float scale = INIT_SCALE;
 	//投げられた後か
 	bool isThrowed = true;
+	//強制移動中か
+	bool isMovingForce = false;
 
 	BallState throwingState;
 
@@ -178,6 +181,11 @@ public:
 	/// </summary>
 	/// <returns>反射したフレームはtrue、それ以外はfalse</returns>
 	bool UpdateBallToDome();
+
+	/// <summary>
+	/// ドームの方向へ移動量を変化させる
+	/// </summary>
+	void ChangeVelocityToDome();
 
 #pragma region Getter
 	/// <summary>
