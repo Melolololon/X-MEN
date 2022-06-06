@@ -9,6 +9,9 @@ PlayerSkillGaugeUI::PlayerSkillGaugeUI(MelLib::Texture* pTexture, const int* val
 
 void PlayerSkillGaugeUI::Update()
 {
+	const float MULTIPLE_VALUE = 0.5f;
+	scale = initScale * MULTIPLE_VALUE;
+
 	size_t index = (size_t)(*gaugeValue);
 	if (index >= sprites.size())return;
 
@@ -31,7 +34,7 @@ void PlayerSkillGaugeUI::AddSprite(MelLib::Texture* pTexture)
 	sprites.emplace_back(newSprite);
 
 	ResizeWithWindow(*newSprite);
+	initScale = scale;
 
-	//const MelLib::Vector2 DIVIDE_SCALE = { 0.3f };
-	//newSprite.get()->SetScale(DIVIDE_SCALE);
+	//newSprite.get()->SetScale(scale);
 }

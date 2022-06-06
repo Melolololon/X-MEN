@@ -57,8 +57,8 @@ void GaugeUI::Initialize()
 
 void GaugeUI::Draw()
 {
-	backGauge.Draw();
-	frontGauge.Draw();
+	//backGauge.Draw();
+	//frontGauge.Draw();
 }
 
 void GaugeUI::SetMaxValue(float setValue)

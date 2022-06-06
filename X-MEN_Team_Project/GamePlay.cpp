@@ -183,8 +183,14 @@ void GamePlay::LoadUITextures()
 	MelLib::Texture::Load(root + "skillGaugeMax.PNG", "skillGaugeMax");
 	MelLib::Texture::Load(root + "userInterfaceBG.PNG", "userInterfaceBG");
 
-	// UIを置く背景を追加
-	uiManager.AddUI(std::make_shared<UI>(MelLib::Texture::Get("userInterfaceBG")));
+	//// UIを置く背景を追加
+	//uiManager.AddUI(std::make_shared<UI>(MelLib::Texture::Get("userInterfaceBG")));
+
+	// プレイヤーのHPゲージUIを追加
+	std::shared_ptr<PlayerHPGaugeUI> playerHPGaugeUI = std::make_shared<PlayerHPGaugeUI>(MelLib::Texture::Get("maxHPGauge")
+		, pPlayer.get()->GetHPPointer());
+	playerHPGaugeUI.get()->AddVoidTexture(MelLib::Texture::Get("hpGaugeBG"));
+	uiManager.AddGaugeUI<float>(playerHPGaugeUI);
 
 	// プレイヤーの必殺技ゲージUIを追加
 	std::shared_ptr<PlayerSkillGaugeUI> playerSkillGaugeUI = std::make_shared<PlayerSkillGaugeUI>(nullptr, pUltimateSkill.get()->GetLevel());
@@ -194,10 +200,4 @@ void GamePlay::LoadUITextures()
 	playerSkillGaugeUI.get()->AddSprite(MelLib::Texture::Get("skillGauge3"));
 	playerSkillGaugeUI.get()->AddSprite(MelLib::Texture::Get("skillGaugeMax"));
 	uiManager.AddGaugeUI<int>(playerSkillGaugeUI);
-
-	// プレイヤーのHPゲージUIを追加
-	std::shared_ptr<PlayerHPGaugeUI> playerHPGaugeUI = std::make_shared<PlayerHPGaugeUI>(MelLib::Texture::Get("maxHPGauge")
-																						,pPlayer.get()->GetHPPointer());
-	playerHPGaugeUI.get()->AddVoidTexture(MelLib::Texture::Get("hpGaugeBG"));
-	uiManager.AddGaugeUI<float>(playerHPGaugeUI);
 }
