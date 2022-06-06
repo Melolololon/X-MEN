@@ -218,7 +218,8 @@ Player::Player()
 	// 四角形をセット
 	const float SCALE = 2;
 	const float MODEL_SIZE = 2 * SCALE;
-	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
+	//modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
+	modelObjects["main"].Create(MelLib::ModelData::Get("playerModel"));
 	modelObjects["main"].SetScale(MODEL_SIZE);
 	// 初期位置を0,0,5に
 	SetPosition(MelLib::Vector3(0, 0, -10));
@@ -235,8 +236,13 @@ Player::Player()
 	hpGauge.SetPosition(PlayerHPUIInfo::DRAW_POSITION);
 	hpGauge.SetSizePercent(PlayerHPUIInfo::SIZE_PERCENT);
 
+	// 無敵状態管理と点滅管理クラスの初期化
 	invincibleFlag.SetMaxTime(PlayerInitializeInfo::INVINCIBLE_TIME);
 	flashingFlag.SetMaxTime(0.016f * 10);
+
+	modelObjects["main"].SetAnimationPlayFlag(true);
+	modelObjects["main"].SetAnimation("walk");
+	modelObjects["main"].SetAnimationSpeedMagnification(3);
 }
 
 Player::~Player()
@@ -266,27 +272,22 @@ void Player::Update()
 	UseAbility(isInputAbilityKey);
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
-	if (flashingFlag.IsFlag())
-	{
-		modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 128, 255));
-	}
-	else
-	{
-		modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
-	}
+	if (flashingFlag.IsFlag())modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 128, 255));
+	else modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
 
 	hpGauge.Update(hp);
 
 	const float PER_FRAME = 1.0f / 60.0f;
 	UpdateIsThrowing(PER_FRAME);
 
-	if (invincibleFlag.IsFlag())
-	{
-		flashingFlag.FlagOn(false);
-	}
+	if (invincibleFlag.IsFlag())flashingFlag.FlagOn(false);
 
+	// フラグ管理クラスの更新
 	flashingFlag.Update(PER_FRAME);
 	invincibleFlag.Update(PER_FRAME);
+
+	// アニメーションなどの更新
+	modelObjects["main"].Update();
 }
 
 void Player::Draw()
