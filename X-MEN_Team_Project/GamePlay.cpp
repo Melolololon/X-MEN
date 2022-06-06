@@ -16,15 +16,15 @@ void GamePlay::Initialize()
 	MelLib::ModelData::Load("Resources/Model/Dome/dome.obj", true, "domeObj");
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
-	fieldObjectManager = FieldObjectManager::GetInstance();
+	pFieldObjectManager = FieldObjectManager::GetInstance();
 
 	// オブジェクトのメモリ確保
 	pPlayer = std::make_shared<Player>();
 	pBall = std::make_shared<Ball>();
 	//pBall->SetPosition(MelLib::Vector3(5, 0, -10));
-	barrier = std::make_shared<NormalBarrier>();
+	pBarrier = std::make_shared<NormalBarrier>();
 
-	pPlayer.get()->SetNormalBarrier(barrier);
+	pPlayer.get()->SetNormalBarrier(pBarrier);
 	pPlayer.get()->SetBall(pBall);
 
 	//pFollowEnemy = std::make_shared<FollowEnemy>();
@@ -39,7 +39,7 @@ void GamePlay::Initialize()
 
 	MelLib::GameObjectManager::GetInstance()->AddObject(pPlayer);
 	//バリアのテスト
-	MelLib::GameObjectManager::GetInstance()->AddObject(barrier);
+	MelLib::GameObjectManager::GetInstance()->AddObject(pBarrier);
 
 	//// テストオブジェクト追加
 	//MelLib::GameObjectManager::GetInstance()->AddObject(std::make_shared<TestObject>(MelLib::Vector3(0, 0, 0)));
@@ -51,13 +51,14 @@ void GamePlay::Initialize()
 
 	EnemyManager::GetInstance()->Initialize();
 
-	fieldObjectManager->Initialize();
+	pFieldObjectManager->Initialize();
 
 	std::shared_ptr<UltimateSkill> ultimateSkill = std::make_shared<UltimateSkill>();
-	dome = std::make_shared<Dome>();
-	MelLib::GameObjectManager::GetInstance()->AddObject(dome);
-	ultimateSkill.get()->SetDome(dome);
+	pDome = std::make_shared<Dome>();
+	MelLib::GameObjectManager::GetInstance()->AddObject(pDome);
+	ultimateSkill.get()->SetDome(pDome);
 	pPlayer.get()->SetUltimateSkill(ultimateSkill);
+	pBall->SetPDome(pDome.get());
 
 	// GameManagerのテスト
 	GameManager::GetInstance()->Initialize();
@@ -75,8 +76,8 @@ void GamePlay::Update()
 		MelLib::GameObjectManager::GetInstance()->Update();
 
 		// 必殺技を使ったあとにゲーム内時間をゆっくりにする
-		if (dome.get()->IsEndTrigger())GameManager::GetInstance()->SetGameTime(0.1f);
-		if (dome.get()->IsPostProcessEndTrigger())GameManager::GetInstance()->SetDefaultGameTime();
+		if (pDome.get()->IsEndTrigger())GameManager::GetInstance()->SetGameTime(0.1f);
+		if (pDome.get()->IsPostProcessEndTrigger())GameManager::GetInstance()->SetDefaultGameTime();
 
 		// 敵のテスト
 		//pFollowEnemy.get()->SetPlayerPos(pPlayer.get()->GetPosition());
@@ -138,7 +139,7 @@ void GamePlay::Draw()
 void GamePlay::Finalize()
 {
 	// 終了処理
-	fieldObjectManager->Finalize();
+	pFieldObjectManager->Finalize();
 
 	// 全削除
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();

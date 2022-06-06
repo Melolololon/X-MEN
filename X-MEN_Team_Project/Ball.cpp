@@ -5,7 +5,6 @@
 #include "Enemy/BarrierEnemy.h"
 #include "NormalBarrier.h"
 #include "EnemyBarrier.h"
-#include "Dome.h"
 #include "GameManager.h"
 #include <Random.h>
 #include <LibMath.h>
@@ -58,9 +57,9 @@ void Ball::Reflection(const Vector3& otherNormal, bool isAddSpeed)
 
 	speed += BALL_ACCEL;
 
-	if (speed > MAX_SPEED)
+	if (speed > maxSpeed)
 	{
-		speed = MAX_SPEED;
+		speed = maxSpeed;
 	}
 }
 
@@ -137,7 +136,9 @@ void Ball::Update()
 {
 	//投げられていたら動かす
 	if (isThrowed) {
-		Move(); 
+		if (UpdateBallToDome() == false) {
+			Move(); 
+		}
 		//停止
 		if (speed <= 0) {
 			////色セット
@@ -154,6 +155,9 @@ void Ball::Update()
 
 	//投げられている状態から色セット
 	SetColor(GetColorFromBallState(throwingState));
+
+	OutputDebugStringA(std::to_string(speed).c_str());
+	OutputDebugStringA("\n");
 }
 
 void Ball::Draw()
@@ -161,7 +165,7 @@ void Ball::Draw()
 	//ボール本体描画
 	AllDraw();
 	////まず軌跡描画
-	//DrawTrajectories();
+	DrawTrajectories();
 }
 
 void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, const std::string& shapeName, const MelLib::ShapeType3D hitObjShapeType, const std::string& hitShapeName)
@@ -232,9 +236,9 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		//加速
 		speed += BALL_ACCEL;
 
-		if (speed > MAX_SPEED)
+		if (speed > maxSpeed)
 		{
-			speed = MAX_SPEED;
+			speed = maxSpeed;
 		}
 
 		throwingState = BallState::THROWING_PLAYER;
@@ -254,19 +258,6 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal, true);
 		throwingState = BallState::THROWING_ENEMY;
-	}
-	//ドームとの当たり判定
-	else if (typeid(object) == typeid(Dome)) {
-		TriangleData triData = GetHitTriangleData();
-
-		//反射共通処理
-		Vector3 otherNormal = triData.GetNormal();
-		Reflection(otherNormal, true);
-
-		//1回目はvelocityのYが0になっている
-		if (velocity.y == 0) {
-			velocity.y = MelLib::Random::GetRandomFloatNumber(0.25f, 4);
-		}
 	}
 }
 
@@ -341,6 +332,76 @@ void Ball::DrawTrajectories()
 			pBallTrajectories[i]->Draw();
 		}
 	}
+}
+
+bool Ball::UpdateBallToDome()
+{
+	if (pDome == nullptr || pDome->IsUse() == false) {
+		maxSpeed = BALL_MAX_SPEED_NORMAL;
+		if (speed > maxSpeed)
+		{
+			speed = maxSpeed;
+		}
+		return false;
+	}
+
+	maxSpeed = BALL_MAX_SPEED_DOME;
+
+	//当たり判定用にボールとドームの距離計算
+	float dist = MelLib::LibMath::CalcDistance3D(GetPosition(), pDome->GetPosition());
+	//次フレームで当たるか求めるのに必要な次フレームでの距離
+	float nextDist = MelLib::LibMath::CalcDistance3D(GetPosition() + velocity * speed * GameManager::GetInstance()->GetGameTime(), pDome->GetPosition());
+	//ドームの半径に自分の半径を引くことで相対的にドームの内側から出るとき判定されるように
+	float calcRad = pDome->GetRadius() - scale / 2;
+
+	float progressDis = 0;
+	float limitMove = speed * GameManager::GetInstance()->GetGameTime();
+
+	bool isHit = dist < calcRad && nextDist >= calcRad;
+
+	//ドームから出るとき
+	if (isHit) {
+		//変更前のvelocityですすめる距離
+		progressDis = calcRad - dist;
+
+		SetPosition(GetPosition() + velocity * progressDis);
+
+		//反射ベクトルを計算
+		Vector3 otherNormal = (pDome->GetPosition() - GetPosition()).Normalize();
+		Vector3 reflectVel = (velocity - 2.0f * velocity.Dot(otherNormal) * otherNormal);
+
+		//反映
+		velocity = reflectVel;
+
+		//残りの進める距離
+		limitMove -= progressDis;
+
+		//残りを進める
+		SetPosition(GetPosition() + velocity * limitMove);
+
+		//スピード少し減らす
+		speed -= BALL_FRICTION;
+		if (speed < 0) { speed = 0; }
+
+		//加速
+		speed += BALL_ACCEL;
+
+		if (speed > maxSpeed)
+		{
+			speed = maxSpeed;
+		}
+
+		return true;
+	}
+	else {
+		maxSpeed = BALL_MAX_SPEED_NORMAL;
+		if (speed > maxSpeed)
+		{
+			speed = maxSpeed;
+		}
+	}
+
+	return false;
 }
 
 void BallTrajectory::Draw()
