@@ -10,6 +10,7 @@
 #include <LibMath.h>
 #include <GameObjectManager.h>
 #include "Enemy/EnemyManager.h"
+#include "Particle/PopUpParticleManager.h"
 #include <Random.h>
 #include <LibMath.h>
 #include <ModelData.cpp>
@@ -175,6 +176,7 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 		//”½Ë‹¤’Êˆ—
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal, false);
+		PopUpParticleManager::GetInstance()->SetFire(GetPosition());;
 	}
 	//“G‚Æ‚ÌÕ“Ë
 	else if (typeid(object) == typeid(FollowEnemy) ||

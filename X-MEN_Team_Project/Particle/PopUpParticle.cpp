@@ -20,6 +20,9 @@ void PopUpParticle::Initialize()
 void PopUpParticle::Update()
 {
 	const int time = object[0].get()->GetTIme();
+
+	static float division = (628.0f / object.size()) / 100;
+
 	//経過したら消える
 	if (time > pop_time)
 	{
@@ -33,13 +36,11 @@ void PopUpParticle::Update()
 	{
 		if (object[i].get()->GetLiveFlag())
 		{
-			//円状に拡散
-			const float b = 360 / object.size() * i;
-			//飛ばす角度
-			const MelLib::Vector3 dir = MelLib::Vector3(sin(b), 0, cos(b));
-			object[i].get()->SetPosition(target + dir * (time * 2));
-			//度数法→弧度法
-			object[i].get()->SetAngle(MelLib::Vector3(0, atan2f(dir.x, dir.z) * 57.32484076433121f, 0));
+			float angle = division * i;
+			object[i].get()->SetPosition(target + MelLib::Vector3(sinf(angle)* time,0.0f, cosf(angle) * time));
+			//オブジェクトの角度
+			object[i].get()->SetAngle(MelLib::Vector3(0, angle, 0));
+			//サイズ縮小
 			object[i].get()->SetScale(MelLib::Vector3(1.0f, 1.0f, MelLib::Easing(3.0f, 0.0f, time * (100.0f / pop_time)).EaseIn()));
 
 		}

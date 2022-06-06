@@ -6,7 +6,7 @@
 namespace
 {
 	//—±q‚ÌŒÂ”
-	int pop_particle = 10;
+	int pop_particle = 8;
 	//—±q‚Ìõ–½
 	int pop_time = 5;
 }
