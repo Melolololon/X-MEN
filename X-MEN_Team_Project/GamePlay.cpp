@@ -14,6 +14,9 @@
 void GamePlay::Initialize()
 {
 	MelLib::ModelData::Load("Resources/Model/Dome/dome.obj", true, "domeObj");
+	MelLib::ModelData::Load("Resources/Model/Player/Player.fbx", true, "playerModel");
+
+
 	// 初期化処理
 	// 必ずコンストラクタではなくここに初期化処理を書く(設計上の都合で)
 	fieldObjectManager = FieldObjectManager::GetInstance();
