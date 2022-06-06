@@ -16,11 +16,13 @@ private:
 	//static PopUpParticle* instance;
 
 	//パーティクル配列
-	std::vector<std::shared_ptr<Particle>> particle;
+	std::vector<std::shared_ptr<Particle>> object;
 	//パーティクルを出す場所
 	MelLib::Vector3 target;
 	//順番に放出する用のカウント
 	int count;
+	//放出フラグ
+	bool isFire;
 
 public:
 	//static PopUpParticle* GetInstance();
@@ -31,6 +33,8 @@ public:
 	//Setter
 	void SetFire(const bool b);
 	void SetTarget(const MelLib::Vector3 t) { target = t; }
-
+	//Getter
+	bool GetLiveFlag() const;
+	
 	//void Destroy();
 };

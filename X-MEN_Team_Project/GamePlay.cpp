@@ -9,6 +9,8 @@
 
 #include"Enemy/EnemyManager.h"
 
+#include"Particle/PopUpParticleManager.h"
+
 #include"GameManager.h"
 
 void GamePlay::Initialize()
@@ -49,9 +51,10 @@ void GamePlay::Initialize()
 	//MelLib::GameObjectManager::GetInstance()->AddObject(pBarrierEnemy);
 	//MelLib::GameObjectManager::GetInstance()->AddObject(pEnemyBarrier);
 
+	
+
 	//ポップアップパーティクル
-	pPrticle = std::make_shared<PopUpParticle>();
-	pPrticle.get()->Initialize();
+	PopUpParticleManager::GetInstance()->Initialize();
 
 	EnemyManager::GetInstance()->Initialize();
 
@@ -98,11 +101,10 @@ void GamePlay::Update()
 		//}
 
 		//ポップパーティクル
-		pPrticle.get()->Update();
+		PopUpParticleManager::GetInstance()->Update();
 		if (MelLib::Input::KeyTrigger(DIK_6))
 		{
-			pPrticle.get()->SetTarget(MelLib::Vector3());
-			pPrticle.get()->SetFire(true);
+			PopUpParticleManager::GetInstance()->SetFire(MelLib::Vector3());
 
 		}
 
@@ -145,7 +147,7 @@ void GamePlay::Draw()
 	// 描画
 	MelLib::GameObjectManager::GetInstance()->Draw();
 	//ポップアップパーティクル
-	pPrticle.get()->Draw();
+	PopUpParticleManager::GetInstance()->Draw();
 	
 	// 半透明なので描画
 	pBall->DrawTrajectories();
