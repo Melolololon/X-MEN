@@ -4,11 +4,15 @@
 #include<GameObject.h>
 #include "Ball.h"
 #include "GaugeUI.h"
+#include "FlagController.h"
 
 namespace PlayerInitializeInfo
 {
 	const float MAX_HP = 10;
 	const float MAX_THROWING_TIME = 0.3f;
+
+	// 無敵時間
+	const float INVINCIBLE_TIME = 1;
 }
 
 namespace PlayerHPUIInfo
@@ -57,6 +61,10 @@ private:
 	float knockbackPower;
 	MelLib::Vector3 knockbackVelocity;
 
+	// 無敵状態を管理
+	FlagController invincibleFlag;
+	// プレイヤーの点滅を管理
+	FlagController flashingFlag;
 private:
 	// 現在の入力デバイスから受け取った結果に基づいてベクトルを返す
 	// 正規化状態
@@ -92,7 +100,6 @@ private:
 	void UpdateIsThrowing(const float PER_FRAME);
 
 	void UpdateKnockback();
-
 public:
 	Player();
 

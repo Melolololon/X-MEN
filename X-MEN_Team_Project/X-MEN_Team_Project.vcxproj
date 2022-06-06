@@ -169,6 +169,7 @@
     <ClCompile Include="FieldObject.cpp" />
     <ClCompile Include="FieldObjectManager.cpp" />
     <ClCompile Include="FieldObjectWall.cpp" />
+    <ClCompile Include="FlagController.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameOver.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="FieldObject.h" />
     <ClInclude Include="FieldObjectManager.h" />
     <ClInclude Include="FieldObjectWall.h" />
+    <ClInclude Include="FlagController.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameOver.h" />

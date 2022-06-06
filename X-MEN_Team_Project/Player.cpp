@@ -199,9 +199,6 @@ void Player::UpdateKnockback()
 		return;
 	}
 
-
-	//AddPosition(knockbackVelocity);
-
 	velocity += backupDecayKnockbackVelocity;
 	knockbackVelocity -= backupDecayKnockbackVelocity;
 }
@@ -237,6 +234,9 @@ Player::Player()
 	hpGauge.SetMaxValue(PlayerInitializeInfo::MAX_HP);
 	hpGauge.SetPosition(PlayerHPUIInfo::DRAW_POSITION);
 	hpGauge.SetSizePercent(PlayerHPUIInfo::SIZE_PERCENT);
+
+	invincibleFlag.SetMaxTime(PlayerInitializeInfo::INVINCIBLE_TIME);
+	flashingFlag.SetMaxTime(0.016f * 10);
 }
 
 Player::~Player()
@@ -266,12 +266,27 @@ void Player::Update()
 	UseAbility(isInputAbilityKey);
 	UseUltimateSkill(MelLib::Input::KeyTrigger(DIK_Z) || MelLib::Input::PadButtonTrigger(MelLib::PadButton::X));
 
-	modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	if (flashingFlag.IsFlag())
+	{
+		modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 128, 255));
+	}
+	else
+	{
+		modelObjects["main"].SetMulColor(MelLib::Color(0, 0, 255, 255));
+	}
 
 	hpGauge.Update(hp);
 
 	const float PER_FRAME = 1.0f / 60.0f;
 	UpdateIsThrowing(PER_FRAME);
+
+	if (invincibleFlag.IsFlag())
+	{
+		flashingFlag.FlagOn(false);
+	}
+
+	flashingFlag.Update(PER_FRAME);
+	invincibleFlag.Update(PER_FRAME);
 }
 
 void Player::Draw()
@@ -321,8 +336,13 @@ void Player::Hit
 		case BallState::THROWING_ENEMY:
 			Damage(pBall.get()->GetSpeed());
 
-			MelLib::Vector3 knockbackVector = GetPosition() - pBall.get()->GetPosition();
-			Knockback(knockbackVector.Normalize());
+			// ñ≥ìGèÛë‘Ç∂Ç·Ç»Ç¢Ç∆Ç´
+			if (!invincibleFlag.IsFlag())
+			{
+				MelLib::Vector3 knockbackVector = GetPosition() - pBall.get()->GetPosition();
+				Knockback(knockbackVector.Normalize());
+				invincibleFlag.FlagOn();
+			}
 			break;
 		}
 	}
@@ -347,7 +367,13 @@ void Player::Hit
 		const Enemy* other = static_cast<const Enemy*>(&object);
 		MelLib::Vector3 knockbackVector = GetPosition() - other->GetPosition();
 
-		Damage(PlayerDamageInfo::HIT_ENEMY_DAMAGE);
+		// ñ≥ìGèÛë‘Ç∂Ç·Ç»Ç¢Ç∆Ç´
+		if (!invincibleFlag.IsFlag())
+		{
+			Damage(PlayerDamageInfo::HIT_ENEMY_DAMAGE);
+			invincibleFlag.FlagOn();
+		}
+
 		Knockback(knockbackVector.Normalize());
 	}
 }
