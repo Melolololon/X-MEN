@@ -163,6 +163,7 @@ void GamePlay::Finalize()
 	MelLib::GameObjectManager::GetInstance()->AllEraseObject();
 
 	EnemyManager::GetInstance()->Destroy();
+	PopUpParticleManager::GetInstance()->Destroy();
 }
 
 MelLib::Scene* GamePlay::GetNextScene()
