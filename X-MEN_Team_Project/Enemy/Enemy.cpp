@@ -36,8 +36,32 @@ void Enemy::FollowToPlayer(const float& moveSpeed)
 	pastVelocity = moveVector * GameManager::GetInstance()->GetGameTime();
 }
 
+void Enemy::KnockBack()
+{
+	if (isKnockBack)
+	{
+		// ノックバック処理
+		MelLib::Vector3 knockBackDir = -1 * (ballPos - GetPosition());
+		knockBackDir = knockBackDir.Normalize();
+
+		AddPosition(knockBackDir* EnemyStatus::KNOCK_BACK_SPEED * GameManager::GetInstance()->GetGameTime());
+
+		// 指定したノックバックのフレーム数を過ぎていたら
+		if (knockBackCount >= EnemyStatus::KNOCK_BACK_FRAME)
+		{
+			isKnockBack = false;
+			knockBackCount = 0;
+		}
+
+		++knockBackCount;
+	}
+}
+
 void Enemy::Damage(float damage)
 {
+	// ダメージ時にノックバックさせる
+	if (!isKnockBack)isKnockBack = true;
+
 	hp -= damage;
 
 	// hpがなくなったときに管理クラスから削除
@@ -65,9 +89,13 @@ void Enemy::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, c
 		if (BALL->GetThrowingState() != BallState::HOLD_PLAYER) {
 			if (BALL->GetThrowingState() == BallState::THROWING_PLAYER) {
 				Damage(BALL->GetSpeed());
+				// ノックバック用にボールの位置を確保
+				if(!isKnockBack)ballPos = BALL->GetPosition();
 			}
 			else if (BALL->GetThrowingState() == BallState::THROWING_ENEMY) {
 				Damage(BALL->GetSpeed());
+				// ノックバック用にボールの位置を確保
+				if (!isKnockBack)ballPos = BALL->GetPosition();
 			}
 		}
 	}

@@ -83,6 +83,8 @@ void FollowEnemy::Defeat()
 }
 void FollowEnemy::Update()
 {
+	KnockBack();
+
 	FollowToPlayer(FollowEnemyStatus::FOLLOW_SPEED);
 	PushPosition();
 

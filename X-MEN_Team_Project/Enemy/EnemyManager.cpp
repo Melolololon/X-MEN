@@ -6,6 +6,9 @@
 
 // 静的な実体
 EnemyManager* EnemyManager::instance;
+std::random_device EnemyManager::random;
+std::default_random_engine EnemyManager::engine;
+
 
 EnemyManager* EnemyManager::GetInstance()
 {
@@ -68,6 +71,8 @@ void EnemyManager::SetPlayerPos(const MelLib::Vector3& pos)
 		x.get()->SetPlayerDir(pos);
 		x.get()->SetPlayerPos(pos);
 	}
+
+	playerPos = pos;
 }
 
 int EnemyManager::GetEnemyCount() const
@@ -77,31 +82,56 @@ int EnemyManager::GetEnemyCount() const
 
 void EnemyManager::PopFollowEnemyInitialize()
 {
-	std::random_device random;
-	std::default_random_engine engine;
-	std::uniform_int_distribution<int> dist(-10, 10);
+	std::uniform_int_distribution<int> dist(-20, 20);
 
 
 	for (int i = 0; i < EnemyManage::SPAWN_FOLLOW_ENEMY_NUM; i++)
 	{
+
 		std::shared_ptr<FollowEnemy> temp = std::make_shared<FollowEnemy>();
 		// 見た目の追加
 		MelLib::GameObjectManager::GetInstance()->AddObject(temp);
 
-		// 後で位置のランダム配置
+		MelLib::Vector3 spawnPos = { (float)dist(engine),0,(float)dist(engine) };
+
+		// 敵が出現範囲外の時に再度配置
+		while (true)
+		{
+			// 後で位置のランダム配置
 
 
-		temp.get()->SetPosition(MelLib::Vector3(dist(engine), 0, dist(engine)));
+			//float calcDistanceX = iEnemyPosition.x - jEnemyPosition.x;
+			//float calcDistanceZ = iEnemyPosition.z - jEnemyPosition.z;
+			//float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+			// プレイヤーとの距離を測定
+			const float calcDistanceX = playerPos.x - spawnPos.x;
+			const float calcDistanceZ = playerPos.z - spawnPos.z;
 
 
+			float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+			//　出現禁止範囲内なら再度位置を決める
+			if (distance <= EnemyManage::NOT_SPAWN_DISTANCE)
+			{
+				spawnPos = { (float)dist(engine),0,(float)dist(engine) };
+			}
+			else break;
+		}
+
+
+		temp.get()->SetPosition(spawnPos);
 		followEnemies.push_back(temp);
 
 		enemyCount++;
+		
 	}
 }
 
 void EnemyManager::PopBarrierEnemyInitialize()
 {
+
+	std::uniform_int_distribution<int> dist(-20, 20);
 
 	// バリア持ちの敵を生成
 	for (int i = 0; i < EnemyManage::SPAWN_BARRIER_ENEMY_NUM; i++)
@@ -118,15 +148,35 @@ void EnemyManager::PopBarrierEnemyInitialize()
 		MelLib::GameObjectManager::GetInstance()->AddObject(tempBarrier);
 
 
+		MelLib::Vector3 spawnPos = { (float)dist(engine),0,(float)dist(engine) };
+		// 敵が出現範囲外の時に再度配置
+		while (true)
+		{
+			// プレイヤーとの距離を測定
+			const float calcDistanceX = playerPos.x - spawnPos.x;
+			const float calcDistanceZ = playerPos.z - spawnPos.z;
+
+
+			float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+			//　出現禁止範囲内なら再度位置を決める
+			if (distance <= EnemyManage::NOT_SPAWN_DISTANCE)
+			{
+				spawnPos = { (float)dist(engine),0,(float)dist(engine) };
+			}
+			else break;
+		}
+
 
 		// とりあえず0,0,0に設置
-		//temp.get()->SetPosition(MelLib::Vector3(0, 0, 0));
-		temp.get()->SetBarrier(tempBarrier);
+		temp.get()->SetPosition(spawnPos);
 
 		barrierEnemies.push_back(temp);
+		temp.get()->SetBarrier(tempBarrier);
 		enemyBarriers.push_back(tempBarrier);
 
 		enemyCount++;
+
 	}
 }
 
@@ -142,18 +192,42 @@ void EnemyManager::PopEnemyTime()
 	// 設定した時間よりも経過時間が長かったら
 	if (time > EnemyManage::SPAWN_TIME)
 	{
-
+		
 		std::shared_ptr<FollowEnemy> followEnemy = std::make_shared<FollowEnemy>();
 
 		//　見た目の追加
 		MelLib::GameObjectManager::GetInstance()->AddObject(followEnemy);
 
 
+		std::uniform_int_distribution<int> dist(-20, 20);
+
+		MelLib::Vector3 spawnPos = { (float)dist(engine),0,(float)dist(engine) };
+		// 敵が出現範囲外の時に再度配置
+		while (true)
+		{
+			// プレイヤーとの距離を測定
+			const float calcDistanceX = playerPos.x - spawnPos.x;
+			const float calcDistanceZ = playerPos.z - spawnPos.z;
+
+
+			float distance = sqrt(calcDistanceX * calcDistanceX + calcDistanceZ * calcDistanceZ);
+
+			//　出現禁止範囲内なら再度位置を決める
+			if (distance <= EnemyManage::NOT_SPAWN_DISTANCE)
+			{
+				spawnPos = { (float)dist(engine),0,(float)dist(engine) };
+			}
+			else break;
+		}
+
+		followEnemy.get()->SetPosition(spawnPos);
+
+
 		followEnemies.push_back(followEnemy);
+		enemyCount++;
 
 		timerStart = clock();
 
-		enemyCount++;
 	}
 
 	

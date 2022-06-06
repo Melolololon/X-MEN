@@ -10,6 +10,13 @@ namespace EnemyStatus
 	const MelLib::Vector3 initPlayerDir = { 0,0,0 };
 	const MelLib::Vector3 initPlayerPos = { 0,0,0 };
 	const float MAX_PUSH_TIME = 1;
+
+	// ノックバックにかかるフレーム数
+	const float KNOCK_BACK_FRAME = 10;
+	// ノックバックの速度
+	const float KNOCK_BACK_SPEED = 0.5f;
+
+
 }
 
 class Enemy : public MelLib::GameObject
@@ -45,6 +52,12 @@ protected:
 	// 敵同士で離れる時のベクトル(計算用)
 	MelLib::Vector3 leaveVector;
 
+	// ノックバックしているのかどうか
+	bool isKnockBack;
+	int knockBackCount;
+	// ノックバック用
+	MelLib::Vector3 ballPos;
+
 protected:
 
 	void virtual Move() {}
@@ -55,6 +68,8 @@ protected:
 	void PushPosition();
 
 	void virtual FollowToPlayer(const float& moveSpeed);
+
+	void KnockBack();
 public:
 	Enemy() 
 		:hp(1), 
@@ -62,7 +77,9 @@ public:
 		playerPos(EnemyStatus::initPlayerPos),
 		pushVector(MelLib::Vector3()),
 		pushTime(0),
-		isPush(false)
+		isPush(false),
+		isKnockBack(false),
+		knockBackCount(0)
 	{}
 	~Enemy() {}
 

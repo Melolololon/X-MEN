@@ -9,6 +9,8 @@
 
 #include"../GameManager.h"
 
+#include"../MyLibrary/GameObjectManager.h"
+
 namespace EnemyManage
 {
 	// 最初にスポーンする追従する敵の数
@@ -20,6 +22,9 @@ namespace EnemyManage
 
 	// 敵同士でぶつからない距離
 	const float NOT_MOVE_DISTANCE = 8.0f;
+
+	// 敵がプレイヤーからどれくらいの距離で出現しなくなるか
+	const float NOT_SPAWN_DISTANCE = 20.0f;
 }
 
 // シングルトンパターン
@@ -44,6 +49,14 @@ private:
 
 	//敵が倒されたフレームか
 	bool isDeadFlame = false;
+
+	// プレイヤーの周辺で敵がわかない用
+	MelLib::Vector3 playerPos;
+
+	// 出現時のランダム用
+	static std::random_device random;
+	static std::default_random_engine engine;
+
 
 public:
 
@@ -84,7 +97,6 @@ private:
 
 	// バリアの敵の出現
 	void PopBarrierEnemyInitialize();
-
 	// 時間での敵の出現
 	void PopEnemyTime();
 
@@ -101,6 +113,7 @@ private:
 	void MoveFollowEnemy();
 	void MoveBarrierEnemy();
 };
+
 
 template<typename T>
 inline void EnemyManager::CheckEnemyDead(T& temp,bool isBarrier)

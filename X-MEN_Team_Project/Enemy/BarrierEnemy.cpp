@@ -213,7 +213,8 @@ void BarrierEnemy::Update()
 	RefBallObject();
 
 	if (!refBallObject)return;
-
+	
+	KnockBack();
 
 	// ƒoƒŠƒA‚ª‚Í‚ª‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	if (pBarrier.get()->GetIsOpen()) 
