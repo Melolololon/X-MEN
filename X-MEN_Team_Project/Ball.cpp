@@ -193,14 +193,26 @@ void Ball::Hit(const GameObject& object, const MelLib::ShapeType3D shapeType, co
 	}
 
 	//壁との衝突
-	if (typeid(object) == typeid(FieldObjectWall))
+	if (typeid(object) == typeid(FieldObjectWall)
+		&& shapeType != MelLib::ShapeType3D::RAY)
 	{
+		
+
 		//反射共通処理
 		Vector3 otherNormal = GetSphereCalcResult().GetOBBHitSurfaceNormal();
 		Reflection(otherNormal, false);
 	}
+
+	else if (typeid(object) == typeid(FieldObjectWall)
+		&& shapeType == MelLib::ShapeType3D::RAY) 
+	{
+		MelLib::Vector3 rayPos = GetRayCalcResult().hitPosition;
+		MelLib::Vector3 pos = GetPosition();
+		
+	}
+
 	//敵との衝突
-	else if (typeid(object) == typeid(FollowEnemy) ||
+	if (typeid(object) == typeid(FollowEnemy) ||
 		typeid(object) == typeid(BarrierEnemy))
 	{
 		// プレイヤーが投げたり反射させたボールなら

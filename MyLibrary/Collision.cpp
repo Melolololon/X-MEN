@@ -100,7 +100,7 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 				triPos.v1
 				+ p1P2DotP1Sphere
 				/ (p1P2DotP1Sphere
-				- p1P2DotP2Sphere)
+					- p1P2DotP2Sphere)
 				* p1ToP2;
 
 			return nearPos;
@@ -142,7 +142,7 @@ Vector3 MelLib::Collision::CalcSphereArea(const Vector3& spherePos, const Value3
 			nearPos =
 				triPos.v2
 				+ w
-				*( triPos.v3 - triPos.v2);
+				* (triPos.v3 - triPos.v2);
 			return nearPos;
 		}
 	}
@@ -728,25 +728,25 @@ bool MelLib::Collision::SphereAndOBB(const SphereData& sphere, SphereCalcResult*
 	float dis = 0.0f;
 	dis = (
 		(1 - s1) * sizeHalf.x * axisX
-		+ (1 - s2)* sizeHalf.y * axisY
+		+ (1 - s2) * sizeHalf.y * axisY
 		+ (1 - s3) * sizeHalf.z * axisZ
 		).Length();
 
 	bool result = dis <= sphere.GetRadius();
-	
 
-	
+
+
 	if (!sphereCalcResult || !result)return result;
-	
+
 	// 以下法線計算
-	
+
 	// 法線取得どうする
 	// 四角形の角度を0,0,0の時に戻し、球の位置も戻した分回転。(箱はGetBoxDataで取得すればいいので、回転させる必要はない)
 	// Boxと同じように求める
 	// 法線を回転
-	
+
 	BoxHitDirection hitDirection = BoxHitDirection::BOX_HIT_DIRECTION_NO_HIT;
-	
+
 	BoxData box = obb.GetBoxData();
 	//1 Xが多い
 	//2 Yが多い
@@ -811,11 +811,11 @@ bool MelLib::Collision::SphereAndOBB(const SphereData& sphere, SphereCalcResult*
 		}
 	}
 
-	
+
 	// 法線を求めてセット
 	Vector3 normal = CalcHitBoxSurfaceNormal(hitDirection);
 	sphereCalcResult->SetOBBHitSurfaceNormal(LibMath::RotateZXYVector3(normal, angle));
-	
+
 	return result;
 }
 
@@ -828,7 +828,7 @@ bool MelLib::Collision::SphereAndRay(const SphereData& sphere, SphereCalcResult*
 	Vector3 rayDir = ray.GetDirection();
 
 	Vector3 sphereToRay = rayPos - spherePos;
-	
+
 	float b = Vector3::Dot(sphereToRay, rayDir);
 	float c = Vector3::Dot(sphereToRay, sphereToRay) - (sphereR * sphereR);
 
@@ -838,8 +838,8 @@ bool MelLib::Collision::SphereAndRay(const SphereData& sphere, SphereCalcResult*
 
 	float t = -b - sqrt((b * b) - c);
 	if (t < 0)return false;
-	
-	if (d > 0) 
+
+	if (d > 0)
 	{
 		if (rayResult)rayResult->hitPosition = rayPos + t * rayDir;
 	}
@@ -853,11 +853,11 @@ bool Collision::SphereAndCapsule(const SphereData& sphere, const CapsuleData& ca
 	Vector3 spherePos = sphere.GetPosition();
 
 	Vector3 capsulePos0ToSphere = spherePos - capsuleLineSegmentPos.v1;
-		//LibMath::OtherVector3(capsuleLineSegmentPos.v1, spherePos);
+	//LibMath::OtherVector3(capsuleLineSegmentPos.v1, spherePos);
 
-	//資料のn
+//資料のn
 	Vector3 capsuleLineSegmentVector = capsuleLineSegmentPos.v2 - capsuleLineSegmentPos.v1;
-		//LibMath::OtherVector3(capsuleLineSegmentPos.v1, capsuleLineSegmentPos.v2);
+	//LibMath::OtherVector3(capsuleLineSegmentPos.v1, capsuleLineSegmentPos.v2);
 
 	float t = Vector3::Dot(capsulePos0ToSphere, capsuleLineSegmentVector.Normalize());
 
@@ -1200,7 +1200,7 @@ bool MelLib::Collision::BoxAndRay(const BoxData& box, const RayData& ray, RayCal
 	// https://el-ement.com/blog/2017/08/16/primitives-ray-intersection/
 
 	// http://marupeke296.com/COL_3D_No18_LineAndAABB.html
-	
+
 	// いいサイト
 	// https://tavianator.com/2011/ray_box.html
 
@@ -1220,13 +1220,13 @@ bool MelLib::Collision::BoxAndRay(const BoxData& box, const RayData& ray, RayCal
 	float minT = -FLT_MAX;
 	float maxT = FLT_MAX;
 
-	for (int i = 0; i < 3; i++) 
+	for (int i = 0; i < 3; i++)
 	{
 		if (LibMath::Difference(rayDir[i], 0.0f, 0.0001f))
 		{
 			// 明らかに出てたら当たってない判定
 			if (rayPos[i] < minPos[i] || rayPos[i] > maxPos[i])return false;
-			
+
 			// 上のfalseに引っかからなかったら当たってるため、次へ
 			continue;
 		}
@@ -1251,10 +1251,10 @@ bool MelLib::Collision::BoxAndRay(const BoxData& box, const RayData& ray, RayCal
 		// スラブ交差チェック
 		if (minT >= maxT)return false;
 	}
-	
+
 	// 間違えてここで0以上か判断しちゃってるけど問題なさそう?
 	// ベクトルの逆にOBBがあるとき、絶対Tが逆になるからこれで問題なさそう
-	if (minT >= 0 && maxT >= 0) 
+	if (minT >= 0 && maxT >= 0)
 	{
 		if (rayResult)rayResult->hitPosition = rayPos + minT * rayDir;
 		return true;
@@ -1393,7 +1393,7 @@ bool MelLib::Collision::OBBAndRay(const OBBData& obb, const RayData& ray, RayCal
 
 	// ベクトルを回転
 	rotRay.SetDirection(LibMath::RotateZXYVector3(ray.GetDirection(), obb.GetAngle() * -1));
-	
+
 	// 座標も回転
 	Vector3 rotRayPos = ray.GetPosition();
 	rotRayPos -= obb.GetPosition();
@@ -1401,5 +1401,18 @@ bool MelLib::Collision::OBBAndRay(const OBBData& obb, const RayData& ray, RayCal
 	rotRayPos += obb.GetPosition();
 	rotRay.SetPosition(rotRayPos);
 
-	return BoxAndRay(obb.GetBoxData(), rotRay, rayResult);
+	bool result = BoxAndRay(obb.GetBoxData(), rotRay, rayResult);
+
+	if (rayResult)
+	{
+		// 角度分回転
+		Vector3 rotRayPos = rayResult->hitPosition;
+		rotRayPos -= obb.GetPosition();
+		rotRayPos = LibMath::RotateZXYVector3(rotRayPos, obb.GetAngle());
+		rotRayPos += obb.GetPosition();
+		rayResult->hitPosition = rotRayPos;
+
+	}
+
+	return result;
 }
