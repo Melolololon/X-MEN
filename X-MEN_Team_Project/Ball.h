@@ -67,9 +67,9 @@ public:
 
 private:
 	//ボールの初期スピード
-	const float INIT_THROW_SPEED = 0.5f;
+	const float INIT_THROW_SPEED = 1.0f;
 	const float MAX_SPEED = 3.0f;
-	const float INIT_SCALE = 4.0f;
+	const float INIT_SCALE = 4.5f;
 	const float MAX_SCALE = 10.0f;
 	const float BALL_ACCEL = 0.25F;
 	const float BALL_FRICTION = 0.0025f;

@@ -9,7 +9,7 @@ NormalBarrier::NormalBarrier()
 	modelObjects["main"].Create(MelLib::ModelData::Get(MelLib::ShapeType3D::BOX));
 	//èâä˙íl
 	const MelLib::Vector3 INIT_POS = { 0,0,5 };
-	const MelLib::Vector3 INIT_SCALE = { 7,7,1 };
+	const MelLib::Vector3 INIT_SCALE = { 10,10,1 };
 	SetPosition(INIT_POS);
 	SetScale(INIT_SCALE);
 	time = 0;

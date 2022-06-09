@@ -78,7 +78,7 @@ void Game::Initialize()
 	// メインカメラを取得(Get関数に何も指定しないとメインカメラを取得する)
 	// SetRotateCriteriaPositionで回転基準をセット
 	//(初期設定だとFSPカメラのため、実質カメラの座標。TPS視点の時はこれでセットした数値が注視点の座標になる)
-	MelLib::Camera::Get()->SetRotateCriteriaPosition(MelLib::Vector3(0, 90, -60));
+	MelLib::Camera::Get()->SetRotateCriteriaPosition(MelLib::Vector3(0, 100, -45));
 
 	MelLib::Camera::Get()->SetAngle(MelLib::Vector3(70, 0, 0));
 

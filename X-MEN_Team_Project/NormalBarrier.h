@@ -3,7 +3,7 @@
 namespace
 {
 	//“WŠJ‚Å‚«‚éŠÔ
-	int openTime = 5;
+	int openTime = 15;
 	//Player‚ÆƒoƒŠƒA‚ÌŠÔ‚ÌŠÔŠu
 	float radius = 3.0f;
 }
